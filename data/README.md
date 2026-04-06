@@ -1,0 +1,19 @@
+# Data Sources
+
+This directory holds downloaded classification data files. Files are auto-downloaded by the ingestion pipeline and gitignored.
+
+## Sources
+
+| System | Source | URL |
+|--------|--------|-----|
+| NAICS 2022 | U.S. Census Bureau | https://www.census.gov/naics/2022NAICS/2-6%20digit_2022_Codes.xlsx |
+| ISIC Rev 4 | United Nations Statistics Division | https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/ISIC_Rev_4_english_structure.Txt |
+| Crosswalk | U.S. Census Bureau | https://www.census.gov/naics/concordances/2022_NAICS_to_ISIC_Rev_4.xlsx |
+
+## Re-downloading
+
+```bash
+# Delete cached files and re-ingest
+rm -rf data/naics/ data/isic/ data/crosswalk/
+python -m world_of_taxanomy ingest all
+```

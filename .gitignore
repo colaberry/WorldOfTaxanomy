@@ -71,3 +71,9 @@ dmypy.json
 .pyre/
 .pytype/
 cython_debug/
+.gstack/
+
+# Downloaded data files (re-downloadable)
+data/naics/
+data/isic/
+data/crosswalk/

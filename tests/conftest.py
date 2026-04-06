@@ -1,0 +1,147 @@
+"""Test fixtures for WorldOfTaxanomy.
+
+Uses a real Neon PostgreSQL test database. Creates tables, seeds mini data,
+and cleans up after tests.
+
+Uses synchronous wrappers around asyncpg to avoid Python 3.9 event loop issues.
+"""
+
+import asyncio
+import os
+import pytest
+import asyncpg
+from dotenv import load_dotenv
+from pathlib import Path
+
+# Load env
+load_dotenv(Path(__file__).parent.parent / ".env")
+
+
+def _run(coro):
+    """Run a coroutine synchronously."""
+    return asyncio.get_event_loop().run_until_complete(coro)
+
+
+@pytest.fixture(scope="session")
+def database_url():
+    """Get the test database URL."""
+    url = os.environ.get("DATABASE_URL")
+    if not url:
+        pytest.skip("DATABASE_URL not set")
+    return url
+
+
+@pytest.fixture(scope="session")
+def db_pool(database_url):
+    """Create a connection pool for tests."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    pool = loop.run_until_complete(
+        asyncpg.create_pool(database_url, min_size=1, max_size=3)
+    )
+    yield pool
+    loop.run_until_complete(pool.close())
+    loop.close()
+
+
+@pytest.fixture(autouse=True)
+def setup_and_teardown(db_pool):
+    """Set up schema and seed data before each test, clean up after."""
+    _run(_setup(db_pool))
+    yield
+    _run(_teardown(db_pool))
+
+
+async def _setup(pool):
+    schema_path = Path(__file__).parent.parent / "world_of_taxanomy" / "schema.sql"
+    schema_sql = schema_path.read_text()
+
+    async with pool.acquire() as conn:
+        await conn.execute("""
+            DROP TABLE IF EXISTS node_taxonomy_link CASCADE;
+            DROP TABLE IF EXISTS domain_taxonomy CASCADE;
+            DROP TABLE IF EXISTS equivalence CASCADE;
+            DROP TABLE IF EXISTS classification_node CASCADE;
+            DROP TABLE IF EXISTS classification_system CASCADE;
+            DROP FUNCTION IF EXISTS update_search_vector CASCADE;
+        """)
+        await conn.execute(schema_sql)
+        await seed_naics(conn)
+        await seed_isic(conn)
+        await seed_crosswalk(conn)
+
+
+async def _teardown(pool):
+    async with pool.acquire() as conn:
+        await conn.execute("DELETE FROM equivalence")
+        await conn.execute("DELETE FROM classification_node")
+        await conn.execute("DELETE FROM classification_system")
+
+
+async def seed_naics(conn):
+    await conn.execute("""
+        INSERT INTO classification_system (id, name, full_name, region, version, authority, tint_color)
+        VALUES ('naics_2022', 'NAICS 2022',
+                'North American Industry Classification System 2022',
+                'North America', '2022', 'U.S. Census Bureau', '#F59E0B')
+    """)
+    naics_nodes = [
+        ("11", "Agriculture, Forestry, Fishing and Hunting", None, 1, None, "11", False, 1),
+        ("62", "Health Care and Social Assistance", None, 1, None, "62", False, 2),
+        ("31-33", "Manufacturing", None, 1, None, "31-33", False, 3),
+        ("111", "Crop Production", None, 2, "11", "11", False, 4),
+        ("621", "Ambulatory Health Care Services", None, 2, "62", "62", False, 5),
+        ("1111", "Oilseed and Grain Farming", None, 3, "111", "11", False, 6),
+        ("6211", "Offices of Physicians", "Establishments with M.D. or D.O. degrees", 3, "621", "62", False, 7),
+        ("11111", "Soybean Farming", None, 4, "1111", "11", False, 8),
+        ("62111", "Offices of Physicians (except Mental Health)", None, 4, "6211", "62", True, 9),
+        ("111110", "Soybean Farming", "Soybean farming and production", 5, "11111", "11", True, 10),
+    ]
+    for code, title, desc, level, parent, sector, leaf, seq in naics_nodes:
+        await conn.execute("""
+            INSERT INTO classification_node
+                (system_id, code, title, description, level, parent_code, sector_code, is_leaf, seq_order)
+            VALUES ('naics_2022', $1, $2, $3, $4, $5, $6, $7, $8)
+        """, code, title, desc, level, parent, sector, leaf, seq)
+    await conn.execute("UPDATE classification_system SET node_count = 10 WHERE id = 'naics_2022'")
+
+
+async def seed_isic(conn):
+    await conn.execute("""
+        INSERT INTO classification_system (id, name, full_name, region, version, authority, tint_color)
+        VALUES ('isic_rev4', 'ISIC Rev 4',
+                'International Standard Industrial Classification Rev 4',
+                'Global (UN)', 'Rev 4', 'United Nations Statistics Division', NULL)
+    """)
+    isic_nodes = [
+        ("A", "Agriculture, forestry and fishing", None, 0, None, "A", False, 1),
+        ("Q", "Human health and social work activities", None, 0, None, "Q", False, 2),
+        ("01", "Crop and animal production", None, 1, "A", "A", False, 3),
+        ("86", "Human health activities", None, 1, "Q", "Q", False, 4),
+        ("011", "Growing of non-perennial crops", None, 2, "01", "A", False, 5),
+        ("862", "Medical and dental practice activities", None, 2, "86", "Q", False, 6),
+        ("0111", "Growing of cereals and other crops", None, 3, "011", "A", True, 7),
+        ("8620", "Medical and dental practice activities", "General and specialist medical services", 3, "862", "Q", True, 8),
+    ]
+    for code, title, desc, level, parent, sector, leaf, seq in isic_nodes:
+        await conn.execute("""
+            INSERT INTO classification_node
+                (system_id, code, title, description, level, parent_code, sector_code, is_leaf, seq_order)
+            VALUES ('isic_rev4', $1, $2, $3, $4, $5, $6, $7, $8)
+        """, code, title, desc, level, parent, sector, leaf, seq)
+    await conn.execute("UPDATE classification_system SET node_count = 8 WHERE id = 'isic_rev4'")
+
+
+async def seed_crosswalk(conn):
+    crosswalk = [
+        ("naics_2022", "6211", "isic_rev4", "8620", "partial"),
+        ("isic_rev4", "8620", "naics_2022", "6211", "partial"),
+        ("naics_2022", "1111", "isic_rev4", "0111", "partial"),
+        ("isic_rev4", "0111", "naics_2022", "1111", "partial"),
+        ("naics_2022", "111110", "isic_rev4", "0111", "exact"),
+    ]
+    for src_sys, src_code, tgt_sys, tgt_code, match in crosswalk:
+        await conn.execute("""
+            INSERT INTO equivalence (source_system, source_code, target_system, target_code, match_type)
+            VALUES ($1, $2, $3, $4, $5)
+        """, src_sys, src_code, tgt_sys, tgt_code, match)
