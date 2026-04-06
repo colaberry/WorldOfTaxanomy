@@ -11,3 +11,6 @@ uvicorn[standard]>=0.29.0
 
 # Phase 3: MCP Server
 # No external dependency — protocol implemented directly (Python 3.9 compatible)
+
+# Phase 4: Web Frontend
+jinja2>=3.1.0
