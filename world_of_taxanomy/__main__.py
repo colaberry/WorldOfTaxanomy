@@ -241,6 +241,12 @@ def cmd_serve(args):
     uvicorn.run(app, host=args.host, port=args.port)
 
 
+def cmd_mcp(args):
+    """Start the MCP server (stdio transport)."""
+    from world_of_taxanomy.mcp.server import main as mcp_main
+    mcp_main()
+
+
 # ── Argument Parser ───────────────────────────────────────────
 
 
@@ -290,6 +296,9 @@ def build_parser() -> argparse.ArgumentParser:
     p_serve.add_argument("--host", default="0.0.0.0", help="Host (default: 0.0.0.0)")
     p_serve.add_argument("--port", type=int, default=8000, help="Port (default: 8000)")
 
+    # mcp
+    sub.add_parser("mcp", help="Start the MCP server (stdio transport)")
+
     return parser
 
 
@@ -310,6 +319,7 @@ def main():
         "equiv": cmd_equiv,
         "stats": cmd_stats,
         "serve": cmd_serve,
+        "mcp": cmd_mcp,
     }
 
     try:
