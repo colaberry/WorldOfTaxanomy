@@ -93,3 +93,7 @@ frontend/out/
 
 # Claude Code
 .claude/
+
+# Session reports (local only)
+reports/
+data/iso3166_all.csv
