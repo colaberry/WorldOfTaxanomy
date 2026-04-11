@@ -9,6 +9,9 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+- ISO 3166-1 Countries ingester (`iso_3166_1`, 271 nodes: 5 continents, 17 sub-regions, 249 countries) - Phase 1-A
+
 ---
 
 ## [0.1.0] - 2026-04-07

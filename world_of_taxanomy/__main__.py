@@ -109,8 +109,14 @@ def cmd_ingest(args):
 
             if target in ("crosswalk", "all"):
                 from world_of_taxanomy.ingest.crosswalk import ingest_crosswalk
-                print("\n── Crosswalk (NAICS ↔ ISIC) ──")
+                print("\n-- Crosswalk (NAICS / ISIC) --")
                 await ingest_crosswalk(conn)
+
+            if target in ("iso3166_1", "all"):
+                from world_of_taxanomy.ingest.iso3166_1 import ingest_iso3166_1
+                print("\n-- ISO 3166-1 Countries --")
+                n = await ingest_iso3166_1(conn)
+                print(f"  {n} nodes")
 
         await close_pool()
 
@@ -320,7 +326,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "all"],
         help="What to ingest",
     )
 

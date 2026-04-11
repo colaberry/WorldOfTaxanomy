@@ -4,7 +4,7 @@
 
 WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 10 national/international classification systems as equal peers through equivalence mappings (crosswalk edges).
 
-**10 systems, 10,966 codes, 11,420 crosswalk edges.**
+**11 systems, 11,237 codes, 11,420 crosswalk edges.**
 
 | System | Region | Codes |
 |--------|--------|-------|
@@ -13,11 +13,12 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | SIC 1987 | USA/UK | 1,176 |
 | NACE Rev 2 | EU (27 countries) | 996 |
 | WZ 2008 | Germany | 996 |
-| ÖNACE 2008 | Austria | 996 |
+| ONACE 2008 | Austria | 996 |
 | NOGA 2008 | Switzerland | 996 |
 | ANZSIC 2006 | Australia/NZ | 825 |
 | ISIC Rev 4 | Global (UN) | 766 |
 | JSIC 2013 | Japan | 20 |
+| ISO 3166-1 | Global | 271 |
 
 Three surfaces: **Web App** (Next.js), **REST API** (FastAPI), **MCP Server** (stdio).
 

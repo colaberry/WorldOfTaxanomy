@@ -71,6 +71,7 @@ WorldOfTaxanomy is a knowledge graph that connects 10 industry classification sy
 - ANZSIC 2006 (Australia/NZ) \u2014 825 codes
 - ISIC Rev 4 (Global/UN) \u2014 766 codes
 - JSIC 2013 (Japan) \u2014 20 codes
+- ISO 3166-1 Countries (Global) \u2014 271 nodes (5 continents, 17 sub-regions, 249 countries)
 
 ## API
 Base URL: https://worldoftaxanomy.com/api/v1
