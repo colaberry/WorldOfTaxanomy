@@ -18,6 +18,7 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - HS 2022 Harmonized System (`hs_2022`, ~6,960 nodes: 21 sections, 97 chapters, 1,229 headings, 5,613 subheadings) - Phase 2-A
 - HS 2022 / ISIC Rev 4 crosswalk (`crosswalk_hs_isic`, ~3,010 edges, broad match via WITS concordance) - Phase 2-B
 - CPC v2.1 Central Product Classification (`cpc_v21`, 4,596 nodes: 10 sections, 71 divisions, 329 groups, 1,299 classes, 2,887 subclasses) - Phase 2-C
+- SOC 2018 (`soc_2018`, 1,447 nodes: 23 major groups, 98 minor groups, 459 broad occupations, 867 detailed occupations) - Phase 3-A
 - UNSPSC v24 (`unspsc_v24`, 77,337 nodes: 57 segments, 465 families, 5,313 classes, 71,502 commodities) - Phase 2-E
 - CPC v2.1 / ISIC Rev 4 crosswalk (`crosswalk_cpc_isic`, ~5,430 bidirectional edges, exact + partial) - Phase 2-D
 - HS 2022 / CPC v2.1 crosswalk (`crosswalk_cpc_hs`, ~11,686 bidirectional edges, exact + partial) - Phase 2-D
