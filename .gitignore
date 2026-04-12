@@ -107,3 +107,4 @@ frontend/out/
 # Session reports (local only)
 reports/
 data/iso3166_all.csv
+data/atc_who.csv

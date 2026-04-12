@@ -116,8 +116,8 @@ def test_ingest_atc_who_from_file(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
             count = await ingest_atc_who(conn, path=str(data_path))
-            # 14 + 94 + 269 + 910 + 5684 = 6971
-            assert count >= 6900, f"Expected >= 6900 nodes, got {count}"
+            # 6440 unique codes (6971 rows, 531 duplicates with different DDD routes)
+            assert count >= 6400, f"Expected >= 6400 nodes, got {count}"
 
             row = await conn.fetchrow(
                 "SELECT id, node_count FROM classification_system WHERE id = 'atc_who'"
