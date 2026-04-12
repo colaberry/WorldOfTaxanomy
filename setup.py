@@ -5,7 +5,7 @@ long_description = (Path(__file__).parent / "README.md").read_text(encoding="utf
 
 setup(
     name="world-of-taxanomy",
-    version="0.1.0",
+    version="0.2.0",
     packages=find_packages(exclude=["tests*", "frontend*", "data*"]),
     python_requires=">=3.9",
     install_requires=[
@@ -18,6 +18,8 @@ setup(
         "slowapi>=0.1.9",
         "openpyxl>=3.1.0",
         "xlrd>=2.0.0",
+        "pycountry>=22.3.5",
+        "requests>=2.31.0",
     ],
     extras_require={
         "dev": [
@@ -27,7 +29,7 @@ setup(
             "build>=1.0.0",
         ]
     },
-    description="Unified global industry classification knowledge graph - NAICS, ISIC, NACE, SIC, and 6 more systems connected by crosswalk edges.",
+    description="36-system open taxonomy knowledge graph: industry, geography, product, occupation, education, health, regulation - all connected by crosswalk edges.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="ramdhanyk",
@@ -43,6 +45,8 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
+        "Intended Audience :: Financial and Insurance Industry",
+        "Intended Audience :: Healthcare Industry",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.9",
@@ -52,11 +56,16 @@ setup(
         "Topic :: Scientific/Engineering :: Information Analysis",
         "Topic :: Database",
         "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+        "Topic :: Office/Business",
         "Operating System :: OS Independent",
+        "Natural Language :: English",
     ],
     keywords=[
         "taxonomy", "classification", "industry", "NAICS", "ISIC", "NACE", "SIC",
         "knowledge-graph", "crosswalk", "MCP", "fastapi", "open-data",
+        "HS", "CPC", "UNSPSC", "SOC", "ISCO", "ESCO", "CIP", "ATC", "ICD",
+        "patent-cpc", "FMCSA", "GDPR", "ISO-31000", "occupational-classification",
+        "product-classification", "trade-classification", "open-taxonomy",
     ],
     entry_points={
         "console_scripts": [
