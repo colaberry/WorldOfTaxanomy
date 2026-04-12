@@ -4,7 +4,7 @@
 
 WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 10 national/international classification systems as equal peers through equivalence mappings (crosswalk edges).
 
-**35 systems, ~395,296 codes, ~57,118 crosswalk edges.**
+**36 systems, ~395,323 codes, ~57,118 crosswalk edges.**
 
 | System | Region | Codes |
 |--------|--------|-------|
@@ -43,6 +43,7 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | Domain: Truck Freight Types | United States | 44 |
 | Domain: Truck Vehicle Classes | United States | 23 |
 | Domain: Truck Cargo Classification | United States | 46 |
+| Domain: Truck Carrier Operations | United States | 27 |
 | ICD-11 MMS | Global (WHO) | (manual download required) |
 | LOINC | Global (Regenstrief) | (manual download required) |
 
