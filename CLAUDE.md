@@ -29,6 +29,8 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | CIP 2020 | United States | 2,848 |
 | ISCED-F 2013 | Global (UNESCO) | 122 |
 | ATC WHO 2021 | Global (WHO) | 6,440 |
+| ICD-11 MMS | Global (WHO) | (manual download required) |
+| LOINC | Global (Regenstrief) | (manual download required) |
 
 Three surfaces: **Web App** (Next.js), **REST API** (FastAPI), **MCP Server** (stdio).
 

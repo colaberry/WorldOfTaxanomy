@@ -108,3 +108,4 @@ frontend/out/
 reports/
 data/iso3166_all.csv
 data/atc_who.csv
+data/icd11_synonyms.parquet

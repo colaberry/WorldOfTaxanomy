@@ -226,6 +226,24 @@ def cmd_ingest(args):
                 n = await ingest_atc_who(conn)
                 print(f"  {n} nodes")
 
+            if target in ("icd_11", "all"):
+                from world_of_taxanomy.ingest.icd_11 import ingest_icd_11
+                print("\n-- ICD-11 MMS (WHO, requires manual download) --")
+                n = await ingest_icd_11(conn)
+                print(f"  {n} nodes")
+
+            if target in ("crosswalk_icd_isic", "all"):
+                from world_of_taxanomy.ingest.crosswalk_icd_isic import ingest_crosswalk_icd_isic
+                print("\n-- Crosswalk (ICD-11 / ISIC Rev 4) --")
+                n = await ingest_crosswalk_icd_isic(conn)
+                print(f"  {n} edges")
+
+            if target in ("loinc", "all"):
+                from world_of_taxanomy.ingest.loinc import ingest_loinc
+                print("\n-- LOINC (requires manual download from loinc.org) --")
+                n = await ingest_loinc(conn)
+                print(f"  {n} nodes")
+
         await close_pool()
 
     _run(_ingest())
@@ -434,7 +452,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "all"],
         help="What to ingest",
     )
 
