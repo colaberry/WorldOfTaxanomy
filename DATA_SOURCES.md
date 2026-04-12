@@ -32,6 +32,7 @@ Attribution and licensing information for all classification systems in WorldOfT
 |-----------|--------|---------|
 | NAICS 2022 / ISIC Rev 4 | UN Statistics Division concordance | Open |
 | UN M.49 / ISO 3166-1 (~498 edges) | Derived from iso3166_all.csv (country-code + alpha-2 columns) | CC0 |
+| UNSPSC v24 (77,337 nodes) | Oklahoma Open Data Portal (public domain) - data.ok.gov | Public Domain |
 | HS 2022 / ISIC Rev 4 (~3,010 edges, broad) | World Bank WITS HS 2012->ISIC Rev 3 concordance, filtered to existing nodes | CC BY 4.0 |
 | CPC v2.1 / ISIC Rev 4 (~5,430 edges, exact + partial) | UN Statistics Division CPCv21_ISIC4/cpc21-isic4.txt | Open |
 | HS 2022 / CPC v2.1 (~11,686 edges, exact + partial) | UN Statistics Division CPCv21_HS2017/CPC21-HS2017.csv | Open |
