@@ -10,20 +10,65 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [Unreleased]
 
 ### Added
-- ISO 3166-1 Countries ingester (`iso_3166_1`, 271 nodes: 5 continents, 17 sub-regions, 249 countries) - Phase 1-A
-- ISO 3166-2 Subdivisions ingester (`iso_3166_2`, ~5,246 nodes: 200 country stubs + ~5,046 subdivisions) - Phase 1-B
-- ISO 3166 crosswalk (`crosswalk_iso3166`, ~498 edges linking iso_3166_1 to iso_3166_2) - Phase 1-C
-- UN M.49 Geographic Regions ingester (`un_m49`, ~272 nodes: World, 5 regions, 24 sub-regions, ~249 countries) - Phase 1-D
-- UN M.49 / ISO 3166-1 crosswalk (`crosswalk_un_m49_iso3166`, ~498 edges linking numeric M.49 codes to alpha-2 codes) - Phase 1-E
-- HS 2022 Harmonized System (`hs_2022`, ~6,960 nodes: 21 sections, 97 chapters, 1,229 headings, 5,613 subheadings) - Phase 2-A
-- HS 2022 / ISIC Rev 4 crosswalk (`crosswalk_hs_isic`, ~3,010 edges, broad match via WITS concordance) - Phase 2-B
-- CPC v2.1 Central Product Classification (`cpc_v21`, 4,596 nodes: 10 sections, 71 divisions, 329 groups, 1,299 classes, 2,887 subclasses) - Phase 2-C
-- SOC 2018 / ISCO-08 crosswalk (`crosswalk_soc_isco`, 1,984 bidirectional edges, broad) - Phase 3-C
-- ISCO-08 (`isco_08`, 619 nodes: 10 major groups, 43 sub-major, 130 minor, 436 unit groups) - Phase 3-B
-- SOC 2018 (`soc_2018`, 1,447 nodes: 23 major groups, 98 minor groups, 459 broad occupations, 867 detailed occupations) - Phase 3-A
-- UNSPSC v24 (`unspsc_v24`, 77,337 nodes: 57 segments, 465 families, 5,313 classes, 71,502 commodities) - Phase 2-E
-- CPC v2.1 / ISIC Rev 4 crosswalk (`crosswalk_cpc_isic`, ~5,430 bidirectional edges, exact + partial) - Phase 2-D
-- HS 2022 / CPC v2.1 crosswalk (`crosswalk_cpc_hs`, ~11,686 bidirectional edges, exact + partial) - Phase 2-D
+
+**Phase 9 - Truck Transportation Domain Deep-Dives (prototype for all industries):**
+- Truck Freight Types (`domain_truck_freight`, 44 nodes: mode, equipment, service level, cargo type)
+- Truck Vehicle Classes (`domain_truck_vehicle`, 23 nodes: DOT GVWR Classes 1-8 + 13 body types)
+- Truck Cargo Classification (`domain_truck_cargo`, 46 nodes: commodity groups, DOT hazmat classes 1-9, handling, regulatory)
+- FMCSA -> Truck Domain crosswalk (`crosswalk_fmcsa_truck`, ~50 edges: HOS, ELD, CDL, HAZMAT, VIM, FR, OA, CSF, AR)
+- Truck Carrier Operations (`domain_truck_ops`, 27 nodes: carrier type, fleet size, business model, route pattern)
+- NAICS 484 -> Truck Domain crosswalk (`crosswalk_naics484_domains`, ~200 edges linking NAICS 484xxx to all 4 domain taxonomies)
+
+**Phase 8 - Regulatory and Compliance Classification:**
+- CFR Title 49 Transportation (`cfr_title_49`, 104 nodes: Parts 171-173, 177, 382, 383, 387, 390-397)
+- FMCSA Regulations (`fmcsa_regs`, 80 nodes: HOS, ELD, CDL, DAT, VIM, HAZMAT, FR, OA, CSF, AR)
+- CFR / NAICS crosswalk (`crosswalk_cfr_naics`, ~300 edges: CFR Title 49 parts -> NAICS 484/485/492)
+- GDPR Articles (`gdpr_articles`, 110 nodes: 11 chapters + 99 articles with full titles)
+- ISO 31000 Risk Framework (`iso_31000`, 47 nodes: Clauses 4-10 + Annex A)
+
+**Phase 7 - Skills and Knowledge:**
+- ESCO Occupations (`esco_occupations`, ~2,942 nodes: European occupational classification)
+- ESCO Skills (`esco_skills`, ~13,890 nodes: European skills and competences taxonomy)
+- ESCO / ISCO-08 crosswalk (`crosswalk_esco_isco`, ~2,942 bidirectional edges)
+- O*NET-SOC (`onet_soc`, ~867 nodes: US occupational information network, base occupations)
+- O*NET / SOC 2018 crosswalk (`crosswalk_onet_soc`, ~867 exact-match edges)
+- Patent CPC (`patent_cpc`, ~260,000 nodes: 9 sections A-H, Y; 5-level hierarchy)
+
+**Phase 6 - Financial and Environmental:**
+- COFOG (`cofog`, 188 nodes: 10 divisions, 69 groups, 109 classes)
+- GICS Bridge (`gics_bridge`, 11 nodes: 11 public sector names only, no proprietary data)
+- GHG Protocol (`ghg_protocol`, 20 nodes: Scope 1/2/3 categories)
+
+**Phase 5 - Health and Clinical:**
+- ATC WHO Drug Classification (`atc_who`, 6,440 nodes: 14 anatomical groups, 5 levels)
+- ICD-11 MMS ingester (requires manual download from icd.who.int)
+- LOINC ingester (requires manual download from loinc.org)
+
+**Phase 4 - Education:**
+- ISCED-F 2013 Fields of Study (`iscedf_2013`, 122 nodes: 11 broad + 29 narrow + 82 detailed fields)
+- CIP 2020 Classification of Instructional Programs (`cip_2020`, 2,848 nodes: 47 2-digit, 397 4-digit, 2,404 6-digit)
+- CIP 2020 / SOC 2018 crosswalk (`crosswalk_cip_soc`, ~2,000 bidirectional edges)
+- CIP 2020 / ISCED-F crosswalk (`crosswalk_cip_iscedf`, ~122 bidirectional edges)
+
+**Phase 3 - Occupational Classification:**
+- SOC 2018 (`soc_2018`, 1,447 nodes: 23 major groups, 98 minor, 459 broad, 867 detailed)
+- ISCO-08 (`isco_08`, 619 nodes: 10 major, 43 sub-major, 130 minor, 436 unit groups)
+- SOC 2018 / ISCO-08 crosswalk (`crosswalk_soc_isco`, 1,984 bidirectional edges)
+
+**Phase 2 - Product and Trade Classification:**
+- HS 2022 Harmonized System (`hs_2022`, 6,960 nodes: 21 sections, 97 chapters, 1,229 headings, 5,613 subheadings)
+- HS 2022 / ISIC Rev 4 crosswalk (`crosswalk_hs_isic`, ~3,010 edges, broad)
+- CPC v2.1 Central Product Classification (`cpc_v21`, 4,596 nodes: 10 sections, 71 divisions, 329 groups, 1,299 classes, 2,887 subclasses)
+- CPC v2.1 / ISIC Rev 4 crosswalk (`crosswalk_cpc_isic`, ~5,430 bidirectional edges)
+- HS 2022 / CPC v2.1 crosswalk (`crosswalk_cpc_hs`, ~11,686 bidirectional edges)
+- UNSPSC v24 (`unspsc_v24`, 77,337 nodes: 57 segments, 465 families, 5,313 classes, 71,502 commodities)
+
+**Phase 1 - Geographic Foundation:**
+- ISO 3166-1 Countries (`iso_3166_1`, 271 nodes: 5 continents, 17 sub-regions, 249 countries)
+- ISO 3166-2 Subdivisions (`iso_3166_2`, ~5,246 nodes)
+- ISO 3166 crosswalk (~498 edges)
+- UN M.49 Geographic Regions (`un_m49`, 272 nodes)
+- UN M.49 / ISO 3166-1 crosswalk (~498 edges)
 
 ---
 
@@ -43,58 +88,24 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - NOGA 2008 (Switzerland, 996 codes - derived from NACE Rev 2)
 - JSIC 2013 (Japan, 20 division codes)
 
-**REST API (FastAPI, 19 endpoints):**
-- `/api/v1/systems` - list and group systems
-- `/api/v1/systems/{id}` - system detail with roots
-- `/api/v1/systems/{id}/nodes/{code}` - node detail
-- `/api/v1/systems/{id}/nodes/{code}/children` - child nodes
-- `/api/v1/systems/{id}/nodes/{code}/ancestors` - ancestor chain
-- `/api/v1/systems/{id}/nodes/{code}/equivalences` - crosswalk edges
-- `/api/v1/systems/{id}/nodes/{code}/translations` - all equivalences at once
-- `/api/v1/systems/{id}/nodes/{code}/siblings` - sibling nodes
-- `/api/v1/systems/{id}/nodes/{code}/subtree` - subtree summary stats
-- `/api/v1/search` - full-text search (with grouped and context modes)
-- `/api/v1/compare` - side-by-side sector comparison
-- `/api/v1/diff` - codes with no mapping to another system
-- `/api/v1/nodes/{code}` - find all systems containing a code
-- `/api/v1/systems/stats` - leaf/total counts per system
-- `/api/v1/equivalences/stats` - crosswalk statistics
-- Auth endpoints: register, login, API key management
+**REST API (FastAPI):**
+- Full browse, search, translate, compare, diff, and auth endpoints
 
-**MCP Server (20 tools, stdio transport):**
-- list_systems, get_industry, browse_children, get_ancestors
-- search_classifications, get_equivalences, translate_code, get_sector_overview
-- translate_across_all_systems, compare_sector, find_by_keyword_all_systems
-- get_crosswalk_coverage, get_system_diff, get_siblings, get_subtree_summary
-- resolve_ambiguous_code, get_leaf_count, get_region_mapping
-- describe_match_types, explore_industry_tree
+**MCP Server (20 tools, stdio transport)**
 
-**Auth system:**
-- JWT-based auth (15-min tokens)
-- API keys with `wot_` prefix, bcrypt-hashed, prefix-indexed
-- Rate limits: anonymous 30 req/min, authenticated 1000 req/min
+**Auth system:** JWT tokens, API keys with `wot_` prefix, rate limiting
 
-**Next.js frontend:**
-- Home page with industry map and Galaxy View (D3 force simulation)
-- System detail pages with sector view and crosswalk matrix
-- Full-text explore/search page
-- Node detail pages with breadcrumb, children panel, cross-system equivalences
-- Dashboard with stats overview
-- Dark/light theme support (next-themes)
+**Next.js 15 frontend:** Industry Map, Galaxy View, System detail, Node detail, Explore, Dashboard
 
-**Infrastructure:**
-- 277 tests (pytest, asyncpg, test_wot schema isolation)
-- Neon PostgreSQL (serverless, pgbouncer compatible)
-- robots.txt and llms.txt endpoints
+**Infrastructure:** 277 tests (pytest), Neon PostgreSQL, test_wot schema isolation
 
 ### Database
 
-- `classification_system` - 10 rows
-- `classification_node` - 10,966 rows
-- `equivalence` - 11,420 rows
-- `app_user`, `api_key`, `usage_log` - auth tables
+- `classification_system`: 10 rows
+- `classification_node`: 10,966 rows
+- `equivalence`: 11,420 rows
 
 ---
 
-[Unreleased]: https://github.com/ramdhanyk/WorldOfTaxanomy/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/ramdhanyk/WorldOfTaxanomy/releases/tag/v0.1.0
+[Unreleased]: https://github.com/colaberry/WorldOfTaxanomy/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/colaberry/WorldOfTaxanomy/releases/tag/v0.1.0
