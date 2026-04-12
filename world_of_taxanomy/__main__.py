@@ -190,6 +190,12 @@ def cmd_ingest(args):
                 n = await ingest_isco_08(conn)
                 print(f"  {n} nodes")
 
+            if target in ("crosswalk_soc_isco", "all"):
+                from world_of_taxanomy.ingest.crosswalk_soc_isco import ingest_crosswalk_soc_isco
+                print("\n-- Crosswalk (SOC 2018 / ISCO-08) --")
+                n = await ingest_crosswalk_soc_isco(conn)
+                print(f"  {n} edges")
+
         await close_pool()
 
     _run(_ingest())
@@ -398,7 +404,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "all"],
         help="What to ingest",
     )
 

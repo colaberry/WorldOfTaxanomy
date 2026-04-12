@@ -22,16 +22,19 @@ def test_crosswalk_soc_isco_module_importable():
 
 def test_ingest_crosswalk_soc_isco(db_pool):
     """Integration test - inserts bidirectional SOC 2018 <-> ISCO-08 edges."""
-    data_path = Path("data/soc2010_isco08.csv")
-    if not data_path.exists():
-        pytest.skip(
-            "Download data/soc2010_isco08.csv first: "
-            "https://danielruss.github.io/codingsystems/soc2010_isco2008.csv"
-        )
+    cw_path = Path("data/soc2010_isco08.csv")
+    soc_path = Path("data/soc_2018.csv")
+    isco_path = Path("data/isco_08.csv")
+    if not cw_path.exists() or not soc_path.exists() or not isco_path.exists():
+        pytest.skip("Download data files first: soc_2018.csv, isco_08.csv, soc2010_isco08.csv")
 
     async def _run():
+        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
-            count = await ingest_crosswalk_soc_isco(conn, path=str(data_path))
+            await ingest_soc_2018(conn, path=str(soc_path))
+            await ingest_isco_08(conn, path=str(isco_path))
+            count = await ingest_crosswalk_soc_isco(conn, path=str(cw_path))
             # ~992 pairs x 2 = ~1984 edges (filtered to codes in our SOC 2018 DB)
             assert count >= 1800, f"Expected >= 1800 edges, got {count}"
 
@@ -58,14 +61,20 @@ def test_ingest_crosswalk_soc_isco(db_pool):
 
 def test_ingest_crosswalk_soc_isco_idempotent(db_pool):
     """Running ingest twice does not raise and returns consistent count."""
-    data_path = Path("data/soc2010_isco08.csv")
-    if not data_path.exists():
-        pytest.skip("Download data/soc2010_isco08.csv first")
+    cw_path = Path("data/soc2010_isco08.csv")
+    soc_path = Path("data/soc_2018.csv")
+    isco_path = Path("data/isco_08.csv")
+    if not cw_path.exists() or not soc_path.exists() or not isco_path.exists():
+        pytest.skip("Download data files first")
 
     async def _run():
+        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
-            count1 = await ingest_crosswalk_soc_isco(conn, path=str(data_path))
-            count2 = await ingest_crosswalk_soc_isco(conn, path=str(data_path))
+            await ingest_soc_2018(conn, path=str(soc_path))
+            await ingest_isco_08(conn, path=str(isco_path))
+            count1 = await ingest_crosswalk_soc_isco(conn, path=str(cw_path))
+            count2 = await ingest_crosswalk_soc_isco(conn, path=str(cw_path))
             assert count1 == count2
 
     asyncio.get_event_loop().run_until_complete(_run())
@@ -73,13 +82,19 @@ def test_ingest_crosswalk_soc_isco_idempotent(db_pool):
 
 def test_crosswalk_excludes_codes_not_in_soc2018(db_pool):
     """SOC codes not present in our soc_2018 system are not inserted."""
-    data_path = Path("data/soc2010_isco08.csv")
-    if not data_path.exists():
-        pytest.skip("Download data/soc2010_isco08.csv first")
+    cw_path = Path("data/soc2010_isco08.csv")
+    soc_path = Path("data/soc_2018.csv")
+    isco_path = Path("data/isco_08.csv")
+    if not cw_path.exists() or not soc_path.exists() or not isco_path.exists():
+        pytest.skip("Download data files first")
 
     async def _run():
+        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
-            await ingest_crosswalk_soc_isco(conn, path=str(data_path))
+            await ingest_soc_2018(conn, path=str(soc_path))
+            await ingest_isco_08(conn, path=str(isco_path))
+            await ingest_crosswalk_soc_isco(conn, path=str(cw_path))
             # Count edges whose source_code is not in our soc_2018 system
             orphans = await conn.fetchval(
                 """SELECT COUNT(*) FROM equivalence e
