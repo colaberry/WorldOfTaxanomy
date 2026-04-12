@@ -10,6 +10,7 @@ This directory holds downloaded classification data files. Files are auto-downlo
 | ISIC Rev 4 | United Nations Statistics Division | https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/ISIC_Rev_4_english_structure.Txt |
 | Crosswalk | U.S. Census Bureau | https://www.census.gov/naics/concordances/2022_NAICS_to_ISIC_Rev_4.xlsx |
 | ISO 3166-1 Countries | lukes/ISO-3166-Countries-with-Regional-Codes (CC0) | https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv |
+| ISO 3166-2 Subdivisions | pycountry library (no file download - uses pycountry in-memory) | pip install pycountry |
 
 ## Re-downloading
 
