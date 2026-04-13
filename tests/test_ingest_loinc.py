@@ -23,6 +23,7 @@ from pathlib import Path
 
 from world_of_taxanomy.ingest.loinc import (
     _is_active,
+    _find_loinc_path,
     ingest_loinc,
 )
 
@@ -52,26 +53,32 @@ def test_loinc_module_importable():
     """All public symbols are importable."""
     assert callable(ingest_loinc)
     assert callable(_is_active)
+    assert callable(_find_loinc_path)
+
+
+def test_find_loinc_path_returns_none_or_string():
+    """_find_loinc_path returns a string path or None."""
+    result = _find_loinc_path()
+    assert result is None or isinstance(result, str)
 
 
 def test_ingest_loinc_from_file(db_pool):
-    """Integration test - ingest from manually downloaded LOINC CSV.
+    """Integration test - ingest from manually downloaded LOINC file.
 
-    To obtain the file:
-      1. Register at https://loinc.org (free)
-      2. Download LOINC Table: https://loinc.org/downloads/loinc-table/
-      3. Extract Loinc.csv from the ZIP and save as data/loinc.csv
+    Accepts either:
+      - data/loinc.csv          (extracted Loinc.csv)
+      - data/Loinc_X.XX.zip     (ZIP downloaded directly from loinc.org)
     """
-    data_path = Path("data/loinc.csv")
-    if not data_path.exists():
+    data_path = _find_loinc_path()
+    if data_path is None:
         pytest.skip(
-            "Download data/loinc.csv from https://loinc.org/downloads/loinc-table/ "
-            "(free registration required). Extract Loinc.csv from the downloaded ZIP."
+            "Download Loinc_X.XX.zip from https://loinc.org/downloads/loinc-table/ "
+            "(free registration required) and place in data/ folder."
         )
 
     async def _run():
         async with db_pool.acquire() as conn:
-            count = await ingest_loinc(conn, path=str(data_path))
+            count = await ingest_loinc(conn, path=data_path)
             # ~90,000+ active LOINC codes
             assert count >= 80000, f"Expected >= 80000 nodes, got {count}"
 
@@ -91,28 +98,19 @@ def test_ingest_loinc_from_file(db_pool):
             assert sample["is_leaf"] is True
             assert sample["parent_code"] is None
 
-            # No deprecated codes
-            deprecated = await conn.fetchval(
-                "SELECT COUNT(*) FROM classification_node "
-                "WHERE system_id = 'loinc' AND title ILIKE '%deprecated%'"
-            )
-            # This is a soft check - some active titles might mention deprecated
-            # The real check is that we filtered by STATUS=ACTIVE
-            assert deprecated is not None  # just verify the query works
-
     asyncio.get_event_loop().run_until_complete(_run())
 
 
 def test_ingest_loinc_idempotent(db_pool):
     """Running ingest twice returns consistent count."""
-    data_path = Path("data/loinc.csv")
-    if not data_path.exists():
-        pytest.skip("Download data/loinc.csv from https://loinc.org first")
+    data_path = _find_loinc_path()
+    if data_path is None:
+        pytest.skip("Place Loinc_X.XX.zip in data/ folder first")
 
     async def _run():
         async with db_pool.acquire() as conn:
-            count1 = await ingest_loinc(conn, path=str(data_path))
-            count2 = await ingest_loinc(conn, path=str(data_path))
+            count1 = await ingest_loinc(conn, path=data_path)
+            count2 = await ingest_loinc(conn, path=data_path)
             assert count1 == count2
 
     asyncio.get_event_loop().run_until_complete(_run())

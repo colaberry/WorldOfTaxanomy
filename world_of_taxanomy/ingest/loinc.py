@@ -3,7 +3,8 @@
 Logical Observation Identifiers Names and Codes (LOINC).
 Source: Regenstrief Institute - loinc.org (free registration required)
   https://loinc.org/downloads/loinc-table/
-  Download: Loinc_X.XX.zip -> extract Loinc.csv -> save as data/loinc.csv
+  Download: Loinc_X.XX.zip -> place at data/Loinc_X.XX.zip
+  OR extract Loinc.csv and save as data/loinc.csv
 
 License: Regenstrief LOINC License
   DO NOT redistribute the data file.
@@ -21,9 +22,13 @@ Only ACTIVE and TRIAL codes are ingested (DEPRECATED and DISCOURAGED are skipped
 from __future__ import annotations
 
 import csv
+import io
+import zipfile
+from pathlib import Path
 from typing import Optional
 
-_DEFAULT_PATH = "data/loinc.csv"
+_DEFAULT_CSV_PATH = "data/loinc.csv"
+_DEFAULT_ZIP_GLOB = "data/Loinc_*.zip"
 
 CHUNK = 500
 
@@ -31,7 +36,7 @@ _SYSTEM_ROW = (
     "loinc",
     "LOINC",
     "Logical Observation Identifiers Names and Codes",
-    "2.77",
+    "2.82",
     "Global",
     "Regenstrief Institute",
 )
@@ -58,16 +63,67 @@ def _is_active(status: str) -> bool:
     return s not in ("DEPRECATED", "DISCOURAGED")
 
 
+def _find_loinc_path() -> Optional[str]:
+    """Auto-detect the LOINC data file.
+
+    Checks in order:
+      1. data/loinc.csv (extracted CSV)
+      2. data/Loinc_*.zip (ZIP downloaded directly from loinc.org)
+    Returns the path string, or None if not found.
+    """
+    csv_path = Path(_DEFAULT_CSV_PATH)
+    if csv_path.exists():
+        return str(csv_path)
+    zips = sorted(Path("data").glob("Loinc_*.zip"))
+    if zips:
+        return str(zips[-1])  # newest version
+    return None
+
+
+def _open_loinc_csv(path: str):
+    """Open a LOINC CSV file from either a plain CSV or a ZIP archive.
+
+    If path ends with .zip, locates LoincTable/Loinc.csv inside the archive.
+    Returns an iterable of dict rows (csv.DictReader).
+    """
+    if path.lower().endswith(".zip"):
+        zf = zipfile.ZipFile(path)
+        # Find LoincTable/Loinc.csv inside the archive
+        member = next(
+            (n for n in zf.namelist() if n.endswith("LoincTable/Loinc.csv")),
+            None,
+        )
+        if member is None:
+            raise FileNotFoundError(
+                f"Could not find LoincTable/Loinc.csv inside {path}"
+            )
+        raw = zf.open(member)
+        text = io.TextIOWrapper(raw, encoding="utf-8-sig")
+        return csv.DictReader(text), zf  # caller must close zf
+    else:
+        fh = open(path, newline="", encoding="utf-8-sig")
+        return csv.DictReader(fh), fh
+
+
 async def ingest_loinc(conn, path: Optional[str] = None) -> int:
     """Ingest LOINC into classification_system + classification_node.
 
-    Reads Loinc.csv (manually downloaded from loinc.org).
+    Reads from path (CSV or ZIP). If path is None, auto-detects:
+      - data/loinc.csv   (manually extracted CSV)
+      - data/Loinc_*.zip (ZIP downloaded from loinc.org)
+
     Skips DEPRECATED and DISCOURAGED codes.
     All codes are flat (level=1, no parent, is_leaf=True).
 
     Returns total nodes inserted (or already present on re-run).
     """
-    local = path or _DEFAULT_PATH
+    local = path or _find_loinc_path()
+    if local is None:
+        raise FileNotFoundError(
+            "LOINC data not found. Download from https://loinc.org/downloads/loinc-table/ "
+            "(free registration required) and place the ZIP at data/Loinc_X.XX.zip "
+            "or extract Loinc.csv to data/loinc.csv"
+        )
 
     await conn.execute(
         """INSERT INTO classification_system
@@ -79,8 +135,8 @@ async def ingest_loinc(conn, path: Optional[str] = None) -> int:
 
     seen: dict[str, tuple] = {}
 
-    with open(local, newline="", encoding="utf-8-sig") as fh:
-        reader = csv.DictReader(fh)
+    reader, handle = _open_loinc_csv(local)
+    try:
         for row in reader:
             code = row.get("LOINC_NUM", "").strip()
             title = row.get("LONG_COMMON_NAME", "").strip() or row.get("COMPONENT", "").strip()
@@ -104,6 +160,8 @@ async def ingest_loinc(conn, path: Optional[str] = None) -> int:
                     sector,  # sector_code: CLASSTYPE
                     True,    # is_leaf: always True
                 )
+    finally:
+        handle.close()
 
     records = list(seen.values())
 
