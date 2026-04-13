@@ -4,7 +4,7 @@
 
 WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 10 national/international classification systems as equal peers through equivalence mappings (crosswalk edges).
 
-**51 systems, ~395,593 codes, ~57,492 crosswalk edges.**
+**55 systems, ~395,697 codes, ~57,492 crosswalk edges.**
 
 | System | Region | Codes |
 |--------|--------|-------|
@@ -60,6 +60,10 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | Domain: Construction Trade Types | United States | 20 |
 | Domain: Construction Building Types | United States | 17 |
 | Domain: NAICS 23 -> Construction Domain crosswalk | United States | ~27 edges |
+| Domain: Manufacturing Process Types | Global | 20 |
+| Domain: Retail Channel Types | United States | 19 |
+| Domain: Finance Instrument Types | Global | 24 |
+| Domain: Health Care Settings | United States | 23 |
 | ICD-11 MMS | Global (WHO) | (manual download required) |
 | LOINC | Global (Regenstrief) | (manual download required) |
 
