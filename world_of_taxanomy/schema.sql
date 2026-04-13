@@ -110,3 +110,17 @@ CREATE TABLE IF NOT EXISTS node_taxonomy_link (
 
 CREATE INDEX IF NOT EXISTS idx_ntl_node ON node_taxonomy_link(system_id, node_code);
 CREATE INDEX IF NOT EXISTS idx_ntl_taxonomy ON node_taxonomy_link(taxonomy_id);
+
+-- Country-to-classification-system applicability mapping
+CREATE TABLE IF NOT EXISTS country_system_link (
+    country_code  TEXT NOT NULL,
+    system_id     TEXT NOT NULL REFERENCES classification_system(id) ON DELETE CASCADE,
+    relevance     TEXT NOT NULL DEFAULT 'recommended'
+                  CHECK (relevance IN ('official', 'regional', 'recommended', 'historical')),
+    notes         TEXT,
+    created_at    TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (country_code, system_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_csl_country ON country_system_link(country_code);
+CREATE INDEX IF NOT EXISTS idx_csl_system  ON country_system_link(system_id);

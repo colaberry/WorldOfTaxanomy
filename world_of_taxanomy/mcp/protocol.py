@@ -27,6 +27,7 @@ from world_of_taxanomy.mcp.handlers import (
     handle_get_leaf_count,
     handle_get_region_mapping,
     handle_describe_match_types,
+    handle_get_country_taxonomy_profile,
     handle_explore_industry_tree,
 )
 
@@ -307,6 +308,27 @@ def build_tools_list() -> List[Dict[str, Any]]:
                 "required": ["query"],
             },
         },
+        {
+            "name": "get_country_taxonomy_profile",
+            "description": (
+                "Get the classification systems applicable to a country, plus its known sector strengths. "
+                "Use this when a user says they are based in or operate in a specific country, or when "
+                "a multinational wants to know which taxonomy to use in a given market. "
+                "Returns: official national system (e.g. WZ 2008 for Germany, NIC 2008 for India), "
+                "regional system (NACE Rev 2 for EU countries), the globally recommended ISIC Rev 4 "
+                "standard, and the country's known sector strengths from the geo-sector crosswalk."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "country_code": {
+                        "type": "string",
+                        "description": "ISO 3166-1 alpha-2 country code (e.g. 'DE', 'PK', 'MX', 'ID', 'US', 'IN')",
+                    },
+                },
+                "required": ["country_code"],
+            },
+        },
     ]
 
 
@@ -353,6 +375,7 @@ _TOOL_HANDLERS = {
     "get_leaf_count": handle_get_leaf_count,
     "get_region_mapping": handle_get_region_mapping,
     "describe_match_types": handle_describe_match_types,
+    "get_country_taxonomy_profile": handle_get_country_taxonomy_profile,
     "explore_industry_tree": handle_explore_industry_tree,
 }
 

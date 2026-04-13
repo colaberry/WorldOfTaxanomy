@@ -12,6 +12,7 @@ from slowapi.errors import RateLimitExceeded
 
 from world_of_taxanomy.api.routers import systems, nodes, search, equivalences, explore
 from world_of_taxanomy.api.routers import auth as auth_router
+from world_of_taxanomy.api.routers import countries as countries_router
 from world_of_taxanomy.api.middleware import limiter, rate_limit_middleware
 from world_of_taxanomy.db import get_pool
 
@@ -210,6 +211,7 @@ def create_app() -> FastAPI:
     app.include_router(nodes.router)
     app.include_router(search.router)
     app.include_router(equivalences.router)
+    app.include_router(countries_router.router)
     app.include_router(auth_router.router)
 
     # Bot protection routes

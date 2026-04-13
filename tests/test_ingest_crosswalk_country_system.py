@@ -121,18 +121,20 @@ class TestCountrySystemLinks:
 def test_ingest_crosswalk_country_system(db_pool):
     async def _run():
         from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.isic import ingest_isic
+        from world_of_taxanomy.ingest.isic import ingest_isic_rev4 as ingest_isic
         from world_of_taxanomy.ingest.iso3166_1 import ingest_iso3166_1
+        from world_of_taxanomy.ingest.nace import ingest_nace_rev2
 
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_isic(conn)
             await ingest_iso3166_1(conn)
+            await ingest_nace_rev2(conn)
 
             count = await ingest_crosswalk_country_system(conn)
             assert count >= 100
 
-            # Germany should return wz_2008, nace_rev2, isic_rev4
+            # Germany should have at least isic_rev4 and nace_rev2
             rows = await conn.fetch(
                 """SELECT system_id, relevance FROM country_system_link
                    WHERE country_code = 'DE'
@@ -142,7 +144,7 @@ def test_ingest_crosswalk_country_system(db_pool):
             assert "isic_rev4" in system_ids
             assert "nace_rev2" in system_ids
 
-            # Pakistan should return isic_rev4
+            # Pakistan should have isic_rev4
             pk_rows = await conn.fetch(
                 "SELECT system_id FROM country_system_link WHERE country_code = 'PK'"
             )
@@ -154,13 +156,15 @@ def test_ingest_crosswalk_country_system(db_pool):
 def test_ingest_crosswalk_country_system_idempotent(db_pool):
     async def _run():
         from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.isic import ingest_isic
+        from world_of_taxanomy.ingest.isic import ingest_isic_rev4 as ingest_isic
         from world_of_taxanomy.ingest.iso3166_1 import ingest_iso3166_1
+        from world_of_taxanomy.ingest.nace import ingest_nace_rev2
 
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_isic(conn)
             await ingest_iso3166_1(conn)
+            await ingest_nace_rev2(conn)
 
             count1 = await ingest_crosswalk_country_system(conn)
             count2 = await ingest_crosswalk_country_system(conn)

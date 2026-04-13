@@ -127,3 +127,54 @@ async def get_ancestors(
     # Reverse so root is first
     path.reverse()
     return path
+
+
+async def get_systems_for_country(conn, country_code: str) -> list:
+    """Return classification systems applicable to a country.
+
+    Queries country_system_link joined with classification_system.
+    Returns list ordered by relevance (official first, then regional,
+    recommended, historical).
+    """
+    rows = await conn.fetch(
+        """SELECT cs.id, cs.name, cs.full_name, cs.region, cs.version,
+                  cs.authority, cs.url, cs.tint_color, cs.node_count,
+                  csl.relevance, csl.notes AS csl_notes
+           FROM country_system_link csl
+           JOIN classification_system cs ON cs.id = csl.system_id
+           WHERE csl.country_code = $1
+           ORDER BY
+             CASE csl.relevance
+               WHEN 'official'     THEN 1
+               WHEN 'regional'     THEN 2
+               WHEN 'recommended'  THEN 3
+               WHEN 'historical'   THEN 4
+               ELSE 5
+             END,
+             cs.name""",
+        country_code.upper(),
+    )
+    return [dict(r) for r in rows]
+
+
+async def get_country_sector_strengths(conn, country_code: str) -> list:
+    """Return sector strengths for a country from the geo-sector crosswalk.
+
+    Queries the equivalence table for iso_3166_1 -> naics_2022 edges,
+    joining with classification_node to get the NAICS sector title.
+    """
+    rows = await conn.fetch(
+        """SELECT e.target_code AS naics_sector,
+                  COALESCE(n.title, '') AS sector_name,
+                  e.match_type,
+                  e.notes
+           FROM equivalence e
+           LEFT JOIN classification_node n
+             ON n.system_id = 'naics_2022' AND n.code = e.target_code
+           WHERE e.source_system = 'iso_3166_1'
+             AND e.source_code = $1
+             AND e.target_system = 'naics_2022'
+           ORDER BY e.match_type, e.target_code""",
+        country_code.upper(),
+    )
+    return [dict(r) for r in rows]

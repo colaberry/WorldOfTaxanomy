@@ -10,6 +10,7 @@ from typing import Any, Dict, List
 from world_of_taxanomy.exceptions import NodeNotFoundError, SystemNotFoundError
 from world_of_taxanomy.query.browse import (
     get_systems, get_system, get_roots, get_node, get_children, get_ancestors,
+    get_systems_for_country, get_country_sector_strengths,
 )
 from world_of_taxanomy.query.search import search_nodes
 from world_of_taxanomy.query.equivalence import (
@@ -369,3 +370,38 @@ async def handle_explore_industry_tree(
         entry["children"] = [_node_to_dict(c) for c in children]
         results.append(entry)
     return results
+
+
+async def handle_get_country_taxonomy_profile(
+    conn, args: Dict[str, Any]
+) -> Dict:
+    """Return taxonomy profile for a country: applicable systems + sector strengths."""
+    country_code = args.get("country_code", "").upper()
+    if not country_code or len(country_code) != 2:
+        return {"error": "country_code must be a 2-letter ISO 3166-1 alpha-2 code (e.g. 'DE', 'PK', 'MX')"}
+
+    # Country metadata
+    country_row = await conn.fetchrow(
+        """SELECT code, title, parent_code
+           FROM classification_node
+           WHERE system_id = 'iso_3166_1' AND code = $1""",
+        country_code,
+    )
+
+    systems = await get_systems_for_country(conn, country_code)
+    sector_strengths = await get_country_sector_strengths(conn, country_code)
+
+    return {
+        "country": {
+            "code": country_code,
+            "title": country_row["title"] if country_row else None,
+            "parent_region": country_row["parent_code"] if country_row else None,
+        },
+        "classification_systems": systems,
+        "sector_strengths": sector_strengths,
+        "usage_tip": (
+            f"For a company in {country_code}: use the 'official' system for local regulatory filings, "
+            "'regional' for cross-border reporting within the region, and "
+            "'recommended' (ISIC Rev 4) for international/UN comparisons."
+        ),
+    }
