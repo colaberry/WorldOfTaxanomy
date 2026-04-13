@@ -8,7 +8,7 @@ import { WorldMap } from '@/components/visualizations/WorldMap'
 import { IndustryMap } from '@/components/IndustryMap'
 import { SYSTEM_CATEGORIES, groupSystemsByCategory, getCategoryForSystem } from '@/lib/categories'
 import Link from 'next/link'
-import { Globe, GitBranch, Network, ArrowRight, Search } from 'lucide-react'
+import { Globe, GitBranch, Network, ArrowRight, Search, GitFork, Braces, Terminal } from 'lucide-react'
 
 export default function HomePage() {
   const [galaxyCat, setGalaxyCat] = useState('')
@@ -221,6 +221,92 @@ export default function HomePage() {
           </p>
         </div>
         <IndustryMap />
+      </div>
+
+      {/* ── For Developers ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight">For Developers</h2>
+            <p className="text-sm text-muted-foreground">Three ways to integrate the classification graph</p>
+          </div>
+          <Link
+            href="/developers"
+            className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+          >
+            Full docs <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* GitHub */}
+          <Link
+            href="https://github.com/colaberry/WorldOfTaxanomy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex flex-col gap-3 p-5 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+                <GitFork className="h-5 w-5" />
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">Open Source</p>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Fork, self-host, or contribute. Full source for the API, ingesters, and frontend.
+              </p>
+            </div>
+            <code className="text-[11px] font-mono text-muted-foreground bg-secondary/60 px-2.5 py-1.5 rounded-md w-fit">
+              colaberry/WorldOfTaxanomy
+            </code>
+          </Link>
+
+          {/* REST API */}
+          <Link
+            href="/developers#api"
+            className="group flex flex-col gap-3 p-5 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+                <Braces className="h-5 w-5" />
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">REST API</p>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                JSON over HTTP - search, browse, translate codes, and explore crosswalks. No SDK needed.
+              </p>
+            </div>
+            <code className="text-[11px] font-mono text-muted-foreground bg-secondary/60 px-2.5 py-1.5 rounded-md w-fit">
+              GET /api/v1/search?q=physician
+            </code>
+          </Link>
+
+          {/* MCP Server */}
+          <Link
+            href="/developers#mcp"
+            className="group flex flex-col gap-3 p-5 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+                <Terminal className="h-5 w-5" />
+              </div>
+              <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div>
+              <p className="font-semibold text-sm">MCP Server</p>
+              <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                Connect Claude Desktop or any MCP client. 21 tools for search, translation, and hierarchy navigation.
+              </p>
+            </div>
+            <code className="text-[11px] font-mono text-muted-foreground bg-secondary/60 px-2.5 py-1.5 rounded-md w-fit">
+              python3 -m world_of_taxanomy mcp
+            </code>
+          </Link>
+        </div>
       </div>
     </div>
   )

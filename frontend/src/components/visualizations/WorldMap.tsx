@@ -59,7 +59,7 @@ const NAME_TO_ALPHA2: Record<string, string> = {
   'Republic of Serbia': 'RS',
   'Republic of the Congo': 'CG',
   'United Republic of Tanzania': 'TZ',
-  'North Macedonia': 'MK', 'Macedonia': 'MK',
+  'Macedonia': 'MK',
   'Montenegro': 'ME',
   'Ivory Coast': 'CI',
   'The Bahamas': 'BS',
