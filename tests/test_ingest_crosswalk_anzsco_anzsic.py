@@ -62,9 +62,9 @@ def test_ingest_crosswalk_anzsco_anzsic(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
             from world_of_taxanomy.ingest.anzsco_2022 import ingest_anzsco_2022
-            from world_of_taxanomy.ingest.anzsic import ingest_anzsic
+            from world_of_taxanomy.ingest.anzsic import ingest_anzsic_2006
             await ingest_anzsco_2022(conn)
-            await ingest_anzsic(conn)
+            await ingest_anzsic_2006(conn)
 
             count = await ingest_crosswalk_anzsco_anzsic(conn)
             assert count >= 30
@@ -83,9 +83,9 @@ def test_ingest_crosswalk_anzsco_anzsic_idempotent(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
             from world_of_taxanomy.ingest.anzsco_2022 import ingest_anzsco_2022
-            from world_of_taxanomy.ingest.anzsic import ingest_anzsic
+            from world_of_taxanomy.ingest.anzsic import ingest_anzsic_2006
             await ingest_anzsco_2022(conn)
-            await ingest_anzsic(conn)
+            await ingest_anzsic_2006(conn)
 
             count1 = await ingest_crosswalk_anzsco_anzsic(conn)
             count2 = await ingest_crosswalk_anzsco_anzsic(conn)
