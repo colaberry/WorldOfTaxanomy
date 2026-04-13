@@ -538,6 +538,18 @@ def cmd_ingest(args):
                 n = await ingest_domain_public_admin(conn)
                 print(f"  {n} nodes")
 
+            if target in ("domain_supply_chain", "all"):
+                from world_of_taxanomy.ingest.domain_supply_chain import ingest_domain_supply_chain
+                print("\n-- Domain: Supply Chain and Trade Terms (ICC Incoterms 2020, hand-coded, open) --")
+                n = await ingest_domain_supply_chain(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_workforce_safety", "all"):
+                from world_of_taxanomy.ingest.domain_workforce_safety import ingest_domain_workforce_safety
+                print("\n-- Domain: Workforce Safety and Health (OSHA 29 CFR, hand-coded, open) --")
+                n = await ingest_domain_workforce_safety(conn)
+                print(f"  {n} nodes")
+
         await close_pool()
 
     _run(_ingest())
@@ -746,7 +758,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "domain_mining_mineral", "domain_mining_method", "domain_mining_reserve", "crosswalk_naics21_domains", "domain_util_energy", "domain_util_grid", "crosswalk_naics22_domains", "domain_const_trade", "domain_const_building", "crosswalk_naics23_domains", "domain_mfg_process", "domain_retail_channel", "domain_finance_instrument", "domain_health_setting", "domain_transport_mode", "domain_info_media", "domain_realestate_type", "domain_food_service", "domain_wholesale_channel", "domain_prof_services", "domain_education_type", "domain_arts_content", "domain_other_services", "domain_public_admin", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "domain_mining_mineral", "domain_mining_method", "domain_mining_reserve", "crosswalk_naics21_domains", "domain_util_energy", "domain_util_grid", "crosswalk_naics22_domains", "domain_const_trade", "domain_const_building", "crosswalk_naics23_domains", "domain_mfg_process", "domain_retail_channel", "domain_finance_instrument", "domain_health_setting", "domain_transport_mode", "domain_info_media", "domain_realestate_type", "domain_food_service", "domain_wholesale_channel", "domain_prof_services", "domain_education_type", "domain_arts_content", "domain_other_services", "domain_public_admin", "domain_supply_chain", "domain_workforce_safety", "all"],
         help="What to ingest",
     )
 
