@@ -65,7 +65,7 @@ def test_ingest_crosswalk_isced_isco(db_pool):
             # Verify edges exist in equivalence table
             rows = await conn.fetch(
                 """SELECT * FROM equivalence
-                   WHERE system_id_1 = 'isced_2011' AND system_id_2 = 'isco_08'
+                   WHERE source_system = 'isced_2011' AND target_system = 'isco_08'
                    LIMIT 5"""
             )
             assert len(rows) > 0
