@@ -4,7 +4,7 @@
 
 WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 10 national/international classification systems as equal peers through equivalence mappings (crosswalk edges).
 
-**55 systems, ~395,697 codes, ~57,492 crosswalk edges.**
+**59 systems, ~395,781 codes, ~57,492 crosswalk edges.**
 
 | System | Region | Codes |
 |--------|--------|-------|
@@ -64,6 +64,10 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | Domain: Retail Channel Types | United States | 19 |
 | Domain: Finance Instrument Types | Global | 24 |
 | Domain: Health Care Settings | United States | 23 |
+| Domain: Transportation Modes | United States | 21 |
+| Domain: Information and Media Types | United States | 20 |
+| Domain: Real Estate Property Types | United States | 20 |
+| Domain: Food Service and Accommodation | United States | 23 |
 | ICD-11 MMS | Global (WHO) | (manual download required) |
 | LOINC | Global (Regenstrief) | (manual download required) |
 

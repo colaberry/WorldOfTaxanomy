@@ -478,6 +478,30 @@ def cmd_ingest(args):
                 n = await ingest_domain_health_setting(conn)
                 print(f"  {n} nodes")
 
+            if target in ("domain_transport_mode", "all"):
+                from world_of_taxanomy.ingest.domain_transport_mode import ingest_domain_transport_mode
+                print("\n-- Domain: Transportation Modes (DOT modal categories, hand-coded, open) --")
+                n = await ingest_domain_transport_mode(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_info_media", "all"):
+                from world_of_taxanomy.ingest.domain_info_media import ingest_domain_info_media
+                print("\n-- Domain: Information and Media Types (NAB/NAICS 51, hand-coded, open) --")
+                n = await ingest_domain_info_media(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_realestate_type", "all"):
+                from world_of_taxanomy.ingest.domain_realestate_type import ingest_domain_realestate_type
+                print("\n-- Domain: Real Estate Property Types (CoStar/NCREIF, hand-coded, open) --")
+                n = await ingest_domain_realestate_type(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_food_service", "all"):
+                from world_of_taxanomy.ingest.domain_food_service import ingest_domain_food_service
+                print("\n-- Domain: Food Service and Accommodation (STR/NRA, hand-coded, open) --")
+                n = await ingest_domain_food_service(conn)
+                print(f"  {n} nodes")
+
         await close_pool()
 
     _run(_ingest())
@@ -686,7 +710,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "domain_mining_mineral", "domain_mining_method", "domain_mining_reserve", "crosswalk_naics21_domains", "domain_util_energy", "domain_util_grid", "crosswalk_naics22_domains", "domain_const_trade", "domain_const_building", "crosswalk_naics23_domains", "domain_mfg_process", "domain_retail_channel", "domain_finance_instrument", "domain_health_setting", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "domain_mining_mineral", "domain_mining_method", "domain_mining_reserve", "crosswalk_naics21_domains", "domain_util_energy", "domain_util_grid", "crosswalk_naics22_domains", "domain_const_trade", "domain_const_building", "crosswalk_naics23_domains", "domain_mfg_process", "domain_retail_channel", "domain_finance_instrument", "domain_health_setting", "domain_transport_mode", "domain_info_media", "domain_realestate_type", "domain_food_service", "all"],
         help="What to ingest",
     )
 
