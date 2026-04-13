@@ -370,6 +370,30 @@ def cmd_ingest(args):
                 n = await ingest_domain_ag_crop(conn)
                 print(f"  {n} nodes")
 
+            if target in ("domain_ag_livestock", "all"):
+                from world_of_taxanomy.ingest.domain_ag_livestock import ingest_domain_ag_livestock
+                print("\n-- Domain: Agricultural Livestock Categories (USDA NASS, hand-coded, open) --")
+                n = await ingest_domain_ag_livestock(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_ag_method", "all"):
+                from world_of_taxanomy.ingest.domain_ag_method import ingest_domain_ag_method
+                print("\n-- Domain: Agricultural Farming Methods (USDA NASS/NOP, hand-coded, open) --")
+                n = await ingest_domain_ag_method(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_ag_grade", "all"):
+                from world_of_taxanomy.ingest.domain_ag_grade import ingest_domain_ag_grade
+                print("\n-- Domain: Agricultural Commodity Grades (USDA AMS, hand-coded, open) --")
+                n = await ingest_domain_ag_grade(conn)
+                print(f"  {n} nodes")
+
+            if target in ("crosswalk_naics11_domains", "all"):
+                from world_of_taxanomy.ingest.crosswalk_naics11_domains import ingest_crosswalk_naics11_domains
+                print("\n-- Crosswalk: NAICS 11 -> Agriculture Domain Taxonomies (derived, open) --")
+                n = await ingest_crosswalk_naics11_domains(conn)
+                print(f"  {n} edges")
+
         await close_pool()
 
     _run(_ingest())
@@ -578,7 +602,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "all"],
         help="What to ingest",
     )
 

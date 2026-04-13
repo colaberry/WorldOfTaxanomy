@@ -4,7 +4,7 @@
 
 WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 10 national/international classification systems as equal peers through equivalence mappings (crosswalk edges).
 
-**37 systems, ~395,369 codes, ~57,318 crosswalk edges.**
+**41 systems, ~395,469 codes, ~57,366 crosswalk edges.**
 
 | System | Region | Codes |
 |--------|--------|-------|
@@ -46,6 +46,10 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | Domain: Truck Carrier Operations | United States | 27 |
 | Domain: NAICS 484 -> Truck Domain crosswalk | United States | ~200 edges |
 | Domain: Agricultural Crop Types | United States | 46 |
+| Domain: Agricultural Livestock Categories | United States | 27 |
+| Domain: Agricultural Farming Methods | United States | 28 |
+| Domain: Agricultural Commodity Grades | United States | 30 |
+| Domain: NAICS 11 -> Agriculture Domain crosswalk | United States | ~48 edges |
 | ICD-11 MMS | Global (WHO) | (manual download required) |
 | LOINC | Global (Regenstrief) | (manual download required) |
 
