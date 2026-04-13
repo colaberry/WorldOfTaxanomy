@@ -37,6 +37,8 @@ from world_of_taxanomy.ingest.esco_skills import (
 )
 
 _DATA_PATH = "data/esco_skills_en.csv"
+_JSONLD_ZIP_PATH = "data/ESCO dataset - v1.2.1 - classification -  - json-ld.zip"
+_DATA_AVAILABLE = os.path.exists(_DATA_PATH) or os.path.exists(_JSONLD_ZIP_PATH)
 
 
 class TestExtractSkillCode:
@@ -78,6 +80,15 @@ class TestDetermineSkillSector:
         assert _determine_skill_sector("Knowledge") == "K"
         assert _determine_skill_sector("SKILL") == "S"
 
+    def test_uri_format_skill(self):
+        assert _determine_skill_sector("http://data.europa.eu/esco/skill-type/skill") == "S"
+
+    def test_uri_format_knowledge(self):
+        assert _determine_skill_sector("http://data.europa.eu/esco/skill-type/knowledge") == "K"
+
+    def test_uri_format_attitude(self):
+        assert _determine_skill_sector("http://data.europa.eu/esco/skill-type/attitudeAndValue") == "A"
+
 
 def test_esco_skills_module_importable():
     assert callable(ingest_esco_skills)
@@ -86,15 +97,14 @@ def test_esco_skills_module_importable():
 
 
 @pytest.mark.skipif(
-    not os.path.exists(_DATA_PATH),
-    reason=f"ESCO skills CSV not found at {_DATA_PATH}. "
-           "Run: python -m world_of_taxanomy ingest esco_skills",
+    not _DATA_AVAILABLE,
+    reason=f"Neither ESCO CSV ({_DATA_PATH}) nor JSON-LD ZIP ({_JSONLD_ZIP_PATH}) found.",
 )
 def test_ingest_esco_skills_from_real_file(db_pool):
-    """Integration test: ingest ESCO skills from downloaded CSV."""
+    """Integration test: ingest ESCO skills from downloaded CSV or JSON-LD ZIP."""
     async def _run():
         async with db_pool.acquire() as conn:
-            count = await ingest_esco_skills(conn, path=_DATA_PATH)
+            count = await ingest_esco_skills(conn)
             assert count >= 13000, f"Expected >= 13000 ESCO skills, got {count}"
             assert count <= 16000, f"Expected <= 16000 ESCO skills, got {count}"
 
@@ -121,15 +131,15 @@ def test_ingest_esco_skills_from_real_file(db_pool):
 
 
 @pytest.mark.skipif(
-    not os.path.exists(_DATA_PATH),
-    reason=f"ESCO skills CSV not found at {_DATA_PATH}.",
+    not _DATA_AVAILABLE,
+    reason=f"Neither ESCO CSV nor JSON-LD ZIP found.",
 )
 def test_ingest_esco_skills_idempotent(db_pool):
     """Running ingest twice returns the same count both times."""
     async def _run():
         async with db_pool.acquire() as conn:
-            count1 = await ingest_esco_skills(conn, path=_DATA_PATH)
-            count2 = await ingest_esco_skills(conn, path=_DATA_PATH)
+            count1 = await ingest_esco_skills(conn)
+            count2 = await ingest_esco_skills(conn)
             assert count1 == count2
 
     asyncio.get_event_loop().run_until_complete(_run())

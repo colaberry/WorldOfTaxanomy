@@ -28,10 +28,13 @@ import pytest
 from world_of_taxanomy.ingest.esco_occupations import (
     _extract_code,
     _determine_sector,
+    _extract_en_label,
     ingest_esco_occupations,
 )
 
 _DATA_PATH = "data/esco_occupations_en.csv"
+_JSONLD_ZIP_PATH = "data/ESCO dataset - v1.2.1 - classification -  - json-ld.zip"
+_DATA_AVAILABLE = os.path.exists(_DATA_PATH) or os.path.exists(_JSONLD_ZIP_PATH)
 
 
 class TestExtractCode:
@@ -78,18 +81,53 @@ def test_esco_occupations_module_importable():
     assert callable(ingest_esco_occupations)
     assert callable(_extract_code)
     assert callable(_determine_sector)
+    assert callable(_extract_en_label)
+
+
+class TestExtractEnLabel:
+    """Tests for JSON-LD preferredLabel extraction."""
+
+    def test_extracts_english_from_literal_form(self):
+        labels = [
+            {"uri": "http://x/1", "type": "skosXl:Label",
+             "literalForm": {"en": "technical director", "de": "Technischer Leiter"}},
+        ]
+        assert _extract_en_label(labels) == "technical director"
+
+    def test_returns_first_english_found(self):
+        labels = [
+            {"uri": "http://x/1", "literalForm": {"de": "nur Deutsch"}},
+            {"uri": "http://x/2", "literalForm": {"en": "first english", "fr": "premier"}},
+            {"uri": "http://x/3", "literalForm": {"en": "second english"}},
+        ]
+        assert _extract_en_label(labels) == "first english"
+
+    def test_no_english_label_returns_empty_string(self):
+        labels = [
+            {"uri": "http://x/1", "literalForm": {"de": "Deutsch", "fr": "Francais"}},
+        ]
+        assert _extract_en_label(labels) == ""
+
+    def test_empty_list_returns_empty_string(self):
+        assert _extract_en_label([]) == ""
+
+    def test_none_input_returns_empty_string(self):
+        assert _extract_en_label(None) == ""
+
+    def test_handles_non_dict_items_gracefully(self):
+        labels = ["unexpected string", {"literalForm": {"en": "valid"}}]
+        assert _extract_en_label(labels) == "valid"
 
 
 @pytest.mark.skipif(
-    not os.path.exists(_DATA_PATH),
-    reason=f"ESCO occupations CSV not found at {_DATA_PATH}. "
-           "Run: python -m world_of_taxanomy ingest esco_occupations",
+    not _DATA_AVAILABLE,
+    reason=f"Neither ESCO CSV ({_DATA_PATH}) nor JSON-LD ZIP ({_JSONLD_ZIP_PATH}) found.",
 )
 def test_ingest_esco_occupations_from_real_file(db_pool):
     """Integration test: ingest ESCO occupations from downloaded CSV."""
     async def _run():
         async with db_pool.acquire() as conn:
-            count = await ingest_esco_occupations(conn, path=_DATA_PATH)
+            count = await ingest_esco_occupations(conn)
             assert count >= 2900, f"Expected >= 2900 ESCO occupations, got {count}"
             assert count <= 4000, f"Expected <= 4000 ESCO occupations, got {count}"
 
@@ -127,15 +165,15 @@ def test_ingest_esco_occupations_from_real_file(db_pool):
 
 
 @pytest.mark.skipif(
-    not os.path.exists(_DATA_PATH),
-    reason=f"ESCO occupations CSV not found at {_DATA_PATH}.",
+    not _DATA_AVAILABLE,
+    reason=f"Neither ESCO CSV nor JSON-LD ZIP found.",
 )
 def test_ingest_esco_occupations_idempotent(db_pool):
     """Running ingest twice returns the same count both times."""
     async def _run():
         async with db_pool.acquire() as conn:
-            count1 = await ingest_esco_occupations(conn, path=_DATA_PATH)
-            count2 = await ingest_esco_occupations(conn, path=_DATA_PATH)
+            count1 = await ingest_esco_occupations(conn)
+            count2 = await ingest_esco_occupations(conn)
             assert count1 == count2
 
     asyncio.get_event_loop().run_until_complete(_run())
