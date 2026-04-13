@@ -4,7 +4,7 @@
 
 WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 10 national/international classification systems as equal peers through equivalence mappings (crosswalk edges).
 
-**41 systems, ~395,469 codes, ~57,366 crosswalk edges.**
+**51 systems, ~395,593 codes, ~57,492 crosswalk edges.**
 
 | System | Region | Codes |
 |--------|--------|-------|
@@ -50,6 +50,16 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | Domain: Agricultural Farming Methods | United States | 28 |
 | Domain: Agricultural Commodity Grades | United States | 30 |
 | Domain: NAICS 11 -> Agriculture Domain crosswalk | United States | ~48 edges |
+| Domain: Mining Mineral Types | Global | 25 |
+| Domain: Mining Extraction Methods | Global | 20 |
+| Domain: Mining Reserve Classification | Global | 12 |
+| Domain: NAICS 21 -> Mining Domain crosswalk | United States | ~31 edges |
+| Domain: Utility Energy Sources | United States | 17 |
+| Domain: Utility Grid Regions | United States | 15 |
+| Domain: NAICS 22 -> Utility Domain crosswalk | United States | ~20 edges |
+| Domain: Construction Trade Types | United States | 20 |
+| Domain: Construction Building Types | United States | 17 |
+| Domain: NAICS 23 -> Construction Domain crosswalk | United States | ~27 edges |
 | ICD-11 MMS | Global (WHO) | (manual download required) |
 | LOINC | Global (Regenstrief) | (manual download required) |
 

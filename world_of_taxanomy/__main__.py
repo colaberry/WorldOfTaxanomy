@@ -394,6 +394,66 @@ def cmd_ingest(args):
                 n = await ingest_crosswalk_naics11_domains(conn)
                 print(f"  {n} edges")
 
+            if target in ("domain_mining_mineral", "all"):
+                from world_of_taxanomy.ingest.domain_mining_mineral import ingest_domain_mining_mineral
+                print("\n-- Domain: Mining Mineral Types (USGS/SPE, hand-coded, open) --")
+                n = await ingest_domain_mining_mineral(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_mining_method", "all"):
+                from world_of_taxanomy.ingest.domain_mining_method import ingest_domain_mining_method
+                print("\n-- Domain: Mining Extraction Methods (SME, hand-coded, open) --")
+                n = await ingest_domain_mining_method(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_mining_reserve", "all"):
+                from world_of_taxanomy.ingest.domain_mining_reserve import ingest_domain_mining_reserve
+                print("\n-- Domain: Mining Reserve Classification (SPE-PRMS, hand-coded, open) --")
+                n = await ingest_domain_mining_reserve(conn)
+                print(f"  {n} nodes")
+
+            if target in ("crosswalk_naics21_domains", "all"):
+                from world_of_taxanomy.ingest.crosswalk_naics21_domains import ingest_crosswalk_naics21_domains
+                print("\n-- Crosswalk: NAICS 21 -> Mining Domain Taxonomies (derived, open) --")
+                n = await ingest_crosswalk_naics21_domains(conn)
+                print(f"  {n} edges")
+
+            if target in ("domain_util_energy", "all"):
+                from world_of_taxanomy.ingest.domain_util_energy import ingest_domain_util_energy
+                print("\n-- Domain: Utility Energy Sources (IEA/EIA, hand-coded, open) --")
+                n = await ingest_domain_util_energy(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_util_grid", "all"):
+                from world_of_taxanomy.ingest.domain_util_grid import ingest_domain_util_grid
+                print("\n-- Domain: Utility Grid Regions (NERC, hand-coded, open) --")
+                n = await ingest_domain_util_grid(conn)
+                print(f"  {n} nodes")
+
+            if target in ("crosswalk_naics22_domains", "all"):
+                from world_of_taxanomy.ingest.crosswalk_naics22_domains import ingest_crosswalk_naics22_domains
+                print("\n-- Crosswalk: NAICS 22 -> Utility Domain Taxonomies (derived, open) --")
+                n = await ingest_crosswalk_naics22_domains(conn)
+                print(f"  {n} edges")
+
+            if target in ("domain_const_trade", "all"):
+                from world_of_taxanomy.ingest.domain_const_trade import ingest_domain_const_trade
+                print("\n-- Domain: Construction Trade Types (CSI MasterFormat, hand-coded, open) --")
+                n = await ingest_domain_const_trade(conn)
+                print(f"  {n} nodes")
+
+            if target in ("domain_const_building", "all"):
+                from world_of_taxanomy.ingest.domain_const_building import ingest_domain_const_building
+                print("\n-- Domain: Construction Building Types (IBC, hand-coded, open) --")
+                n = await ingest_domain_const_building(conn)
+                print(f"  {n} nodes")
+
+            if target in ("crosswalk_naics23_domains", "all"):
+                from world_of_taxanomy.ingest.crosswalk_naics23_domains import ingest_crosswalk_naics23_domains
+                print("\n-- Crosswalk: NAICS 23 -> Construction Domain Taxonomies (derived, open) --")
+                n = await ingest_crosswalk_naics23_domains(conn)
+                print(f"  {n} edges")
+
         await close_pool()
 
     _run(_ingest())
@@ -602,7 +662,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_isco", "cip_2020", "crosswalk_cip_soc", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "domain_mining_mineral", "domain_mining_method", "domain_mining_reserve", "crosswalk_naics21_domains", "domain_util_energy", "domain_util_grid", "crosswalk_naics22_domains", "domain_const_trade", "domain_const_building", "crosswalk_naics23_domains", "all"],
         help="What to ingest",
     )
 
