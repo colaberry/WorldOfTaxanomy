@@ -1,5 +1,19 @@
 import Link from 'next/link'
-import { GitFork, Terminal, Braces, ArrowRight, Key, Zap, BookOpen, ChevronRight } from 'lucide-react'
+import { GitFork, Terminal, Braces, ArrowRight, Key, Zap, BookOpen, ChevronRight, Star } from 'lucide-react'
+
+async function fetchGithubStars(): Promise<number | null> {
+  try {
+    const res = await fetch('https://api.github.com/repos/colaberry/WorldOfTaxanomy', {
+      headers: { Accept: 'application/vnd.github.v3+json' },
+      next: { revalidate: 3600 },
+    })
+    if (!res.ok) return null
+    const data = await res.json()
+    return data.stargazers_count ?? null
+  } catch {
+    return null
+  }
+}
 
 const ENDPOINTS = [
   { method: 'GET',  path: '/api/v1/systems',                               desc: 'List all 82 classification systems' },
@@ -46,7 +60,8 @@ const METHOD_COLORS: Record<string, string> = {
   POST: 'text-blue-500 bg-blue-500/10',
 }
 
-export default function DevelopersPage() {
+export default async function DevelopersPage() {
+  const githubStars = await fetchGithubStars()
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-16">
 
@@ -74,6 +89,15 @@ export default function DevelopersPage() {
             View on GitHub
           </Link>
           <Link
+            href="https://github.com/colaberry/WorldOfTaxanomy/stargazers"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border/50 bg-card text-sm font-medium hover:bg-secondary/50 transition-colors"
+          >
+            <Star className="h-4 w-4 text-yellow-500" />
+            Star{githubStars != null ? ` (${githubStars.toLocaleString()})` : ''}
+          </Link>
+          <Link
             href="/explore"
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
           >
@@ -96,11 +120,12 @@ export default function DevelopersPage() {
         </div>
 
         <div className="rounded-xl border border-border/50 bg-card p-6 space-y-4">
-          <div className="grid sm:grid-cols-3 gap-4 text-sm">
+          <div className="grid sm:grid-cols-4 gap-4 text-sm">
             {[
               { label: 'Repository', value: 'colaberry/WorldOfTaxanomy' },
               { label: 'License',    value: 'Open Source' },
               { label: 'Stack',      value: 'Python + Next.js + PostgreSQL' },
+              { label: 'GitHub Stars', value: githubStars != null ? githubStars.toLocaleString() : '-' },
             ].map(({ label, value }) => (
               <div key={label}>
                 <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">{label}</p>

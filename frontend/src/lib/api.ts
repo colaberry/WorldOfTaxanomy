@@ -202,4 +202,16 @@ export async function revokeApiKey(
   }
 }
 
+// ── GitHub public repo stats ──
+
+export async function getGithubStars(): Promise<number> {
+  const res = await fetch('https://api.github.com/repos/colaberry/WorldOfTaxanomy', {
+    headers: { Accept: 'application/vnd.github.v3+json' },
+    next: { revalidate: 3600 }, // Next.js cache hint - 1 hour
+  })
+  if (!res.ok) return 0
+  const data = await res.json()
+  return data.stargazers_count ?? 0
+}
+
 export { ApiError }

@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { getSystems, getStats } from '@/lib/api'
+import { getSystems, getStats, getGithubStars } from '@/lib/api'
 import { GalaxyView } from '@/components/visualizations/GalaxyView'
 import { WorldMap } from '@/components/visualizations/WorldMap'
 import { IndustryMap } from '@/components/IndustryMap'
 import { SYSTEM_CATEGORIES, groupSystemsByCategory, getCategoryForSystem } from '@/lib/categories'
 import Link from 'next/link'
-import { Globe, GitBranch, Network, ArrowRight, Search, GitFork, Braces, Terminal } from 'lucide-react'
+import { Globe, GitBranch, Network, ArrowRight, Search, GitFork, Braces, Terminal, Star } from 'lucide-react'
 
 export default function HomePage() {
   const [galaxyCat, setGalaxyCat] = useState('')
@@ -21,6 +21,13 @@ export default function HomePage() {
   const { data: stats, isLoading: loadingStats } = useQuery({
     queryKey: ['stats'],
     queryFn: getStats,
+  })
+
+  const { data: githubStars } = useQuery({
+    queryKey: ['github-stars'],
+    queryFn: getGithubStars,
+    staleTime: 60 * 60 * 1000,
+    retry: false,
   })
 
   const totalNodes = systems?.reduce((sum, s) => sum + s.node_count, 0) ?? 0
@@ -54,6 +61,7 @@ export default function HomePage() {
               { icon: Globe,     value: loadingSystems ? '...' : (systems?.length ?? 82).toString(),     label: 'Systems' },
               { icon: GitBranch, value: loadingSystems ? '...' : totalNodes.toLocaleString(),            label: 'Nodes' },
               { icon: Network,   value: loadingStats   ? '...' : totalEdges.toLocaleString(),            label: 'Connections' },
+              { icon: Star,      value: githubStars != null ? githubStars.toLocaleString() : '...',      label: 'GitHub Stars' },
             ].map(({ icon: Icon, value, label }) => (
               <div
                 key={label}

@@ -464,6 +464,22 @@ COUNTRY_SYSTEM_LINKS: list[tuple[str, str, str, Optional[str]]] = [
     ("SE", "esco_skills", "regional", "EU member - ESCO skills taxonomy"),
     ("SI", "esco_skills", "regional", "EU member - ESCO skills taxonomy"),
     ("SK", "esco_skills", "regional", "EU member - ESCO skills taxonomy"),
+
+    # -----------------------------------------------------------------------
+    # National industry classification systems (new countries)
+    # -----------------------------------------------------------------------
+    ("BR", "cnae_2012", "official",
+     "CNAE 2.0 is Brazil's official national industrial classification, aligned to ISIC Rev 4"),
+    ("CN", "csic_2017", "official",
+     "CSIC GB/T 4754-2017 is China's official national industrial classification"),
+    ("RU", "okved_2",   "official",
+     "OKVED-2 (OK 029-2014) is Russia's official classification of economic activities, NACE/ISIC aligned"),
+    ("ID", "kbli_2020", "official",
+     "KBLI 2020 is Indonesia's official industrial classification, aligned to ISIC Rev 4"),
+    ("MX", "scian_2018", "official",
+     "SCIAN 2018 is Mexico's official industrial classification, the Spanish NAICS adaptation"),
+    ("ZA", "sic_sa",    "official",
+     "SIC-SA version 5 (2012) is South Africa's official industrial classification, ISIC Rev 4 aligned"),
 ]
 
 # ---------------------------------------------------------------------------

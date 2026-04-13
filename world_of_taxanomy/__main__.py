@@ -695,6 +695,42 @@ def cmd_ingest(args):
                 n = await ingest_domain_xr_meta(conn)
                 print(f"  {n} nodes")
 
+            if target in ("cnae_2012", "all"):
+                from world_of_taxanomy.ingest.cnae_2012 import ingest_cnae_2012
+                print("\n-- CNAE 2.0 (Brazil) --")
+                n = await ingest_cnae_2012(conn)
+                print(f"  {n} nodes")
+
+            if target in ("csic_2017", "all"):
+                from world_of_taxanomy.ingest.csic_2017 import ingest_csic_2017
+                print("\n-- CSIC 2017 (China) --")
+                n = await ingest_csic_2017(conn)
+                print(f"  {n} nodes")
+
+            if target in ("okved_2", "all"):
+                from world_of_taxanomy.ingest.okved_2 import ingest_okved_2
+                print("\n-- OKVED-2 (Russia) --")
+                n = await ingest_okved_2(conn)
+                print(f"  {n} nodes")
+
+            if target in ("kbli_2020", "all"):
+                from world_of_taxanomy.ingest.kbli_2020 import ingest_kbli_2020
+                print("\n-- KBLI 2020 (Indonesia) --")
+                n = await ingest_kbli_2020(conn)
+                print(f"  {n} nodes")
+
+            if target in ("scian_2018", "all"):
+                from world_of_taxanomy.ingest.scian_2018 import ingest_scian_2018
+                print("\n-- SCIAN 2018 (Mexico) --")
+                n = await ingest_scian_2018(conn)
+                print(f"  {n} nodes")
+
+            if target in ("sic_sa", "all"):
+                from world_of_taxanomy.ingest.sic_sa import ingest_sic_sa
+                print("\n-- SIC-SA (South Africa) --")
+                n = await ingest_sic_sa(conn)
+                print(f"  {n} nodes")
+
             if target in ("crosswalk_geo_sector", "all"):
                 from world_of_taxanomy.ingest.crosswalk_geo_sector import ingest_crosswalk_geo_sector
                 print("\n-- Crosswalk (Nation-Sector Geographic Synergy) --")
@@ -940,7 +976,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ingest = sub.add_parser("ingest", help="Ingest classification data")
     p_ingest.add_argument(
         "target",
-        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_naics", "crosswalk_soc_isco", "crosswalk_isco_isic", "cip_2020", "crosswalk_cip_soc", "isced_2011", "crosswalk_isced_isco", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "domain_mining_mineral", "domain_mining_method", "domain_mining_reserve", "crosswalk_naics21_domains", "domain_util_energy", "domain_util_grid", "crosswalk_naics22_domains", "domain_const_trade", "domain_const_building", "crosswalk_naics23_domains", "domain_mfg_process", "domain_retail_channel", "domain_finance_instrument", "domain_health_setting", "domain_transport_mode", "domain_info_media", "domain_realestate_type", "domain_food_service", "domain_wholesale_channel", "domain_prof_services", "domain_education_type", "domain_arts_content", "domain_other_services", "domain_public_admin", "domain_supply_chain", "domain_workforce_safety", "anzsco_2022", "crosswalk_anzsco_anzsic", "domain_chemical_type", "domain_defence_type", "domain_water_env", "domain_ai_data", "domain_biotech", "domain_space", "domain_climate_tech", "domain_adv_materials", "domain_quantum", "domain_digital_assets", "domain_robotics", "domain_energy_storage", "domain_semiconductor", "domain_synbio", "domain_xr_meta", "crosswalk_geo_sector", "crosswalk_country_system", "all"],
+        choices=["naics", "isic", "nic", "nace", "sic", "anzsic", "jsic", "wz", "onace", "noga", "crosswalk", "iso3166_1", "iso3166_2", "crosswalk_iso3166", "un_m49", "crosswalk_un_m49_iso3166", "hs2022", "crosswalk_hs_isic", "cpc_v21", "crosswalk_cpc_isic", "crosswalk_cpc_hs", "unspsc_v24", "soc_2018", "isco_08", "crosswalk_soc_naics", "crosswalk_soc_isco", "crosswalk_isco_isic", "cip_2020", "crosswalk_cip_soc", "isced_2011", "crosswalk_isced_isco", "iscedf_2013", "crosswalk_cip_iscedf", "atc_who", "icd_11", "crosswalk_icd_isic", "loinc", "cofog", "gics_bridge", "ghg_protocol", "esco_occupations", "esco_skills", "crosswalk_esco_isco", "onet_soc", "crosswalk_onet_soc", "patent_cpc", "cfr_title_49", "fmcsa_regs", "crosswalk_cfr_naics", "gdpr", "iso_31000", "domain_truck_freight", "domain_truck_vehicle", "domain_truck_cargo", "crosswalk_fmcsa_truck", "domain_truck_ops", "crosswalk_naics484_domains", "domain_ag_crop", "domain_ag_livestock", "domain_ag_method", "domain_ag_grade", "crosswalk_naics11_domains", "domain_mining_mineral", "domain_mining_method", "domain_mining_reserve", "crosswalk_naics21_domains", "domain_util_energy", "domain_util_grid", "crosswalk_naics22_domains", "domain_const_trade", "domain_const_building", "crosswalk_naics23_domains", "domain_mfg_process", "domain_retail_channel", "domain_finance_instrument", "domain_health_setting", "domain_transport_mode", "domain_info_media", "domain_realestate_type", "domain_food_service", "domain_wholesale_channel", "domain_prof_services", "domain_education_type", "domain_arts_content", "domain_other_services", "domain_public_admin", "domain_supply_chain", "domain_workforce_safety", "anzsco_2022", "crosswalk_anzsco_anzsic", "domain_chemical_type", "domain_defence_type", "domain_water_env", "domain_ai_data", "domain_biotech", "domain_space", "domain_climate_tech", "domain_adv_materials", "domain_quantum", "domain_digital_assets", "domain_robotics", "domain_energy_storage", "domain_semiconductor", "domain_synbio", "domain_xr_meta", "cnae_2012", "csic_2017", "okved_2", "kbli_2020", "scian_2018", "sic_sa", "crosswalk_geo_sector", "crosswalk_country_system", "all"],
         help="What to ingest",
     )
 

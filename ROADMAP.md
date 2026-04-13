@@ -23,20 +23,18 @@ Work items organized by priority. Check off items as they are completed.
   `newsletter_subscriber` table. Low friction - no account required.
   Integrates with Resend/Mailchimp/SendGrid for delivery.
 
-- [ ] **GitHub stars badge**
-  Add a live GitHub star count badge to the hero stat pills and the
-  developers page. Uses the GitHub public API (no auth needed).
-  Social proof drives more stars, which drives organic discovery.
+- [x] **GitHub stars badge**
+  Live GitHub star count badge on hero stat pills and developers page.
 
 ---
 
 ## Short term - next few sessions
 
-- [ ] **Export / bulk download (gated behind free account)**
-  Add CSV download buttons to system and crosswalk pages.
-  Unauthenticated users see the button but are prompted to sign in.
-  Downloads of interest: NAICS-ISIC crosswalk, full system node list,
-  country coverage CSV. High-intent action - a strong lead signal.
+- [x] **Export / bulk download (gated behind free account)**
+  CSV download buttons on every system page. Authenticated users get
+  "All nodes" + per-crosswalk buttons. Unauthenticated users see a lock
+  with a sign-in prompt. Backend: `/api/v1/systems/{id}/export.csv` and
+  `/{id}/crosswalk/{target}/export.csv` (auth-gated StreamingResponse).
 
 - [ ] **CI/CD pipeline (GitHub Actions)**
   A workflow that runs `pytest tests/ -q` on every push and pull request.
@@ -48,15 +46,15 @@ Work items organized by priority. Check off items as they are completed.
   Railway) and frontend (Vercel). Include env vars, build commands,
   custom domain setup, and how to wire the Next.js proxy to the API.
 
-- [ ] **More country coverage on the world map**
-  Add national classification systems for the largest uncovered
-  economies so the world map shows more colour:
-  - Brazil: CNAE 2.0
-  - China: CSIC (Chinese Standard Industrial Classification)
-  - Russia: OKVED 2
-  - Indonesia: KBLI
-  - Mexico: SCIAN
-  - South Africa: SIC (SA)
+- [x] **More country coverage on the world map**
+  Added national classification systems for 6 large economies:
+  - Brazil: CNAE 2.0 (21 sections, exact ISIC Rev 4 alignment)
+  - China: CSIC 2017 (20 sections, ISIC Rev 4 aligned)
+  - Russia: OKVED-2 (21 sections, NACE/ISIC exact alignment)
+  - Indonesia: KBLI 2020 (21 sections, exact ISIC Rev 4 alignment)
+  - Mexico: SCIAN 2018 (23 sectors, NAICS crosswalk)
+  - South Africa: SIC-SA (21 sections, exact ISIC Rev 4 alignment)
+  All wired into crosswalk_country_system.py as official links.
 
 ---
 
@@ -116,4 +114,7 @@ Work items organized by priority. Check off items as they are completed.
 - [x] Expanded footer with Explore + Developers link columns
 - [x] Header with Sign In / user dropdown
 - [x] OAuth production setup guide (OAUTH_PRODUCTION_SETUP.md)
-- [x] Full test suite - 1944 tests, TDD throughout
+- [x] Full test suite - 2018+ tests, TDD throughout
+- [x] GitHub stars badge (hero + developers page)
+- [x] Export/bulk download - nodes CSV + crosswalk CSV, auth-gated (backend + frontend)
+- [x] Country coverage - CNAE 2.0, CSIC 2017, OKVED-2, KBLI 2020, SCIAN 2018, SIC-SA
