@@ -9,6 +9,7 @@ import { getSystemColor } from '@/lib/colors'
 import { getToken } from '@/lib/auth'
 import { SectorTreemap } from '@/components/visualizations/SectorTreemap'
 import { CrosswalkNetwork } from '@/components/visualizations/CrosswalkNetwork'
+import { NodeTree } from '@/components/NodeTree'
 
 export default function SystemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -135,24 +136,13 @@ export default function SystemPage({ params }: { params: Promise<{ id: string }>
       )}
 
       <div>
-        <h2 className="text-lg font-semibold mb-3">Top-Level Sectors</h2>
+        <h2 className="text-lg font-semibold mb-3">Hierarchy Explorer</h2>
         {system.roots && system.roots.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {system.roots.map((root) => (
-              <Link
-                key={root.code}
-                href={`/system/${id}/node/${root.code}`}
-                className="p-3 rounded-lg bg-card border border-border/50 hover:border-primary/50 transition-colors group"
-              >
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xs font-mono text-muted-foreground">{root.code}</span>
-                  <span className="text-sm group-hover:text-primary transition-colors">
-                    {root.title}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <NodeTree
+            systemId={id}
+            roots={system.roots}
+            systems={allSystems ?? []}
+          />
         ) : (
           <p className="text-sm text-muted-foreground">No root nodes found.</p>
         )}
