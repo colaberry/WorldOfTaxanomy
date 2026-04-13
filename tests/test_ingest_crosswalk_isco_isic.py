@@ -63,9 +63,9 @@ def test_ingest_crosswalk_isco_isic(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
             from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
-            from world_of_taxanomy.ingest.isic import ingest_isic
+            from world_of_taxanomy.ingest.isic import ingest_isic_rev4
             await ingest_isco_08(conn)
-            await ingest_isic(conn)
+            await ingest_isic_rev4(conn)
 
             count = await ingest_crosswalk_isco_isic(conn)
             assert count >= 30
@@ -84,9 +84,9 @@ def test_ingest_crosswalk_isco_isic_idempotent(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
             from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
-            from world_of_taxanomy.ingest.isic import ingest_isic
+            from world_of_taxanomy.ingest.isic import ingest_isic_rev4
             await ingest_isco_08(conn)
-            await ingest_isic(conn)
+            await ingest_isic_rev4(conn)
 
             count1 = await ingest_crosswalk_isco_isic(conn)
             count2 = await ingest_crosswalk_isco_isic(conn)
