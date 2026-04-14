@@ -27,6 +27,10 @@ export interface ClassificationNode {
   seq_order: number
 }
 
+export interface ClassificationNodeWithContext extends ClassificationNode {
+  ancestors?: ClassificationNode[]
+}
+
 export interface Equivalence {
   source_system: string
   source_code: string

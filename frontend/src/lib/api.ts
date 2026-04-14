@@ -2,6 +2,7 @@ import type {
   ClassificationSystem,
   SystemDetail,
   ClassificationNode,
+  ClassificationNodeWithContext,
   Equivalence,
   CrosswalkStat,
   User,
@@ -79,11 +80,13 @@ export async function getEquivalences(
 export async function search(
   query: string,
   systemId?: string,
-  limit?: number
-): Promise<ClassificationNode[]> {
+  limit?: number,
+  context = false
+): Promise<ClassificationNodeWithContext[]> {
   const params = new URLSearchParams({ q: query })
   if (systemId) params.set('system', systemId)
   if (limit) params.set('limit', String(limit))
+  if (context) params.set('context', 'true')
   return fetchJson(`/api/v1/search?${params}`)
 }
 
