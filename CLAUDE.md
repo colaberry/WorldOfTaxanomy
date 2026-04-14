@@ -2,9 +2,9 @@
 
 ## What this project is
 
-WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 82 classification systems as equal peers through equivalence mappings (crosswalk edges).
+WorldOfTaxanomy is a unified global industry classification knowledge graph. It connects 133 classification systems as equal peers through equivalence mappings (crosswalk edges).
 
-**82 systems, 532,651 nodes, 58,647 crosswalk edges.**
+**133 systems, ~535,000 nodes, 58,647 crosswalk edges.**
 
 | System | Region | Codes |
 |--------|--------|-------|
@@ -96,6 +96,53 @@ WorldOfTaxanomy is a unified global industry classification knowledge graph. It 
 | Domain: Synthetic Biology Types | Global | 28 |
 | Domain: Extended Reality and Metaverse Types | Global | 27 |
 | Nation-Sector Geographic Synergy Crosswalk | Global | 98 edges |
+| Domain: Truck Pricing and Rate Structures | United States | 27 |
+| Domain: Truck Regulatory Compliance | United States | 25 |
+| Domain: Truck Technology Adoption | United States | 22 |
+| Domain: Truck Lane and Geography | United States | 23 |
+| Domain: Agricultural Equipment and Machinery | United States | 35 |
+| Domain: Agricultural Input Supply Types | United States | 30 |
+| Domain: Agricultural Business Structure | United States | 27 |
+| Domain: Agricultural Market Channel Types | United States | 26 |
+| Domain: Agricultural Regulatory Framework | United States | 30 |
+| Domain: Agricultural Land and Soil Classification | United States | 35 |
+| Domain: Agricultural Post-Harvest and Value Chain | United States | 37 |
+| Domain: Mining Equipment Types | Global | 30 |
+| Domain: Mining Project Lifecycle Phases | Global | 26 |
+| Domain: Mining Safety and Regulatory Compliance | Global | 25 |
+| Domain: Utility Tariff and Rate Structure Types | United States | 26 |
+| Domain: Utility Infrastructure Asset Types | United States | 25 |
+| Domain: Utility Regulatory Ownership Types | United States | 25 |
+| Domain: Construction Project Delivery Methods | United States | 22 |
+| Domain: Construction Material System Types | United States | 24 |
+| Domain: Construction Sustainability and Green Building Types | United States | 24 |
+| Domain: Manufacturing Industry Vertical | Global | 26 |
+| Domain: Manufacturing Quality and Compliance | Global | 18 |
+| Domain: Manufacturing Operations Model Types | Global | 18 |
+| Domain: Retail Merchandise Category Types | United States | 20 |
+| Domain: Retail Fulfillment and Last-Mile Delivery | United States | 18 |
+| Domain: Finance Market Structure Types | Global | 18 |
+| Domain: Finance Regulatory Framework Types | Global | 18 |
+| Domain: Health Care Specialty Service Lines | United States | 20 |
+| Domain: Health Care Payer Types | United States | 18 |
+| Domain: Transportation Service Class Types | United States | 19 |
+| Domain: Transportation Infrastructure Types | United States | 19 |
+| Domain: Information and Media Revenue Model Types | United States | 18 |
+| Domain: Information Platform and Distribution Types | United States | 18 |
+| Domain: Real Estate Transaction Types | United States | 16 |
+| Domain: Real Estate Capital Structure Types | United States | 15 |
+| Domain: Food Service Revenue Mix Types | United States | 15 |
+| Domain: Food Service Ownership and Business Model Types | United States | 16 |
+| Domain: Education Funding Source and Governance | United States | 18 |
+| Domain: Education Learner Segment Types | United States | 18 |
+| Domain: Arts and Entertainment Monetization Types | United States | 19 |
+| Domain: Arts and Entertainment Creator Structure Types | United States | 15 |
+| Domain: Other Services Pricing and Delivery Types | United States | 15 |
+| Domain: Public Administration Funding Source Types | United States | 19 |
+| Domain: Supply Chain Technology Platform Types | Global | 19 |
+| Domain: Supply Chain Risk Category Types | Global | 18 |
+| Domain: Workforce Training and Development Types | United States | 18 |
+| Domain: Workforce Safety Management System Types | United States | 15 |
 
 Three surfaces: **Web App** (Next.js), **REST API** (FastAPI), **MCP Server** (stdio).
 
