@@ -5,6 +5,7 @@ import type {
   ClassificationNodeWithContext,
   Equivalence,
   CrosswalkStat,
+  CrosswalkGraphResponse,
   User,
   ApiKey,
   AuthTokens,
@@ -145,6 +146,18 @@ export async function search(
 
 export async function getStats(): Promise<CrosswalkStat[]> {
   return fetchJson('/api/v1/equivalences/stats')
+}
+
+// ── Crosswalk graph ──
+
+export async function getCrosswalkGraph(
+  source: string,
+  target: string,
+  limit = 500
+): Promise<CrosswalkGraphResponse> {
+  return fetchJson(
+    `/api/v1/systems/${source}/crosswalk/${target}/graph?limit=${limit}`
+  )
 }
 
 // ── Countries ──

@@ -18,6 +18,13 @@ export interface DomainSector {
   extraIds?: string[]  // domain systems that don't match the prefix
 }
 
+export interface LifeSciencesSector {
+  id: string
+  label: string
+  accent: string
+  systemIds: string[]  // all system IDs in this sector (core + domain_*)
+}
+
 export const SYSTEM_CATEGORIES: SystemCategory[] = [
   {
     id: 'education',
@@ -77,9 +84,9 @@ export const SYSTEM_CATEGORIES: SystemCategory[] = [
     ],
   },
   {
-    id: 'health',
-    label: 'Health / Clinical',
-    description: 'Medical diagnoses, drugs, lab tests, devices, and clinical codes',
+    id: 'lifesciences',
+    label: 'Life Sciences',
+    description: 'Pharmaceuticals, clinical coding, diagnostics, medical devices, biotechnology, and health informatics',
     accent: '#E11D48',
     bg: 'rgba(225,29,72,0.08)',
     systemIds: [
@@ -92,6 +99,10 @@ export const SYSTEM_CATEGORIES: SystemCategory[] = [
       'fhir_resources', 'dicom_modality',
       'icn_nursing', 'nic_nursing_intv', 'nanda_nursing_dx', 'edqm_dosage',
       'hedis', 'cms_star',
+      'nci_thesaurus', 'ndc_product',
+      'reg_hipaa', 'reg_fda_21cfr', 'reg_dea', 'reg_usp',
+      'reg_joint_commission', 'reg_cap', 'reg_clia',
+      'reg_hitrust', 'reg_mdr', 'reg_ivdr',
     ],
   },
   {
@@ -211,23 +222,21 @@ export const SYSTEM_CATEGORIES: SystemCategory[] = [
       'cfr_title_49', 'fmcsa_regs', 'gdpr_articles', 'iso_31000',
       'eu_taxonomy', 'sfdr', 'tnfd', 'gri_standards', 'sasb_sics',
       'sdg', 'seea', 'oecd_dac',
-      'reg_hipaa', 'reg_sox', 'reg_glba', 'reg_ferpa', 'reg_coppa',
+      'reg_sox', 'reg_glba', 'reg_ferpa', 'reg_coppa',
       'reg_fcra', 'reg_ada', 'reg_osha_1910', 'reg_osha_1926',
       'reg_nerc_cip', 'reg_fisma', 'reg_fedramp', 'reg_ccpa',
       'reg_cfpb', 'reg_sec', 'reg_finra', 'reg_far', 'reg_dfars',
       'reg_itar', 'reg_ear', 'reg_clean_air', 'reg_clean_water',
       'reg_cercla', 'reg_rcra', 'reg_tsca',
-      'reg_pci_dss', 'reg_soc2', 'reg_hitrust', 'reg_cmmc',
+      'reg_pci_dss', 'reg_soc2', 'reg_cmmc',
       'reg_nist_csf', 'reg_nist_800_53', 'reg_nist_800_171',
       'reg_cis_controls', 'reg_cobit', 'reg_coso',
       'reg_ffiec', 'reg_ftc_safeguards', 'reg_naic',
       'reg_us_gaap', 'reg_fasb', 'reg_pcaob', 'reg_aicpa',
-      'reg_joint_commission', 'reg_cap', 'reg_clia',
-      'reg_fda_21cfr', 'reg_dea', 'reg_usp',
       'reg_ashrae', 'reg_asme',
       'reg_dora', 'reg_nis2', 'reg_eu_ai_act', 'reg_eprivacy',
       'reg_mifid2', 'reg_solvency2', 'reg_psd2',
-      'reg_reach', 'reg_rohs', 'reg_mdr', 'reg_ivdr',
+      'reg_reach', 'reg_rohs',
       'reg_eu_whistleblower', 'reg_csrd', 'reg_cbam', 'reg_weee',
       'reg_eu_packaging', 'reg_eu_batteries', 'reg_sfdr_detail',
       'reg_eu_deforestation', 'reg_dsa', 'reg_dma',
@@ -349,11 +358,6 @@ export const DOMAIN_SECTORS: DomainSector[] = [
     extraIds: ['domain_ev_charging', 'domain_fleet_mgmt'],
   },
   {
-    id: 'biotech', label: 'Biotechnology', prefix: 'domain_biotech_',
-    accent: '#10B981', group: 'emerging',
-    extraIds: ['domain_biotech'],
-  },
-  {
     id: 'chemical', label: 'Chemical Industry', prefix: 'domain_chemical_',
     accent: '#F97316', group: 'emerging',
   },
@@ -444,28 +448,6 @@ export const DOMAIN_SECTORS: DomainSector[] = [
     id: 'gaming', label: 'Gaming & Sports', prefix: 'domain_gaming_',
     accent: '#E11D48', group: 'emerging',
     extraIds: ['domain_sports_recreation', 'domain_pet_animal'],
-  },
-  {
-    id: 'health', label: 'Healthcare', prefix: 'domain_health_',
-    accent: '#F43F5E', group: 'traditional',
-    extraIds: [
-      'domain_adverse_event', 'domain_allied_health', 'domain_anesthesia',
-      'domain_biobank', 'domain_biomarker', 'domain_biosimilar',
-      'domain_bundled_pay', 'domain_capitation', 'domain_cds',
-      'domain_cell_therapy', 'domain_cleanroom', 'domain_clinical_endpoint',
-      'domain_clinical_reg', 'domain_companion_dx', 'domain_drug_interaction',
-      'domain_formulary', 'domain_gene_therapy', 'domain_global_budget',
-      'domain_hospital_dept', 'domain_imaging', 'domain_implant',
-      'domain_infection_ctrl', 'domain_lab_test', 'domain_med_gas',
-      'domain_nursing_spec', 'domain_orphan_drug', 'domain_orthotic',
-      'domain_pathology_sub', 'domain_pharma_practice', 'domain_pop_health',
-      'domain_prosthetic', 'domain_radiopharm', 'domain_remote_monitor',
-      'domain_sdoh', 'domain_sterilization', 'domain_surgical_inst',
-      'domain_surgical_spec', 'domain_telemedicine', 'domain_vbc_model',
-      'domain_wound_care', 'domain_clinical_trial', 'domain_dental',
-      'domain_mental_health', 'domain_medical_device', 'domain_pharma_drug_class',
-      'domain_veterinary', 'domain_healthtech',
-    ],
   },
   {
     id: 'hr', label: 'HR & Labor', prefix: 'domain_hr_',
@@ -604,11 +586,6 @@ export const DOMAIN_SECTORS: DomainSector[] = [
     ],
   },
   {
-    id: 'synbio', label: 'Synthetic Biology', prefix: 'domain_synbio_',
-    accent: '#06B6D4', group: 'emerging',
-    extraIds: ['domain_synbio'],
-  },
-  {
     id: 'telecom', label: 'Telecom', prefix: 'domain_telecom_',
     accent: '#0284C7', group: 'emerging',
     extraIds: ['domain_iot_device'],
@@ -662,6 +639,152 @@ export const DOMAIN_SECTORS: DomainSector[] = [
   },
 ]
 
+// ---------------------------------------------------------------------------
+// Life Sciences sectors - sub-categories within "Life Sciences"
+// Parallel to DOMAIN_SECTORS but for the lifesciences category.
+// ---------------------------------------------------------------------------
+
+export const LIFE_SCIENCES_SECTORS: LifeSciencesSector[] = [
+  {
+    id: 'diagnoses', label: 'Diagnoses & Classification', accent: '#DC2626',
+    systemIds: [
+      'icd10cm', 'icd_11', 'icd10_pcs', 'icdo3', 'dsm5', 'snomed_ct',
+      'icpc2', 'ichi_who', 'icf', 'icd10_am', 'icd10_gm', 'icd10_ca', 'gbd_cause',
+    ],
+  },
+  {
+    id: 'pharmaceuticals', label: 'Pharmaceuticals', accent: '#7C3AED',
+    systemIds: [
+      'atc_who', 'ndc_product', 'rxnorm', 'edqm_dosage', 'who_essential_med',
+      'domain_pharma_drug_class', 'domain_pharma_practice',
+      'domain_formulary', 'domain_drug_interaction', 'domain_orphan_drug',
+      'domain_adverse_event',
+    ],
+  },
+  {
+    id: 'diagnostics', label: 'Diagnostics & Lab', accent: '#0891B2',
+    systemIds: [
+      'loinc',
+      'domain_lab_test', 'domain_imaging', 'domain_biomarker',
+      'domain_companion_dx', 'domain_pathology_sub',
+    ],
+  },
+  {
+    id: 'procedures', label: 'Procedures & Billing', accent: '#EA580C',
+    systemIds: [
+      'cpt_ama', 'hcpcs_l2', 'hcpcs_l3', 'ms_drg', 'g_drg', 'nucc_hcpt',
+      'domain_hospital_dept',
+    ],
+  },
+  {
+    id: 'oncology', label: 'Oncology & Research', accent: '#BE185D',
+    systemIds: [
+      'nci_thesaurus', 'mesh', 'omim', 'orphanet', 'ctcae', 'cdc_vaccine',
+      'domain_clinical_trial', 'domain_clinical_endpoint', 'domain_clinical_reg',
+    ],
+  },
+  {
+    id: 'devices', label: 'Medical Devices', accent: '#059669',
+    systemIds: [
+      'gmdn',
+      'domain_medical_device', 'domain_implant', 'domain_prosthetic',
+      'domain_orthotic', 'domain_surgical_inst', 'domain_sterilization',
+      'domain_cleanroom', 'domain_med_gas', 'domain_wound_care',
+      'domain_infection_ctrl', 'domain_radiopharm',
+    ],
+  },
+  {
+    id: 'biotech', label: 'Biotechnology', accent: '#10B981',
+    systemIds: [
+      'domain_biotech', 'domain_biotech_reg', 'domain_biotech_biz',
+      'domain_biosimilar', 'domain_biobank', 'domain_gene_therapy', 'domain_cell_therapy',
+    ],
+  },
+  {
+    id: 'synbio', label: 'Synthetic Biology', accent: '#06B6D4',
+    systemIds: [
+      'domain_synbio', 'domain_synbio_app', 'domain_synbio_biosafety',
+    ],
+  },
+  {
+    id: 'informatics', label: 'Health Informatics', accent: '#3B82F6',
+    systemIds: [
+      'fhir_resources', 'dicom_modality',
+      'domain_healthtech', 'domain_telemedicine', 'domain_remote_monitor',
+      'domain_cds', 'domain_health_it',
+    ],
+  },
+  {
+    id: 'nursing', label: 'Nursing & Allied Health', accent: '#F43F5E',
+    systemIds: [
+      'icn_nursing', 'nic_nursing_intv', 'nanda_nursing_dx',
+      'domain_nursing_spec', 'domain_allied_health', 'domain_anesthesia',
+      'domain_surgical_spec',
+    ],
+  },
+  {
+    id: 'delivery', label: 'Payment & Delivery', accent: '#8B5CF6',
+    systemIds: [
+      'hedis', 'cms_star',
+      'domain_health_setting', 'domain_health_payer', 'domain_health_delivery',
+      'domain_health_specialty', 'domain_health_literacy',
+      'domain_bundled_pay', 'domain_capitation', 'domain_vbc_model',
+      'domain_global_budget', 'domain_sdoh', 'domain_pop_health',
+    ],
+  },
+  {
+    id: 'health_reg', label: 'Health Regulation', accent: '#0369A1',
+    systemIds: [
+      'reg_hipaa', 'reg_fda_21cfr', 'reg_dea', 'reg_usp',
+      'reg_joint_commission', 'reg_cap', 'reg_clia',
+      'reg_hitrust', 'reg_mdr', 'reg_ivdr',
+    ],
+  },
+  {
+    id: 'dental_mental', label: 'Dental, Mental & Veterinary', accent: '#D97706',
+    systemIds: [
+      'domain_dental', 'domain_mental_health', 'domain_veterinary',
+    ],
+  },
+]
+
+// Prefixes for domain_* systems that belong to Life Sciences
+const LIFE_SCIENCES_DOMAIN_PREFIXES = [
+  'domain_biotech_', 'domain_synbio_', 'domain_pharma_', 'domain_health_',
+]
+
+// Set of all explicitly listed Life Sciences system IDs for fast lookups
+const _lifeSciencesAllIds = new Set<string>(
+  LIFE_SCIENCES_SECTORS.flatMap((s) => s.systemIds)
+)
+
+/**
+ * Returns true if the given domain_* system ID belongs to Life Sciences.
+ * Checks explicit sector membership first, then falls back to prefix matching.
+ */
+export function isLifeSciencesDomainSystem(systemId: string): boolean {
+  if (_lifeSciencesAllIds.has(systemId)) return true
+  return LIFE_SCIENCES_DOMAIN_PREFIXES.some((p) => systemId.startsWith(p))
+}
+
+/**
+ * Returns the Life Sciences sector for a system ID, or null if not found.
+ * Checks explicit systemIds first, then falls back to prefix matching.
+ */
+export function getLifeSciencesSector(systemId: string): LifeSciencesSector | null {
+  const explicit = LIFE_SCIENCES_SECTORS.find((s) => s.systemIds.includes(systemId))
+  if (explicit) return explicit
+  if (systemId.startsWith('domain_biotech_'))
+    return LIFE_SCIENCES_SECTORS.find((s) => s.id === 'biotech')!
+  if (systemId.startsWith('domain_synbio_'))
+    return LIFE_SCIENCES_SECTORS.find((s) => s.id === 'synbio')!
+  if (systemId.startsWith('domain_pharma_'))
+    return LIFE_SCIENCES_SECTORS.find((s) => s.id === 'pharmaceuticals')!
+  if (systemId.startsWith('domain_health_'))
+    return LIFE_SCIENCES_SECTORS.find((s) => s.id === 'delivery')!
+  return null
+}
+
 /**
  * Returns the domain sector for a domain_* system ID, or null if not found.
  * Checks explicit extraIds first, then falls back to prefix matching.
@@ -674,10 +797,10 @@ export function getDomainSector(systemId: string): DomainSector | null {
 
 export function getCategoryForSystem(systemId: string): SystemCategory {
   if (systemId.startsWith('domain_')) {
-    return SYSTEM_CATEGORIES.find((c) => c.id === 'domain')!
+    return isLifeSciencesDomainSystem(systemId)
+      ? SYSTEM_CATEGORIES.find((c) => c.id === 'lifesciences')!
+      : SYSTEM_CATEGORIES.find((c) => c.id === 'domain')!
   }
-  // Explicit lookup - if not found, fall back to the domain catch-all
-  // (keeps behaviour safe for any future systems not yet categorized)
   return (
     SYSTEM_CATEGORIES.find((c) => c.systemIds.includes(systemId)) ??
     SYSTEM_CATEGORIES.find((c) => c.id === 'domain')!
@@ -691,8 +814,10 @@ export function groupSystemsByCategory(
     category: cat,
     systems: systems.filter((s) =>
       cat.id === 'domain'
-        ? s.id.startsWith('domain_')
-        : cat.systemIds.includes(s.id)
+        ? s.id.startsWith('domain_') && !isLifeSciencesDomainSystem(s.id)
+        : cat.id === 'lifesciences'
+          ? cat.systemIds.includes(s.id) || isLifeSciencesDomainSystem(s.id)
+          : cat.systemIds.includes(s.id)
     ),
   })).filter((g) => g.systems.length > 0)
 }

@@ -64,6 +64,84 @@ async def translate_code(
     return [_row_to_equivalence(r) for r in rows]
 
 
+async def get_crosswalk_graph(
+    conn,
+    source_system: str,
+    target_system: str,
+    limit: int = 500,
+) -> Dict:
+    """Get a graph of crosswalk edges between two systems.
+
+    Returns deduplicated edges (only source->target direction) with
+    node metadata for building a Cytoscape.js visualization.
+    """
+    # Get deduplicated edges (use LEAST/GREATEST to pick canonical direction)
+    all_rows = await conn.fetch(
+        """SELECT DISTINCT ON (
+                LEAST(source_system, target_system),
+                LEAST(source_code, target_code),
+                GREATEST(source_code, target_code)
+           )
+           e.source_system, e.source_code, e.target_system, e.target_code,
+           e.match_type,
+           s.title AS source_title,
+           t.title AS target_title
+           FROM equivalence e
+           LEFT JOIN classification_node s
+             ON s.system_id = e.source_system AND s.code = e.source_code
+           LEFT JOIN classification_node t
+             ON t.system_id = e.target_system AND t.code = e.target_code
+           WHERE (e.source_system = $1 AND e.target_system = $2)
+              OR (e.source_system = $2 AND e.target_system = $1)
+           ORDER BY
+             LEAST(source_system, target_system),
+             LEAST(source_code, target_code),
+             GREATEST(source_code, target_code),
+             e.id
+        """,
+        source_system, target_system,
+    )
+
+    total_edges = len(all_rows)
+    truncated = total_edges > limit
+    rows = all_rows[:limit]
+
+    # Build unique nodes from edges
+    node_map: Dict[str, Dict] = {}
+    edges = []
+    for r in rows:
+        src_id = f"{r['source_system']}:{r['source_code']}"
+        tgt_id = f"{r['target_system']}:{r['target_code']}"
+        if src_id not in node_map:
+            node_map[src_id] = {
+                "id": src_id,
+                "system": r["source_system"],
+                "code": r["source_code"],
+                "title": r["source_title"] or r["source_code"],
+            }
+        if tgt_id not in node_map:
+            node_map[tgt_id] = {
+                "id": tgt_id,
+                "system": r["target_system"],
+                "code": r["target_code"],
+                "title": r["target_title"] or r["target_code"],
+            }
+        edges.append({
+            "source": src_id,
+            "target": tgt_id,
+            "match_type": r["match_type"],
+        })
+
+    return {
+        "source_system": source_system,
+        "target_system": target_system,
+        "nodes": list(node_map.values()),
+        "edges": edges,
+        "total_edges": total_edges,
+        "truncated": truncated,
+    }
+
+
 async def get_crosswalk_stats(conn) -> List[Dict]:
     """Get counts of equivalence edges per system pair."""
     rows = await conn.fetch(

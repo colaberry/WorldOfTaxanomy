@@ -4,7 +4,10 @@ import { Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { getSystems, getStats } from '@/lib/api'
-import { groupSystemsByCategory, SYSTEM_CATEGORIES, DOMAIN_SECTORS } from '@/lib/categories'
+import {
+  groupSystemsByCategory, SYSTEM_CATEGORIES, DOMAIN_SECTORS,
+  LIFE_SCIENCES_SECTORS, getLifeSciencesSector,
+} from '@/lib/categories'
 import Link from 'next/link'
 import { Globe, GitBranch, Network, ArrowUpRight } from 'lucide-react'
 import type { ClassificationSystem, CrosswalkStat } from '@/lib/types'
@@ -52,38 +55,62 @@ function DashboardInner({ initialSystems, initialStats }: DashboardContentProps)
   const maxNodes = systems ? Math.max(...systems.map((s) => s.node_count)) : 1
 
   // Domain sector helpers
-  const activeSectorDef = DOMAIN_SECTORS.find((s) => s.id === activeSectorId) ?? null
   const allDomainSystems = grouped.find((g) => g.category.id === 'domain')?.systems ?? []
-  const sectorsWithSystems = DOMAIN_SECTORS.filter((sector) =>
+  const domainSectorsPresent = DOMAIN_SECTORS.filter((sector) =>
     allDomainSystems.some((s) =>
       s.id === 'domain_adv_materials' ? sector.id === 'materials' : s.id.startsWith(sector.prefix)
     )
   )
-  const traditionalSectors = sectorsWithSystems.filter((s) => s.group === 'traditional')
-  const emergingSectors = sectorsWithSystems.filter((s) => s.group === 'emerging')
+  const traditionalSectors = domainSectorsPresent.filter((s) => s.group === 'traditional')
+  const emergingSectors = domainSectorsPresent.filter((s) => s.group === 'emerging')
+
+  // Life Sciences sector helpers
+  const allLSSystems = grouped.find((g) => g.category.id === 'lifesciences')?.systems ?? []
+  const lsSectorsPresent = LIFE_SCIENCES_SECTORS.filter((sector) =>
+    allLSSystems.some((s) => getLifeSciencesSector(s.id)?.id === sector.id)
+  )
+
+  // Generic active sector (works for both domain and life sciences)
+  const activeSectorDef = activeSectorId
+    ? (DOMAIN_SECTORS.find((s) => s.id === activeSectorId)
+       ?? LIFE_SCIENCES_SECTORS.find((s) => s.id === activeSectorId)
+       ?? null)
+    : null
 
   function sectorSystemCount(sectorId: string): number {
-    const def = DOMAIN_SECTORS.find((s) => s.id === sectorId)
-    if (!def) return 0
-    return allDomainSystems.filter((s) =>
-      s.id === 'domain_adv_materials' ? def.id === 'materials' : s.id.startsWith(def.prefix)
-    ).length
+    const domainDef = DOMAIN_SECTORS.find((s) => s.id === sectorId)
+    if (domainDef) {
+      return allDomainSystems.filter((s) =>
+        s.id === 'domain_adv_materials' ? domainDef.id === 'materials' : s.id.startsWith(domainDef.prefix)
+      ).length
+    }
+    const lsDef = LIFE_SCIENCES_SECTORS.find((s) => s.id === sectorId)
+    if (lsDef) {
+      return allLSSystems.filter((s) => getLifeSciencesSector(s.id)?.id === lsDef.id).length
+    }
+    return 0
   }
 
-  function filterDomainBySector(catSystems: typeof allDomainSystems) {
-    if (!activeSectorDef) return catSystems
-    return catSystems.filter((s) =>
-      s.id === 'domain_adv_materials'
-        ? activeSectorDef.id === 'materials'
-        : s.id.startsWith(activeSectorDef.prefix)
-    )
+  function filterBySector(catSystems: ClassificationSystem[], catId: string) {
+    if (!activeSectorId) return catSystems
+    if (catId === 'domain') {
+      const def = DOMAIN_SECTORS.find((s) => s.id === activeSectorId)
+      if (!def) return catSystems
+      return catSystems.filter((s) =>
+        s.id === 'domain_adv_materials' ? def.id === 'materials' : s.id.startsWith(def.prefix)
+      )
+    }
+    if (catId === 'lifesciences') {
+      return catSystems.filter((s) => getLifeSciencesSector(s.id)?.id === activeSectorId)
+    }
+    return catSystems
   }
 
-  function handleSectorClick(sectorId: string) {
+  function handleSectorClick(sectorId: string, catId: string) {
     if (sectorId === activeSectorId) {
-      router.push('/dashboard?cat=domain')
+      router.push(`/dashboard?cat=${catId}`)
     } else {
-      router.push(`/dashboard?cat=domain&sector=${sectorId}`)
+      router.push(`/dashboard?cat=${catId}&sector=${sectorId}`)
     }
   }
 
@@ -116,19 +143,20 @@ function DashboardInner({ initialSystems, initialStats }: DashboardContentProps)
       {/* Summary stats */}
       <div className="grid grid-cols-3 gap-4">
         {[
-          { icon: Globe,     value: systems?.length ?? 0, label: 'Classification Systems', mono: false },
-          { icon: GitBranch, value: totalNodes,            label: 'Total Nodes',            mono: true  },
-          { icon: Network,   value: totalEdges,            label: 'Crosswalk Edges',        mono: true  },
-        ].map(({ icon: Icon, value, label, mono }) => (
-          <div key={label} className="p-5 rounded-xl bg-card border border-border/50 space-y-1">
+          { icon: Globe,     value: systems?.length ?? 0, label: 'Classification Systems', mono: false, href: '/explore' },
+          { icon: GitBranch, value: totalNodes,            label: 'Total Nodes',            mono: true,  href: '/explore' },
+          { icon: Network,   value: totalEdges,            label: 'Crosswalk Edges',        mono: true,  href: '/crosswalk-explorer' },
+        ].map(({ icon: Icon, value, label, mono, href }) => (
+          <Link key={label} href={href} className="p-5 rounded-xl bg-card border border-border/50 space-y-1 hover:border-border hover:shadow-sm transition-all group">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Icon className="h-4 w-4" />
               <span className="text-xs font-medium">{label}</span>
+              <ArrowUpRight className="h-3 w-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <div className={`text-3xl font-bold ${mono ? 'font-mono tabular-nums' : ''}`}>
               {mono ? value.toLocaleString() : value}
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
@@ -166,7 +194,7 @@ function DashboardInner({ initialSystems, initialStats }: DashboardContentProps)
       </div>
 
       {/* Domain sector sub-filter */}
-      {activeCat === 'domain' && sectorsWithSystems.length > 0 && (
+      {activeCat === 'domain' && domainSectorsPresent.length > 0 && (
         <div className="space-y-2 rounded-xl border border-border/50 bg-card/50 p-4">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Filter by sector</span>
@@ -194,7 +222,7 @@ function DashboardInner({ initialSystems, initialStats }: DashboardContentProps)
                 {traditionalSectors.slice().sort((a, b) => a.label.localeCompare(b.label)).map((sector) => (
                   <button
                     key={sector.id}
-                    onClick={() => handleSectorClick(sector.id)}
+                    onClick={() => handleSectorClick(sector.id, 'domain')}
                     className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                       activeSectorId === sector.id
                         ? 'text-white'
@@ -217,7 +245,7 @@ function DashboardInner({ initialSystems, initialStats }: DashboardContentProps)
                 {emergingSectors.slice().sort((a, b) => a.label.localeCompare(b.label)).map((sector) => (
                   <button
                     key={sector.id}
-                    onClick={() => handleSectorClick(sector.id)}
+                    onClick={() => handleSectorClick(sector.id, 'domain')}
                     className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
                       activeSectorId === sector.id
                         ? 'text-white'
@@ -235,15 +263,56 @@ function DashboardInner({ initialSystems, initialStats }: DashboardContentProps)
         </div>
       )}
 
+      {/* Life Sciences sector sub-filter */}
+      {activeCat === 'lifesciences' && lsSectorsPresent.length > 0 && (
+        <div className="space-y-2 rounded-xl border border-border/50 bg-card/50 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Filter by sector</span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 mb-2">
+            <button
+              onClick={() => router.push('/dashboard?cat=lifesciences')}
+              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                !activeSectorId
+                  ? 'bg-foreground text-background'
+                  : 'bg-secondary text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              All
+              <span className="ml-1 font-mono opacity-70">{allLSSystems.length}</span>
+            </button>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5">
+            {lsSectorsPresent.map((sector) => (
+              <button
+                key={sector.id}
+                onClick={() => handleSectorClick(sector.id, 'lifesciences')}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium transition-colors ${
+                  activeSectorId === sector.id
+                    ? 'text-white'
+                    : 'bg-secondary text-muted-foreground hover:text-foreground'
+                }`}
+                style={activeSectorId === sector.id ? { backgroundColor: sector.accent } : {}}
+              >
+                {sector.label}
+                <span className="ml-1 font-mono opacity-70">{sectorSystemCount(sector.id)}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Systems grouped by category */}
       <div className="space-y-8">
         {grouped
           .filter((g) => !activeCat || g.category.id === activeCat)
           .map(({ category: cat, systems: catSystems }) => {
-            const displaySystems = cat.id === 'domain'
-              ? filterDomainBySector(catSystems)
+            const displaySystems = (cat.id === 'domain' || cat.id === 'lifesciences')
+              ? filterBySector(catSystems, cat.id)
               : catSystems
-            const sectorLabel = cat.id === 'domain' && activeSectorDef
+            const sectorLabel = activeSectorDef && (cat.id === 'domain' || cat.id === 'lifesciences')
               ? ` - ${activeSectorDef.label}`
               : ''
             return (
@@ -252,7 +321,7 @@ function DashboardInner({ initialSystems, initialStats }: DashboardContentProps)
               <div className="flex items-center gap-3 mb-3">
                 <div
                   className="w-3 h-3 rounded-sm shrink-0"
-                  style={{ backgroundColor: activeSectorDef && cat.id === 'domain' ? activeSectorDef.accent : cat.accent }}
+                  style={{ backgroundColor: activeSectorDef && (cat.id === 'domain' || cat.id === 'lifesciences') ? activeSectorDef.accent : cat.accent }}
                 />
                 <h2 className="text-base font-semibold">{cat.label}{sectorLabel}</h2>
                 <span className="text-xs text-muted-foreground">

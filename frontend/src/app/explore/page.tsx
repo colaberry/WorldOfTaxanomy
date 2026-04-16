@@ -4,7 +4,14 @@ import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { search, getSystems } from '@/lib/api'
-import { SYSTEM_CATEGORIES, getCategoryForSystem, DOMAIN_SECTORS, getDomainSector } from '@/lib/categories'
+import {
+  SYSTEM_CATEGORIES,
+  getCategoryForSystem,
+  DOMAIN_SECTORS,
+  getDomainSector,
+  LIFE_SCIENCES_SECTORS,
+  getLifeSciencesSector,
+} from '@/lib/categories'
 import { getSystemColor } from '@/lib/colors'
 import Link from 'next/link'
 import { Search, X, ChevronDown, Leaf } from 'lucide-react'
@@ -204,19 +211,25 @@ function ExploreContent() {
           {activeBuckets.map(({ catId, nodes }) => {
             const cat = SYSTEM_CATEGORIES.find((c) => c.id === catId)!
 
-            // Domain category: sub-group by sector
-            if (catId === 'domain') {
-              // Build sector groups preserving DOMAIN_SECTORS order
+            // Sector-grouped categories (Domain and Life Sciences)
+            if (catId === 'domain' || catId === 'lifesciences') {
+              const isDomain = catId === 'domain'
+              const sectorDefs = isDomain ? DOMAIN_SECTORS : LIFE_SCIENCES_SECTORS
+              const getSector = isDomain
+                ? (id: string) => getDomainSector(id)
+                : (id: string) => getLifeSciencesSector(id)
+
+              // Build sector groups preserving sector definition order
               const sectorMap = new Map<string, typeof nodes>()
               for (const node of nodes) {
-                const sector = getDomainSector(node.system_id)
+                const sector = getSector(node.system_id)
                 const key = sector?.id ?? '_other'
                 if (!sectorMap.has(key)) sectorMap.set(key, [])
                 sectorMap.get(key)!.push(node)
               }
               // Ordered list: known sectors first, then _other
               const orderedSectors: Array<{ sectorId: string; sectorNodes: typeof nodes }> = []
-              for (const sector of DOMAIN_SECTORS) {
+              for (const sector of sectorDefs) {
                 if (sectorMap.has(sector.id)) {
                   orderedSectors.push({ sectorId: sector.id, sectorNodes: sectorMap.get(sector.id)! })
                 }
@@ -242,8 +255,8 @@ function ExploreContent() {
                   {/* Sector sub-groups */}
                   <div className="space-y-4">
                     {orderedSectors.map(({ sectorId, sectorNodes }) => {
-                      const sectorDef = DOMAIN_SECTORS.find((s) => s.id === sectorId)
-                      const expandKey = `domain_${sectorId}`
+                      const sectorDef = sectorDefs.find((s) => s.id === sectorId)
+                      const expandKey = `${catId}_${sectorId}`
                       const visible = expanded[expandKey] ?? INITIAL_VISIBLE
                       const shown = sectorNodes.slice(0, visible)
                       const remaining = sectorNodes.length - shown.length

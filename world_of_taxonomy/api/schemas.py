@@ -63,6 +63,28 @@ class CrosswalkStatResponse(BaseModel):
     partial_count: int
 
 
+class CrosswalkGraphNode(BaseModel):
+    id: str
+    system: str
+    code: str
+    title: str
+
+
+class CrosswalkGraphEdge(BaseModel):
+    source: str
+    target: str
+    match_type: str
+
+
+class CrosswalkGraphResponse(BaseModel):
+    source_system: str
+    target_system: str
+    nodes: List[CrosswalkGraphNode]
+    edges: List[CrosswalkGraphEdge]
+    total_edges: int
+    truncated: bool
+
+
 # ── Auth schemas ─────────────────────────────────────────────
 
 

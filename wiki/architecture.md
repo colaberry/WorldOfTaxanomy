@@ -9,7 +9,7 @@ The platform serves three consumer interfaces - a web application, a REST API, a
 ```mermaid
 graph TB
   subgraph Data["Data Layer"]
-    PG[(PostgreSQL on Neon)]
+    PG[(PostgreSQL)]
     WIKI["wiki/*.md files"]
   end
   subgraph Backend["Python Backend"]
@@ -199,7 +199,7 @@ Relationships:
 
 | Layer | Technology |
 |-------|-----------|
-| Database | PostgreSQL on Neon (with pgbouncer) |
+| Database | PostgreSQL (with pgbouncer) |
 | Backend | Python 3.9+, FastAPI, asyncpg |
 | Frontend | Next.js 15, TypeScript, Tailwind CSS v4, shadcn/ui |
 | Visualization | D3.js (Galaxy View force simulation) |

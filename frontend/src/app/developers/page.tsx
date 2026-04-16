@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { GitFork, Terminal, Braces, ArrowRight, Key, Zap, BookOpen, ChevronRight, Star, PlusCircle } from 'lucide-react'
+import { GitFork, Terminal, Braces, ArrowRight, Key, Zap, BookOpen, ChevronRight, Star, PlusCircle, Network } from 'lucide-react'
 
 async function fetchGithubStars(): Promise<number | null> {
   try {
@@ -221,6 +221,45 @@ cd frontend && npm install && npm run dev`}
             className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
           >
             Open repository <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Crosswalk Explorer ── */}
+      <section id="crosswalks" className="space-y-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+            <Network className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">Crosswalk Explorer</h2>
+            <p className="text-sm text-muted-foreground">Interactive graph visualization of crosswalk relationships</p>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-border/50 bg-card p-6 space-y-4">
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Explore how classification systems connect through 321K+ crosswalk edges.
+            The system-level graph shows all connected systems grouped by category.
+            Click any edge to drill into the code-level view with individual mappings.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-4 text-sm">
+            {[
+              { label: 'System view', value: 'Systems grouped by category, edges = crosswalks' },
+              { label: 'Code view',   value: 'Individual codes with exact/partial/broad edges' },
+              { label: 'Powered by',  value: 'Cytoscape.js graph library' },
+            ].map(({ label, value }) => (
+              <div key={label}>
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">{label}</p>
+                <p className="text-xs text-foreground/80">{value}</p>
+              </div>
+            ))}
+          </div>
+          <Link
+            href="/crosswalk-explorer"
+            className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+          >
+            Open Crosswalk Explorer <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
       </section>

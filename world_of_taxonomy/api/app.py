@@ -11,6 +11,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from world_of_taxonomy.api.routers import systems, nodes, search, equivalences, explore
+from world_of_taxonomy.api.routers import crosswalk_graph as crosswalk_graph_router
 from world_of_taxonomy.api.routers import auth as auth_router
 from world_of_taxonomy.api.routers import countries as countries_router
 from world_of_taxonomy.api.routers import oauth as oauth_router
@@ -230,6 +231,7 @@ def create_app() -> FastAPI:
     app.include_router(nodes.router)
     app.include_router(search.router)
     app.include_router(equivalences.router)
+    app.include_router(crosswalk_graph_router.router)
     app.include_router(countries_router.router)
     app.include_router(auth_router.router)
     app.include_router(oauth_router.router)

@@ -1,8 +1,8 @@
 # WorldOfTaxonomy
 
 <p align="center">
-  <strong>279 classification systems. 570,178 codes. 122,769 crosswalk edges.</strong><br>
-  The open-source Rosetta Stone for global industry, trade, occupation, and health taxonomies.
+  <strong>1,000 classification systems. 1,212,000+ codes. 321,000+ crosswalk edges.</strong><br>
+  The open-source Rosetta Stone for global industry, trade, occupation, health, and regulatory taxonomies.
 </p>
 
 <p align="center">
@@ -13,8 +13,8 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" />
   </a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python 3.9+" />
-  <img src="https://img.shields.io/badge/systems-279-purple.svg" alt="279 systems" />
-  <img src="https://img.shields.io/badge/codes-570K%2B-green.svg" alt="570K codes" />
+  <img src="https://img.shields.io/badge/systems-1000-purple.svg" alt="1000 systems" />
+  <img src="https://img.shields.io/badge/codes-1.2M%2B-green.svg" alt="1.2M codes" />
 </p>
 
 ---
@@ -25,7 +25,169 @@ Every country, industry body, and standards organization has its own classificat
 
 A truck driver in the US is `NAICS 484`, `SOC 53-3032`, `ISCO-08 8332`, `NACE 49.4`, and `ISIC 4923` - five different codes in five different systems that all mean the same thing. Figuring that out manually costs hours. Doing it at scale costs entire teams.
 
-**WorldOfTaxonomy solves this.** One queryable graph connects all 279 systems. One API call translates any code to any other system. One MCP server gives AI agents access to the entire taxonomy universe.
+**WorldOfTaxonomy solves this.** One queryable graph connects all 1,000 systems. One API call translates any code to any other system. One MCP server gives AI agents access to the entire taxonomy universe.
+
+---
+
+## Architecture
+
+### System Overview
+
+The platform serves four consumer interfaces - a web application, a REST API, an MCP server, and an AI-readable wiki - all backed by a shared PostgreSQL database.
+
+```mermaid
+graph TB
+  subgraph Data["Data Layer"]
+    PG[(PostgreSQL)]
+    WIKI["wiki/*.md files"]
+  end
+  subgraph Backend["Python Backend"]
+    INGEST["Ingesters - 1,000 systems"]
+    API["FastAPI REST API - /api/v1/*"]
+    MCP["MCP Server - stdio transport"]
+    WIKILOADER["Wiki Loader - wiki.py"]
+  end
+  subgraph Frontend["Next.js Frontend"]
+    NEXT["Next.js 15 App Router"]
+    GUIDE["/guide/* pages"]
+  end
+  subgraph Consumers
+    BROWSER["Web Browsers"]
+    AIAGENT["AI Agents - Claude, GPT, etc."]
+    CRAWLER["AI Crawlers - Perplexity, etc."]
+    DEV["Developer Applications"]
+  end
+  INGEST -->|ingest| PG
+  API -->|query| PG
+  MCP -->|query| PG
+  WIKILOADER -->|read| WIKI
+  MCP -->|instructions| WIKILOADER
+  NEXT -->|proxy /api/*| API
+  NEXT -->|read| WIKI
+  GUIDE -->|render| WIKI
+  BROWSER --> NEXT
+  BROWSER --> GUIDE
+  AIAGENT --> MCP
+  CRAWLER -->|/llms-full.txt| NEXT
+  DEV --> API
+```
+
+### Ingestion Pipeline
+
+Each of the 1,000 systems has a dedicated ingester that fetches from authoritative sources and loads into three core tables.
+
+```mermaid
+graph TD
+  subgraph Sources["Official Sources"]
+    CSV["CSV files - NAICS, ISIC"]
+    XLSX["Excel files - NACE, ANZSIC"]
+    HTML["HTML/PDF - SIC, NIC"]
+    CURATED["Expert-Curated - Domain taxonomies"]
+  end
+  subgraph Pipeline["Ingestion Pipeline"]
+    PARSE["Parse and Validate"]
+    UPSERT["Upsert Nodes into classification_node"]
+    XWALK["Build Crosswalks into equivalence"]
+    PROV["Set Provenance - 4-tier audit"]
+  end
+  subgraph DB["Database Tables"]
+    SYS["classification_system - 1,000+ systems"]
+    NODE["classification_node - 1.2M+ nodes"]
+    EQUIV["equivalence - 321K+ edges"]
+  end
+  CSV --> PARSE
+  XLSX --> PARSE
+  HTML --> PARSE
+  CURATED --> PARSE
+  PARSE --> UPSERT
+  PARSE --> XWALK
+  PARSE --> PROV
+  UPSERT --> NODE
+  XWALK --> EQUIV
+  PROV --> SYS
+  SYS --- NODE
+  NODE --- EQUIV
+```
+
+### API Request Flow
+
+```mermaid
+sequenceDiagram
+  participant C as Client
+  participant RL as Rate Limiter
+  participant AUTH as Auth Layer
+  participant R as Router
+  participant Q as Query Layer
+  participant DB as PostgreSQL
+
+  C->>RL: GET /api/v1/search?q=physician
+  RL->>RL: Check rate - 30/min anon, 1000/min auth
+  RL->>AUTH: Forward request
+  AUTH->>AUTH: Validate JWT or API key
+  AUTH->>R: Authenticated request
+  R->>Q: search(conn, query, limit)
+  Q->>DB: SELECT with ts_vector query
+  DB-->>Q: Matching nodes
+  Q-->>R: Results with system context
+  R-->>C: JSON response
+```
+
+### MCP Session Lifecycle
+
+```mermaid
+sequenceDiagram
+  participant AI as AI Agent
+  participant MCP as MCP Server
+  participant WIKI as Wiki Loader
+  participant DB as PostgreSQL
+
+  AI->>MCP: initialize - JSON-RPC
+  MCP->>WIKI: build_wiki_context()
+  WIKI-->>MCP: Structural knowledge - ~15K tokens
+  MCP-->>AI: serverInfo + instructions + capabilities
+  Note over AI: Agent now knows all 1,000 systems and crosswalk topology
+  AI->>MCP: tools/call search_classifications
+  MCP->>DB: Query nodes
+  DB-->>MCP: Results
+  MCP-->>AI: Tool response as JSON
+  AI->>MCP: resources/read taxonomy://wiki/crosswalk-map
+  MCP->>WIKI: load_wiki_page - crosswalk-map
+  WIKI-->>MCP: Full markdown content
+  MCP-->>AI: Resource content
+```
+
+### Directory Structure
+
+```
+WorldOfTaxonomy/
+├── world_of_taxonomy/
+│   ├── api/              # FastAPI REST API (lifespan pool, rate limiting)
+│   │   ├── routers/      # systems, nodes, search, equivalences, countries, auth, crosswalk_graph
+│   │   └── schemas.py    # Pydantic response models
+│   ├── mcp/              # MCP server (stdio transport, 21 tools)
+│   ├── ingest/           # One ingester per system (100+ files)
+│   │   ├── naics.py      # Downloads from Census Bureau
+│   │   ├── nace_derived.py  # EU national adaptations (copy NACE + equivalences)
+│   │   ├── isic_derived.py  # LATAM/Asia/Africa adaptations
+│   │   └── crosswalk_*.py   # 20+ crosswalk ingesters
+│   ├── query/            # Query layer (browse, search, equivalence)
+│   ├── schema.sql        # Core tables
+│   └── schema_auth.sql   # Auth tables
+├── frontend/             # Next.js 15 + TypeScript + Tailwind + shadcn/ui
+│   └── src/app/          # Home, Explore, System, Dashboard, Crosswalk Explorer, Guide
+├── wiki/                 # Curated guides (serves web, MCP, llms.txt, and API)
+├── tests/                # pytest (test_wot schema isolation, never touches production)
+└── data/                 # Downloaded source files (gitignored, re-downloadable)
+```
+
+**Database** (PostgreSQL):
+
+```sql
+classification_system      -- 1,000 rows: id, name, region, authority, node_count
+classification_node        -- 1.2M rows: system_id, code, title, level, parent_code
+equivalence                -- 321K rows: source_system, source_code, target_system, target_code, match_type
+country_system_link        -- 27K rows: country_code, system_id, relevance ('official'|'regional'|'recommended')
+```
 
 ---
 
@@ -71,7 +233,7 @@ python3 -m uvicorn world_of_taxonomy.api.app:create_app --factory --port 8000
 # Translate NAICS 4841 (general freight trucking) to all equivalent systems
 curl "http://localhost:8000/api/v1/systems/naics_2022/nodes/4841/translations"
 
-# Search for "hospital" across all 279 systems simultaneously
+# Search for "hospital" across all 1,000 systems simultaneously
 curl "http://localhost:8000/api/v1/search?q=hospital&grouped=true"
 
 # Get every classification system applicable to Germany
@@ -106,7 +268,7 @@ translations = json.loads(r[1])
 
 ## Use With Claude / AI Agents (MCP)
 
-WorldOfTaxonomy ships with a Model Context Protocol server. Add it to Claude Desktop and your AI gets instant access to all 279 systems as structured tools.
+WorldOfTaxonomy ships with a Model Context Protocol server. Add it to Claude Desktop and your AI gets instant access to all 1,000 systems as structured tools.
 
 **`~/Library/Application Support/Claude/claude_desktop_config.json`:**
 
@@ -129,7 +291,7 @@ WorldOfTaxonomy ships with a Model Context Protocol server. Add it to Claude Des
 | Tool | What it does |
 |------|-------------|
 | `translate_code` | Translate any code to a target system |
-| `translate_across_all_systems` | One code -> all 279 systems at once |
+| `translate_across_all_systems` | One code -> all 1,000 systems at once |
 | `search_classifications` | Full-text search across all codes |
 | `get_country_taxonomy_profile` | Official + recommended systems for any country |
 | `compare_sector` | Side-by-side root nodes across two systems |
@@ -144,18 +306,18 @@ WorldOfTaxonomy ships with a Model Context Protocol server. Add it to Claude Des
 
 ## What's Covered
 
-**10 categories. 279 systems. Every major region.**
+**16 categories. 1,000 systems. Every major region.**
 
 | Category | Systems | Highlights |
 |----------|---------|-----------|
 | Industry | 68 | NAICS, ISIC, NACE + 58 national adaptations (EU, LATAM, Asia, Africa) |
-| Domain Deep-Dives | 149 | Sector vocabularies for 36 industry verticals |
-| Health / Clinical | 13 | ICD-11, LOINC (102K codes), ATC, ICD-10-CM/PCS/AM/GM, MeSH |
+| Life Sciences | 108 | ICD-11, ICD-10-CM/PCS, LOINC (102K), MeSH, SNOMED, NDC, NCI Thesaurus (211K) |
+| Domain Deep-Dives | 400+ | Sector vocabularies for 40+ industry verticals |
+| Regulatory | 80+ | GDPR, FDA, SOX, HIPAA, ISO standards, EU directives, NIST frameworks |
 | Occupational | 10 | SOC, ISCO-08, ESCO (14K skills), O\*NET, ANZSCO, NOC, KldB, ROME |
 | Product / Trade | 11 | HS 2022, UNSPSC (77K codes), CPC, SITC, HTS, Schedule B, ECCN |
 | Research & Knowledge | 8 | FORD, JEL, LCC, PACS, MSC, ACM CCS, arXiv, ANZSRC |
 | Financial / Investment | 7 | GICS, ICB, CFI (ISO 10962), COFOG, COICOP, GHG Protocol, Patent CPC |
-| Regulatory & Governance | 12 | GDPR, EU Taxonomy, SFDR, TNFD, GRI, SASB, SDG, SEEA, OECD DAC |
 | Geographic | 7 | ISO 3166-1/2, UN M.49, EU NUTS, US FIPS, World Bank income groups |
 | Education | 3 | ISCED 2011, ISCED-F 2013, CIP 2020 |
 
@@ -194,45 +356,12 @@ GET /api/v1/compare?a={sys}&b={sys}                Side-by-side comparison
 GET /api/v1/diff?a={sys}&b={sys}                   Codes in A with no match in B
 GET /api/v1/countries/stats                        Coverage stats (world map)
 GET /api/v1/countries/{code}                       Country taxonomy profile
+GET /api/v1/systems/{src}/crosswalk/{tgt}/graph    Crosswalk graph for visualization
 ```
 
 Interactive docs: `http://localhost:8000/docs` (Swagger UI, auto-generated)
 
 **Rate limits** (default): 30 req/min unauthenticated, 1000 req/min with API key.
-
----
-
-## Architecture
-
-```
-WorldOfTaxonomy/
-├── world_of_taxonomy/
-│   ├── api/              # FastAPI REST API (lifespan pool, rate limiting)
-│   │   ├── routers/      # systems, nodes, search, equivalences, countries, auth
-│   │   └── schemas.py    # Pydantic response models
-│   ├── mcp/              # MCP server (stdio transport, 21 tools)
-│   ├── ingest/           # One ingester per system (100+ files)
-│   │   ├── naics.py      # Downloads from Census Bureau
-│   │   ├── nace_derived.py  # EU national adaptations (copy NACE + equivalences)
-│   │   ├── isic_derived.py  # LATAM/Asia/Africa adaptations
-│   │   └── crosswalk_*.py   # 20+ crosswalk ingesters
-│   ├── query/            # Query layer (browse, search, equivalence)
-│   ├── schema.sql        # Core tables
-│   └── schema_auth.sql   # Auth tables
-├── frontend/             # Next.js 15 + TypeScript + Tailwind + shadcn/ui
-│   └── src/app/          # Home (world map), Explore, System, Dashboard, Country
-├── tests/                # pytest (test_wot schema isolation, never touches production)
-└── data/                 # Downloaded source files (gitignored, re-downloadable)
-```
-
-**Database** (PostgreSQL):
-
-```sql
-classification_system      -- 279 rows: id, name, region, authority, node_count
-classification_node        -- 570K rows: system_id, code, title, level, parent_code
-equivalence                -- 122K rows: source_system, source_code, target_system, target_code, match_type
-country_system_link        -- 27K rows: country_code, system_id, relevance ('official'|'regional'|'recommended')
-```
 
 ---
 

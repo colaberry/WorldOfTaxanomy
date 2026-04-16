@@ -9,8 +9,10 @@ import { getSystemColor } from '@/lib/colors'
 import {
   SYSTEM_CATEGORIES,
   DOMAIN_SECTORS,
+  LIFE_SCIENCES_SECTORS,
   getCategoryForSystem,
   groupSystemsByCategory,
+  getLifeSciencesSector,
 } from '@/lib/categories'
 import { ChevronRight } from 'lucide-react'
 
@@ -138,7 +140,32 @@ function buildView(
       return { nodes, links: [], breadcrumb }
     }
 
-    // Non-domain: show individual system bubbles
+    // Life Sciences: show 13 sector bubbles
+    if (drill.categoryId === 'lifesciences') {
+      const sectorsPresent = LIFE_SCIENCES_SECTORS.filter((sector) =>
+        catSystems.some((s) => getLifeSciencesSector(s.id)?.id === sector.id)
+      )
+      const maxCount = Math.max(...sectorsPresent.map((sec) =>
+        catSystems.filter((s) => getLifeSciencesSector(s.id)?.id === sec.id).length
+      ), 1)
+
+      const nodes: ViewNode[] = sectorsPresent.map((sector, i) => {
+        const count = catSystems.filter((s) => getLifeSciencesSector(s.id)?.id === sector.id).length
+        return {
+          id: sector.id,
+          label: sector.label,
+          subLabel: `${count} system${count !== 1 ? 's' : ''}`,
+          radius: Math.sqrt(count / maxCount) * 38 + 30,
+          color: sector.accent,
+          phase: (i / sectorsPresent.length) * Math.PI * 2,
+          breathSpeed: 0.35 + Math.random() * 0.25,
+          type: 'sector' as const,
+        }
+      })
+      return { nodes, links: [], breadcrumb }
+    }
+
+    // Non-domain, non-lifesciences: show individual system bubbles
     const maxNodeCount = Math.max(...catSystems.map((s) => s.node_count), 1)
     const nodes: ViewNode[] = catSystems.map((sys, i) => ({
       id: sys.id,
@@ -167,21 +194,39 @@ function buildView(
     return { nodes, links, breadcrumb }
   }
 
-  // ── SECTOR: systems within one domain sector ──
-  const sector = DOMAIN_SECTORS.find((s) => s.id === drill.sectorId)!
-  const domainGroup = grouped.find((g) => g.category.id === 'domain')
-  const allDomain = domainGroup?.systems ?? []
-  const sectorSystems = allDomain.filter((s) =>
-    s.id === 'domain_adv_materials'
-      ? sector.id === 'materials'
-      : s.id.startsWith(sector.prefix)
-  )
+  // ── SECTOR: systems within one sector (domain or life sciences) ──
+  let sectorAccent: string
+  let sectorName: string
+  let sectorSystems: ClassificationSystem[]
+  let parentCatId: string
 
-  const domainCat = SYSTEM_CATEGORIES.find((c) => c.id === 'domain')!
+  if (drill.categoryId === 'lifesciences') {
+    const sector = LIFE_SCIENCES_SECTORS.find((s) => s.id === drill.sectorId)!
+    sectorAccent = sector.accent
+    sectorName = sector.label
+    parentCatId = 'lifesciences'
+    const lsGroup = grouped.find((g) => g.category.id === 'lifesciences')
+    const allLS = lsGroup?.systems ?? []
+    sectorSystems = allLS.filter((s) => getLifeSciencesSector(s.id)?.id === sector.id)
+  } else {
+    const sector = DOMAIN_SECTORS.find((s) => s.id === drill.sectorId)!
+    sectorAccent = sector.accent
+    sectorName = sector.label
+    parentCatId = 'domain'
+    const domainGroup = grouped.find((g) => g.category.id === 'domain')
+    const allDomain = domainGroup?.systems ?? []
+    sectorSystems = allDomain.filter((s) =>
+      s.id === 'domain_adv_materials'
+        ? sector.id === 'materials'
+        : s.id.startsWith(sector.prefix)
+    )
+  }
+
+  const parentCat = SYSTEM_CATEGORIES.find((c) => c.id === parentCatId)!
   const breadcrumb: BreadcrumbItem[] = [
     { label: 'All Categories', state: OVERVIEW_STATE },
-    { label: domainCat.label, state: { mode: 'category', categoryId: 'domain', sectorId: null } },
-    { label: sector.label, state: { ...drill } },
+    { label: parentCat.label, state: { mode: 'category', categoryId: parentCatId, sectorId: null } },
+    { label: sectorName, state: { ...drill } },
   ]
 
   const maxNodeCount = Math.max(...sectorSystems.map((s) => s.node_count), 1)
@@ -190,7 +235,7 @@ function buildView(
     label: sys.name,
     subLabel: `${sys.node_count.toLocaleString()} codes`,
     radius: Math.sqrt(sys.node_count / maxNodeCount) * 38 + 22,
-    color: sys.tint_color || sector.accent,
+    color: sys.tint_color || sectorAccent,
     phase: (i / sectorSystems.length) * Math.PI * 2,
     breathSpeed: 0.35 + Math.random() * 0.25,
     type: 'system' as const,
@@ -238,7 +283,7 @@ export function GalaxyView({ systems, stats }: Props) {
       if (node.type === 'category') {
         setDrill({ mode: 'category', categoryId: node.id, sectorId: null })
       } else if (node.type === 'sector') {
-        setDrill({ mode: 'sector', categoryId: 'domain', sectorId: node.id })
+        setDrill((prev) => ({ mode: 'sector', categoryId: prev.categoryId, sectorId: node.id }))
       } else {
         router.push(`/system/${node.id}`)
       }
@@ -249,7 +294,7 @@ export function GalaxyView({ systems, stats }: Props) {
   const handleBack = useCallback(() => {
     setDrill((prev) => {
       if (prev.mode === 'sector') {
-        return { mode: 'category', categoryId: 'domain', sectorId: null }
+        return { mode: 'category', categoryId: prev.categoryId, sectorId: null }
       }
       if (prev.mode === 'category') {
         return { mode: 'overview', categoryId: null, sectorId: null }
@@ -622,7 +667,7 @@ export function GalaxyView({ systems, stats }: Props) {
     if (drill.mode !== 'overview') {
       const prevLabel =
         drill.mode === 'sector'
-          ? (SYSTEM_CATEGORIES.find((c) => c.id === 'domain')?.label ?? 'Domain Deep-Dives')
+          ? (SYSTEM_CATEGORIES.find((c) => c.id === drill.categoryId)?.label ?? 'Back')
           : 'All Categories'
 
       const btnW = isMobile ? 110 : 136
@@ -788,7 +833,9 @@ export function GalaxyView({ systems, stats }: Props) {
     ? SYSTEM_CATEGORIES.find((c) => c.id === drill.categoryId)?.label ?? ''
     : ''
   const sectorLabel = drill.sectorId
-    ? DOMAIN_SECTORS.find((s) => s.id === drill.sectorId)?.label ?? ''
+    ? (DOMAIN_SECTORS.find((s) => s.id === drill.sectorId)?.label
+       ?? LIFE_SCIENCES_SECTORS.find((s) => s.id === drill.sectorId)?.label
+       ?? '')
     : ''
 
   return (
@@ -820,7 +867,7 @@ export function GalaxyView({ systems, stats }: Props) {
             {viewNodes.length}{' '}
             {drill.mode === 'overview'
               ? 'categories'
-              : drill.mode === 'category' && drill.categoryId === 'domain'
+              : drill.mode === 'category' && (drill.categoryId === 'domain' || drill.categoryId === 'lifesciences')
               ? 'sectors'
               : drill.mode === 'sector'
               ? 'systems'
@@ -830,7 +877,7 @@ export function GalaxyView({ systems, stats }: Props) {
           {/* Context hint for drillable views */}
           {drill.mode !== 'overview' && drill.mode !== 'sector' && (
             <span className="ml-1 text-[10px] opacity-50">
-              {drill.categoryId === 'domain'
+              {(drill.categoryId === 'domain' || drill.categoryId === 'lifesciences')
                 ? '- click a sector to explore'
                 : '- click a system to open it'}
             </span>

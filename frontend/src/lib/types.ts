@@ -61,6 +61,28 @@ export interface CrosswalkStat {
   partial_count: number
 }
 
+export interface CrosswalkGraphNode {
+  id: string
+  system: string
+  code: string
+  title: string
+}
+
+export interface CrosswalkGraphEdge {
+  source: string
+  target: string
+  match_type: string
+}
+
+export interface CrosswalkGraphResponse {
+  source_system: string
+  target_system: string
+  nodes: CrosswalkGraphNode[]
+  edges: CrosswalkGraphEdge[]
+  total_edges: number
+  truncated: boolean
+}
+
 export interface User {
   id: string
   email: string

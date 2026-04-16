@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { getSystems, getStats, getGithubStars } from '@/lib/api'
 import { GalaxyView } from '@/components/visualizations/GalaxyView'
+import { CrosswalkGraph } from '@/components/visualizations/CrosswalkGraph'
 import { WorldMap } from '@/components/visualizations/WorldMap'
 import { IndustryMap } from '@/components/IndustryMap'
 import { SYSTEM_CATEGORIES, groupSystemsByCategory, getCategoryForSystem } from '@/lib/categories'
@@ -70,7 +71,7 @@ export function HomeContent({ initialSystems, initialStats }: HomeContentProps) 
             {[
               { icon: Globe,     value: loadingSystems ? '...' : (systems?.length ?? '...').toString(),     label: 'Systems',      href: '/dashboard' },
               { icon: GitBranch, value: loadingSystems ? '...' : totalNodes.toLocaleString(),            label: 'Nodes',        href: '/explore' },
-              { icon: Network,   value: loadingStats   ? '...' : totalEdges.toLocaleString(),            label: 'Connections',  href: '/dashboard' },
+              { icon: Network,   value: loadingStats   ? '...' : totalEdges.toLocaleString(),            label: 'Connections',  href: '/crosswalk-explorer' },
               { icon: Star,      value: githubStars != null ? githubStars.toLocaleString() : '...',      label: 'GitHub Stars', href: 'https://github.com/colaberry/WorldOfTaxonomy/stargazers' },
             ].map(({ icon: Icon, value, label, href }) => (
               <Link
@@ -187,6 +188,40 @@ export function HomeContent({ initialSystems, initialStats }: HomeContentProps) 
           Click any system to explore its hierarchy. Drag to rearrange.
         </p>
       </div>
+
+      {/* Crosswalk Ring - preview links to /crosswalk-explorer */}
+      {systems && stats && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight">System Crosswalks</h2>
+              <p className="text-sm text-muted-foreground">
+                {totalEdges.toLocaleString()} connections linking{' '}
+                {new Set([...stats.map((s) => s.source_system), ...stats.map((s) => s.target_system)]).size}{' '}
+                classification systems
+              </p>
+            </div>
+            <Link
+              href="/crosswalk-explorer"
+              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
+            >
+              Explore crosswalks <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+          <Link href="/crosswalk-explorer" className="block group">
+            <div className="relative w-full h-[500px] rounded-xl border border-border/50 bg-background overflow-hidden">
+              <div className="pointer-events-none w-full h-full">
+                <CrosswalkGraph mode="system" systems={systems} stats={stats} />
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-background/20">
+                <span className="px-4 py-2 rounded-lg bg-card border border-border/50 text-sm font-medium shadow-lg flex items-center gap-2">
+                  Explore crosswalks <ArrowRight className="h-4 w-4" />
+                </span>
+              </div>
+            </div>
+          </Link>
+        </div>
+      )}
 
       {/* Browse by Category */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full space-y-4">

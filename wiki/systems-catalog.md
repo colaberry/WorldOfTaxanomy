@@ -74,7 +74,7 @@ Over 80 country-specific ISIC Rev 4 adaptations covering Africa, Middle East, Ce
 | UK SOC 2020 | United Kingdom | 43 | UK occupations |
 | ANZSCO 2022 | Australia/NZ | 1,590 | AU/NZ occupations |
 
-## Health and Clinical Classification
+## Life Sciences
 
 | System | Region | Codes | Purpose |
 |--------|--------|-------|---------|
