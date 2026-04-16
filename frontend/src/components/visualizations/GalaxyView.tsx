@@ -344,11 +344,23 @@ export function GalaxyView({ systems, stats }: Props) {
     const maxRadius = Math.max(...viewNodes.map((n) => n.radius))
     const padding = maxRadius + 16
     const linkDist = isMobile ? 90 : 160
-    const chargeStrength = viewNodes.length <= 15
+    const nCount = viewNodes.length
+    const chargeStrength = nCount <= 15
       ? -(isMobile ? 900 : 1600)
-      : isMobile ? -200 : -420
+      : nCount <= 40
+      ? -(isMobile ? 400 : 800)
+      : -(isMobile ? 200 : 420)
 
-    const simNodes = viewNodes.map((n) => ({ ...n }))
+    // Pre-position nodes in a circle so the simulation starts settled
+    const simNodes: ViewNode[] = viewNodes.map((n, i) => {
+      const angle = (i / viewNodes.length) * Math.PI * 2
+      const spread = Math.min(width, height) * 0.3
+      return {
+        ...n,
+        x: width / 2 + Math.cos(angle) * spread,
+        y: height / 2 + Math.sin(angle) * spread,
+      }
+    })
 
     const simLinks: ViewLink[] = viewLinks.map((l) => ({
       ...l,
@@ -370,7 +382,7 @@ export function GalaxyView({ systems, stats }: Props) {
       .force('center', d3.forceCenter(width / 2, height / 2))
       .force(
         'collision',
-        d3.forceCollide<ViewNode>().radius((d) => d.radius + (isMobile ? 14 : 20))
+        d3.forceCollide<ViewNode>().radius((d) => d.radius + (isMobile ? 14 : 20)).strength(0.9)
       )
       .force('x', d3.forceX(width / 2).strength(0.06))
       .force('y', d3.forceY(height / 2).strength(0.06))
@@ -426,24 +438,28 @@ export function GalaxyView({ systems, stats }: Props) {
 
     let hoveredId: string | null = null
 
+    let wasDragged = false
+
     const node = svg
       .append('g')
       .selectAll<SVGGElement, ViewNode>('g')
       .data(simNodes)
       .join('g')
-      .attr('cursor', (d) => d.type === 'system' ? 'pointer' : 'pointer')
+      .attr('cursor', 'pointer')
       .on('click', (_event, d) => {
-        handleNodeClick(d)
+        if (!wasDragged) handleNodeClick(d)
       })
       .call(
         d3
           .drag<SVGGElement, ViewNode>()
           .on('start', (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart()
+            wasDragged = false
+            if (!event.active) simulation.alphaTarget(0.15).restart()
             d.fx = d.x
             d.fy = d.y
           })
           .on('drag', (event, d) => {
+            wasDragged = true
             d.fx = event.x
             d.fy = event.y
           })
@@ -742,13 +758,13 @@ export function GalaxyView({ systems, stats }: Props) {
           .attr('fill', src.color)
       })
 
-      if (simulation.alpha() < 0.01) {
+      if (simulation.alpha() < 0.005) {
         simNodes.forEach((d) => {
           if (d.fx !== null && d.fx !== undefined) return
-          d.vx = (d.vx ?? 0) + (Math.random() - 0.5) * 0.15
-          d.vy = (d.vy ?? 0) + (Math.random() - 0.5) * 0.15
+          d.vx = (d.vx ?? 0) + (Math.random() - 0.5) * 0.05
+          d.vy = (d.vy ?? 0) + (Math.random() - 0.5) * 0.05
         })
-        simulation.alpha(0.015).restart()
+        simulation.alpha(0.008).restart()
       }
 
       animId = requestAnimationFrame(animate)
