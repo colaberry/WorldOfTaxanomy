@@ -30,6 +30,12 @@ export interface ClassificationNode {
   sector_code: string | null
   is_leaf: boolean
   seq_order: number
+  // Provenance fields (from parent classification_system)
+  data_provenance: 'official_download' | 'structural_derivation' | 'manual_transcription' | 'expert_curated' | null
+  license: string | null
+  source_url: string | null
+  source_date: string | null
+  source_file_hash: string | null
 }
 
 export interface ClassificationNodeWithContext extends ClassificationNode {

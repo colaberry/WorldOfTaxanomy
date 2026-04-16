@@ -8,7 +8,10 @@ import type {
   User,
   ApiKey,
   AuthTokens,
+  GeneratedNode,
+  GenerateTaxonomyResponse,
 } from './types'
+import { getToken } from './auth'
 
 const API_BASE = ''
 
@@ -73,6 +76,54 @@ export async function getEquivalences(
   code: string
 ): Promise<Equivalence[]> {
   return fetchJson(`/api/v1/systems/${systemId}/nodes/${code}/equivalences`)
+}
+
+// ── AI Taxonomy Generation ──
+
+export async function generateTaxonomy(
+  systemId: string,
+  code: string,
+  count = 5
+): Promise<GenerateTaxonomyResponse> {
+  const token = getToken()
+  const res = await fetch(
+    `/api/v1/systems/${systemId}/nodes/${encodeURIComponent(code)}/generate`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ count }),
+    }
+  )
+  if (!res.ok) {
+    throw new ApiError(res.status, `Generate failed: ${res.status} ${res.statusText}`)
+  }
+  return res.json()
+}
+
+export async function acceptGeneratedTaxonomy(
+  systemId: string,
+  code: string,
+  nodes: GeneratedNode[]
+): Promise<ClassificationNode[]> {
+  const token = getToken()
+  const res = await fetch(
+    `/api/v1/systems/${systemId}/nodes/${encodeURIComponent(code)}/generate/accept`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ nodes }),
+    }
+  )
+  if (!res.ok) {
+    throw new ApiError(res.status, `Accept failed: ${res.status} ${res.statusText}`)
+  }
+  return res.json()
 }
 
 // ── Search ──
@@ -208,7 +259,7 @@ export async function revokeApiKey(
 // ── GitHub public repo stats ──
 
 export async function getGithubStars(): Promise<number> {
-  const res = await fetch('https://api.github.com/repos/colaberry/WorldOfTaxanomy', {
+  const res = await fetch('https://api.github.com/repos/colaberry/WorldOfTaxonomy', {
     headers: { Accept: 'application/vnd.github.v3+json' },
     next: { revalidate: 3600 }, // Next.js cache hint - 1 hour
   })

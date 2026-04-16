@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import asyncio
 import pytest
-from world_of_taxanomy.ingest.crosswalk_isco_isic import (
+from world_of_taxonomy.ingest.crosswalk_isco_isic import (
     ISCO_ISIC_EDGES,
     ingest_crosswalk_isco_isic,
 )
@@ -62,8 +62,8 @@ class TestIscoIsicEdges:
 def test_ingest_crosswalk_isco_isic(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
-            from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
-            from world_of_taxanomy.ingest.isic import ingest_isic_rev4
+            from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
+            from world_of_taxonomy.ingest.isic import ingest_isic_rev4
             await ingest_isco_08(conn)
             await ingest_isic_rev4(conn)
 
@@ -83,8 +83,8 @@ def test_ingest_crosswalk_isco_isic(db_pool):
 def test_ingest_crosswalk_isco_isic_idempotent(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
-            from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
-            from world_of_taxanomy.ingest.isic import ingest_isic_rev4
+            from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
+            from world_of_taxonomy.ingest.isic import ingest_isic_rev4
             await ingest_isco_08(conn)
             await ingest_isic_rev4(conn)
 

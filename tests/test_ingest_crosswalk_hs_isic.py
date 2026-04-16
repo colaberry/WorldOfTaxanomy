@@ -8,7 +8,7 @@ Match type: broad (version differences: HS 2012 vs 2022, ISIC Rev 3 vs Rev 4).
 Edges: ~3,010 (1,505 pairs x 2 directions).
 """
 import pytest
-from world_of_taxanomy.ingest.crosswalk_hs_isic import (
+from world_of_taxonomy.ingest.crosswalk_hs_isic import (
     ingest_crosswalk_hs_isic,
 )
 
@@ -25,7 +25,7 @@ def test_ingest_crosswalk_hs_isic(db_pool):
 
     data_path = Path("data/hs_isic_wits.csv")
     if not data_path.exists():
-        pytest.skip(f"Download {data_path} first: see world_of_taxanomy/ingest/crosswalk_hs_isic.py")
+        pytest.skip(f"Download {data_path} first: see world_of_taxonomy/ingest/crosswalk_hs_isic.py")
 
     async def _run():
         async with db_pool.acquire() as conn:

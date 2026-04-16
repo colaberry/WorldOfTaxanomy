@@ -7,13 +7,13 @@ integration test with the real Excel data file.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.nic import (
+from world_of_taxonomy.ingest.nic import (
     _determine_level,
     _determine_parent,
     _determine_sector,
     SECTION_NAMES,
 )
-from world_of_taxanomy.ingest.isic import _DIV_TO_SECTION
+from world_of_taxonomy.ingest.isic import _DIV_TO_SECTION
 
 
 def _run(coro):
@@ -126,7 +126,7 @@ def test_ingest_nic_2008_from_real_file(db_pool):
     Skips if the data file hasn't been downloaded yet.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.nic import ingest_nic_2008, _get_project_root
+    from world_of_taxonomy.ingest.nic import ingest_nic_2008, _get_project_root
 
     xlsx_path = _get_project_root() / "data/nic/NIC_2008.xlsx"
     if not xlsx_path.exists():

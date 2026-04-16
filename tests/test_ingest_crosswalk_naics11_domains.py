@@ -13,7 +13,7 @@ Source: Derived. Open.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk_naics11_domains import (
+from world_of_taxonomy.ingest.crosswalk_naics11_domains import (
     NAICS_DOMAIN_LINKS,
     ingest_crosswalk_naics11_domains,
 )
@@ -67,11 +67,11 @@ def test_crosswalk_naics11_domains_module_importable():
 
 def test_ingest_crosswalk_naics11_domains(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.domain_ag_crop import ingest_domain_ag_crop
-        from world_of_taxanomy.ingest.domain_ag_livestock import ingest_domain_ag_livestock
-        from world_of_taxanomy.ingest.domain_ag_method import ingest_domain_ag_method
-        from world_of_taxanomy.ingest.domain_ag_grade import ingest_domain_ag_grade
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.domain_ag_crop import ingest_domain_ag_crop
+        from world_of_taxonomy.ingest.domain_ag_livestock import ingest_domain_ag_livestock
+        from world_of_taxonomy.ingest.domain_ag_method import ingest_domain_ag_method
+        from world_of_taxonomy.ingest.domain_ag_grade import ingest_domain_ag_grade
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_domain_ag_crop(conn)
@@ -85,11 +85,11 @@ def test_ingest_crosswalk_naics11_domains(db_pool):
 
 def test_ingest_crosswalk_naics11_domains_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.domain_ag_crop import ingest_domain_ag_crop
-        from world_of_taxanomy.ingest.domain_ag_livestock import ingest_domain_ag_livestock
-        from world_of_taxanomy.ingest.domain_ag_method import ingest_domain_ag_method
-        from world_of_taxanomy.ingest.domain_ag_grade import ingest_domain_ag_grade
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.domain_ag_crop import ingest_domain_ag_crop
+        from world_of_taxonomy.ingest.domain_ag_livestock import ingest_domain_ag_livestock
+        from world_of_taxonomy.ingest.domain_ag_method import ingest_domain_ag_method
+        from world_of_taxonomy.ingest.domain_ag_grade import ingest_domain_ag_grade
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_domain_ag_crop(conn)

@@ -16,7 +16,7 @@ All categories are leaves. Scopes are not leaves (they have children).
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.ghg_protocol import (
+from world_of_taxonomy.ingest.ghg_protocol import (
     GHG_NODES,
     ingest_ghg_protocol,
 )

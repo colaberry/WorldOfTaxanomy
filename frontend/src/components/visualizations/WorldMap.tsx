@@ -257,8 +257,8 @@ export function WorldMap() {
             const alpha2 = NAME_TO_ALPHA2[d.properties.name]
             const stat = statsMap.get(alpha2!)
             if (!stat) return ''
-            // Show country-specific count if any, otherwise total
-            return String(stat.country_specific_count > 0 ? stat.country_specific_count : stat.system_count)
+            // Show total system count (includes global recommended standards)
+            return String(stat.system_count)
           })
       })
       .catch(() => {

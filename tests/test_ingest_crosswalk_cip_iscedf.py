@@ -18,7 +18,7 @@ import asyncio
 import pytest
 from pathlib import Path
 
-from world_of_taxanomy.ingest.crosswalk_cip_iscedf import (
+from world_of_taxonomy.ingest.crosswalk_cip_iscedf import (
     ingest_crosswalk_cip_iscedf,
     _match_type,
 )
@@ -53,8 +53,8 @@ def test_ingest_crosswalk_cip_iscedf(db_pool):
         pytest.skip("Download data files first")
 
     async def _run():
-        from world_of_taxanomy.ingest.cip_2020 import ingest_cip_2020
-        from world_of_taxanomy.ingest.iscedf_2013 import ingest_iscedf_2013
+        from world_of_taxonomy.ingest.cip_2020 import ingest_cip_2020
+        from world_of_taxonomy.ingest.iscedf_2013 import ingest_iscedf_2013
         async with db_pool.acquire() as conn:
             await ingest_cip_2020(conn, path=str(cip_path))
             await ingest_iscedf_2013(conn, path=str(iscedf_path))
@@ -101,8 +101,8 @@ def test_ingest_crosswalk_cip_iscedf_idempotent(db_pool):
         pytest.skip("Download data files first")
 
     async def _run():
-        from world_of_taxanomy.ingest.cip_2020 import ingest_cip_2020
-        from world_of_taxanomy.ingest.iscedf_2013 import ingest_iscedf_2013
+        from world_of_taxonomy.ingest.cip_2020 import ingest_cip_2020
+        from world_of_taxonomy.ingest.iscedf_2013 import ingest_iscedf_2013
         async with db_pool.acquire() as conn:
             await ingest_cip_2020(conn, path=str(cip_path))
             await ingest_iscedf_2013(conn, path=str(iscedf_path))
@@ -122,8 +122,8 @@ def test_crosswalk_asterisk_codes_stripped(db_pool):
         pytest.skip("Download data files first")
 
     async def _run():
-        from world_of_taxanomy.ingest.cip_2020 import ingest_cip_2020
-        from world_of_taxanomy.ingest.iscedf_2013 import ingest_iscedf_2013
+        from world_of_taxonomy.ingest.cip_2020 import ingest_cip_2020
+        from world_of_taxonomy.ingest.iscedf_2013 import ingest_iscedf_2013
         async with db_pool.acquire() as conn:
             await ingest_cip_2020(conn, path=str(cip_path))
             await ingest_iscedf_2013(conn, path=str(iscedf_path))

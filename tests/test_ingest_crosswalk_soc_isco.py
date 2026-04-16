@@ -12,7 +12,7 @@ import asyncio
 import pytest
 from pathlib import Path
 
-from world_of_taxanomy.ingest.crosswalk_soc_isco import ingest_crosswalk_soc_isco
+from world_of_taxonomy.ingest.crosswalk_soc_isco import ingest_crosswalk_soc_isco
 
 
 def test_crosswalk_soc_isco_module_importable():
@@ -29,8 +29,8 @@ def test_ingest_crosswalk_soc_isco(db_pool):
         pytest.skip("Download data files first: soc_2018.csv, isco_08.csv, soc2010_isco08.csv")
 
     async def _run():
-        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
-        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
+        from world_of_taxonomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
             await ingest_soc_2018(conn, path=str(soc_path))
             await ingest_isco_08(conn, path=str(isco_path))
@@ -68,8 +68,8 @@ def test_ingest_crosswalk_soc_isco_idempotent(db_pool):
         pytest.skip("Download data files first")
 
     async def _run():
-        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
-        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
+        from world_of_taxonomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
             await ingest_soc_2018(conn, path=str(soc_path))
             await ingest_isco_08(conn, path=str(isco_path))
@@ -89,8 +89,8 @@ def test_crosswalk_excludes_codes_not_in_soc2018(db_pool):
         pytest.skip("Download data files first")
 
     async def _run():
-        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
-        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
+        from world_of_taxonomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
             await ingest_soc_2018(conn, path=str(soc_path))
             await ingest_isco_08(conn, path=str(isco_path))

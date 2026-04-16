@@ -7,7 +7,7 @@ Run these first to confirm RED, then implement handlers to go GREEN.
 import asyncio
 import pytest
 
-from world_of_taxanomy.mcp.handlers import (
+from world_of_taxonomy.mcp.handlers import (
     handle_translate_across_all_systems,
     handle_compare_sector,
     handle_find_by_keyword_all_systems,

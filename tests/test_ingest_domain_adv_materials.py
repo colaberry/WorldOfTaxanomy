@@ -17,7 +17,7 @@ Source: NAICS 325 + 327 advanced materials industry structure. Hand-coded. Open.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.domain_adv_materials import (
+from world_of_taxonomy.ingest.domain_adv_materials import (
     MATERIALS_NODES,
     _determine_level,
     _determine_parent,
@@ -113,7 +113,7 @@ def test_domain_adv_materials_module_importable():
 def test_ingest_domain_adv_materials(db_pool):
     """Integration test: advanced materials taxonomy rows + NAICS links."""
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count = await ingest_domain_adv_materials(conn)
@@ -137,7 +137,7 @@ def test_ingest_domain_adv_materials(db_pool):
 
 def test_ingest_domain_adv_materials_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count1 = await ingest_domain_adv_materials(conn)

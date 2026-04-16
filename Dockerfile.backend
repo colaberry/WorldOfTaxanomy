@@ -1,0 +1,31 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies needed by some ingesters (xlrd, lxml, etc.)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies first (layer cached unless requirements change)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy source
+COPY . .
+RUN pip install -e . --no-deps
+
+# Create data directory for downloaded source files
+RUN mkdir -p /app/data
+
+EXPOSE 8000
+
+# Initialize schema, then start the API server.
+# Data ingestion is done separately via:
+#   docker compose exec backend python3 -m world_of_taxonomy ingest <system>
+CMD ["sh", "-c", \
+     "python3 -m world_of_taxonomy init && \
+      python3 -m uvicorn world_of_taxonomy.api.app:create_app \
+        --factory --host 0.0.0.0 --port 8000"]

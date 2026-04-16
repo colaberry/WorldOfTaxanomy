@@ -8,7 +8,7 @@ import asyncio
 import json
 import pytest
 
-from world_of_taxanomy.mcp.protocol import (
+from world_of_taxonomy.mcp.protocol import (
     build_tools_list,
     build_resources_list,
     handle_jsonrpc_request,
@@ -22,9 +22,9 @@ def _run(coro):
 # ── tools/list ────────────────────────────────────────────────
 
 
-def test_tools_list_returns_21_tools():
+def test_tools_list_returns_23_tools():
     tools = build_tools_list()
-    assert len(tools) == 21
+    assert len(tools) == 23
     names = {t["name"] for t in tools}
     assert names == {
         "list_classification_systems",
@@ -47,7 +47,9 @@ def test_tools_list_returns_21_tools():
         "get_region_mapping",
         "describe_match_types",
         "explore_industry_tree",
+        "get_audit_report",
         "get_country_taxonomy_profile",
+        "classify_business",
     }
 
 
@@ -89,7 +91,7 @@ def test_handle_initialize():
         response = await handle_jsonrpc_request(request, conn=None)
         assert response["id"] == 1
         assert "result" in response
-        assert response["result"]["serverInfo"]["name"] == "WorldOfTaxanomy"
+        assert response["result"]["serverInfo"]["name"] == "WorldOfTaxonomy"
         assert "tools" in response["result"]["capabilities"]
         assert "resources" in response["result"]["capabilities"]
     _run(_test())
@@ -105,7 +107,7 @@ def test_handle_tools_list():
         response = await handle_jsonrpc_request(request, conn=None)
         assert response["id"] == 2
         assert "result" in response
-        assert len(response["result"]["tools"]) == 21
+        assert len(response["result"]["tools"]) == 23
     _run(_test())
 
 

@@ -4,7 +4,7 @@ from pathlib import Path
 long_description = (Path(__file__).parent / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name="world-of-taxanomy",
+    name="world-of-taxonomy",
     version="0.2.0",
     packages=find_packages(exclude=["tests*", "frontend*", "data*"]),
     python_requires=">=3.9",
@@ -29,16 +29,16 @@ setup(
             "build>=1.0.0",
         ]
     },
-    description="36-system open taxonomy knowledge graph: industry, geography, product, occupation, education, health, regulation - all connected by crosswalk edges.",
+    description="1,000+ system open taxonomy knowledge graph: industry, geography, product, occupation, education, health, regulation - all connected by crosswalk edges.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    author="ramdhanyk",
-    author_email="",
-    url="https://github.com/colaberry/WorldOfTaxanomy",
+    author="Colaberry, Inc.",
+    author_email="ram@colaberry.com",
+    url="https://github.com/colaberry/WorldOfTaxonomy",
     project_urls={
-        "Documentation": "https://worldoftaxanomy.com",
-        "Source": "https://github.com/colaberry/WorldOfTaxanomy",
-        "Tracker": "https://github.com/colaberry/WorldOfTaxanomy/issues",
+        "Documentation": "https://worldoftaxonomy.com",
+        "Source": "https://github.com/colaberry/WorldOfTaxonomy",
+        "Tracker": "https://github.com/colaberry/WorldOfTaxonomy/issues",
     },
     license="MIT",
     classifiers=[
@@ -69,11 +69,11 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "world-of-taxanomy=world_of_taxanomy.__main__:main",
+            "world-of-taxonomy=world_of_taxonomy.__main__:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "world_of_taxanomy": ["schema.sql", "schema_auth.sql"],
+        "world_of_taxonomy": ["schema.sql", "schema_auth.sql"],
     },
 )

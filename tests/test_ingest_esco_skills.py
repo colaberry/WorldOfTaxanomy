@@ -30,7 +30,7 @@ import asyncio
 import os
 import pytest
 
-from world_of_taxanomy.ingest.esco_skills import (
+from world_of_taxonomy.ingest.esco_skills import (
     _extract_skill_code,
     _determine_skill_sector,
     ingest_esco_skills,

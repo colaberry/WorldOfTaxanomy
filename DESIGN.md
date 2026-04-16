@@ -1,4 +1,4 @@
-# Design System - WorldOfTaxanomy
+# Design System - WorldOfTaxonomy
 
 ## Product Context
 - **What this is:** A unified global industry classification graph that federates ISIC, NAICS, NACE, ANZSIC, JSIC, and other national classification systems as equal peers, connecting each industry node to its domain-specific taxonomies (ICD codes, drug classifications, crop taxonomies, financial instrument codes, etc.)

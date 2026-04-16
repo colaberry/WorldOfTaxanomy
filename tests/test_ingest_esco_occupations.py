@@ -7,7 +7,7 @@ Published by the European Commission, available as bulk CSV download.
 License: CC BY 4.0
 
 ESCO Occupations are level-5 specialisations beneath ISCO-08 unit groups.
-Stored as a flat system (all level=1, no parent) in WorldOfTaxanomy.
+Stored as a flat system (all level=1, no parent) in WorldOfTaxonomy.
 The link to ISCO-08 is handled by the crosswalk in Phase 7-C.
 
 Structure:
@@ -25,7 +25,7 @@ import asyncio
 import os
 import pytest
 
-from world_of_taxanomy.ingest.esco_occupations import (
+from world_of_taxonomy.ingest.esco_occupations import (
     _extract_code,
     _determine_sector,
     _extract_en_label,

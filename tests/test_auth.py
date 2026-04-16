@@ -11,7 +11,7 @@ import pytest
 import secrets
 from datetime import datetime, timedelta, timezone
 
-from world_of_taxanomy.api.deps import JWT_SECRET, JWT_ALGORITHM
+from world_of_taxonomy.api.deps import JWT_SECRET, JWT_ALGORITHM
 
 
 def _run(coro):

@@ -1,4 +1,4 @@
-"""Test fixtures for WorldOfTaxanomy.
+"""Test fixtures for WorldOfTaxonomy.
 
 Uses a real Neon PostgreSQL database but isolates tests in a separate
 'test_wot' schema so production data in the 'public' schema is NEVER touched.
@@ -98,10 +98,10 @@ def setup_and_teardown(request):
 
 
 async def _setup(pool):
-    schema_path = Path(__file__).parent.parent / "world_of_taxanomy" / "schema.sql"
+    schema_path = Path(__file__).parent.parent / "world_of_taxonomy" / "schema.sql"
     schema_sql = schema_path.read_text()
 
-    auth_schema_path = Path(__file__).parent.parent / "world_of_taxanomy" / "schema_auth.sql"
+    auth_schema_path = Path(__file__).parent.parent / "world_of_taxonomy" / "schema_auth.sql"
     auth_schema_sql = auth_schema_path.read_text() if auth_schema_path.exists() else ""
 
     async with pool.acquire() as conn:
@@ -134,10 +134,14 @@ async def _teardown(pool):
 
 async def seed_naics(conn):
     await conn.execute("""
-        INSERT INTO classification_system (id, name, full_name, region, version, authority, tint_color)
+        INSERT INTO classification_system
+            (id, name, full_name, region, version, authority, tint_color,
+             source_url, data_provenance, license, source_file_hash)
         VALUES ('naics_2022', 'NAICS 2022',
                 'North American Industry Classification System 2022',
-                'North America', '2022', 'U.S. Census Bureau', '#F59E0B')
+                'North America', '2022', 'U.S. Census Bureau', '#F59E0B',
+                'https://www.census.gov/naics/', 'official_download',
+                'Public Domain (US Government)', 'abc123hash')
     """)
     naics_nodes = [
         ("11", "Agriculture, Forestry, Fishing and Hunting", None, 1, None, "11", False, 1),

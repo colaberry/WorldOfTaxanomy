@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useState, useEffect } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import Link from 'next/link'
-import { ChevronRight, Leaf, ExternalLink } from 'lucide-react'
-import { getChildren, getEquivalences } from '@/lib/api'
+import { ChevronRight, Leaf, ExternalLink, Wand2, Loader2 } from 'lucide-react'
+import { getChildren, getEquivalences, generateTaxonomy, acceptGeneratedTaxonomy } from '@/lib/api'
 import { getSectorColor, getSystemColor } from '@/lib/colors'
-import type { ClassificationNode, ClassificationSystem, Equivalence } from '@/lib/types'
+import { isLoggedIn } from '@/lib/auth'
+import type { ClassificationNode, ClassificationSystem, Equivalence, GeneratedNode } from '@/lib/types'
 
 // ── Single tree row ──────────────────────────────────────────────────────────
 
@@ -18,6 +19,18 @@ interface NodeRowProps {
 
 function NodeRow({ systemId, node, systems }: NodeRowProps) {
   const [expanded, setExpanded] = useState(false)
+  const [loggedIn, setLoggedIn] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [loginRequired, setLoginRequired] = useState(false)
+  const [suggestions, setSuggestions] = useState<GeneratedNode[] | null>(null)
+  const [selected, setSelected] = useState<number[]>([])
+  const [accepting, setAccepting] = useState(false)
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    const devMode = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    setLoggedIn(isLoggedIn() || devMode)
+  }, [])
 
   const { data: children, isFetching: loadingChildren } = useQuery({
     queryKey: ['tree-children', systemId, node.code],
@@ -51,6 +64,42 @@ function NodeRow({ systemId, node, systems }: NodeRowProps) {
     ? new Set(equivalences.map((e) => e.target_system)).size
     : 0
   const hiddenCount = totalSystems - chips.length
+
+  async function handleGenerate(e: { stopPropagation(): void }) {
+    e.stopPropagation()
+    if (!loggedIn) {
+      setLoginRequired(true)
+      setSuggestions(null)
+      return
+    }
+    setLoginRequired(false)
+    setGenerating(true)
+    try {
+      const result = await generateTaxonomy(systemId, node.code)
+      setSuggestions(result.nodes)
+      setSelected(result.nodes.map((_, i) => i))
+    } catch {
+      setSuggestions([])
+    } finally {
+      setGenerating(false)
+    }
+  }
+
+  async function handleAccept() {
+    if (!suggestions) return
+    const chosen = suggestions.filter((_, i) => selected.includes(i))
+    if (chosen.length === 0) return
+    setAccepting(true)
+    try {
+      await acceptGeneratedTaxonomy(systemId, node.code, chosen)
+      setSuggestions(null)
+      setSelected([])
+      queryClient.invalidateQueries({ queryKey: ['tree-children', systemId, node.code] })
+      queryClient.invalidateQueries({ queryKey: ['node', systemId, node.code] })
+    } finally {
+      setAccepting(false)
+    }
+  }
 
   return (
     <div>
@@ -87,9 +136,31 @@ function NodeRow({ systemId, node, systems }: NodeRowProps) {
           {node.code}
         </span>
 
-        {/* Title */}
-        <span className="text-sm flex-1 min-w-0 truncate text-foreground/75 group-hover:text-foreground transition-colors">
-          {node.title}
+        {/* Title + inline action buttons */}
+        <span className="flex items-center gap-1.5 flex-1 min-w-0">
+          <span className="text-sm min-w-0 truncate text-foreground/75 group-hover:text-foreground transition-colors">
+            {node.title}
+          </span>
+          <button
+            onClick={handleGenerate}
+            title={loggedIn ? 'Generate AI sub-classifications' : 'Sign in to generate AI sub-classifications'}
+            className="shrink-0 flex items-center justify-center hover:scale-110 transition-transform"
+            style={{ color: generating ? '#d97706' : '#b8860b' }}
+          >
+            {generating ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Wand2 className="h-3.5 w-3.5" />
+            )}
+          </button>
+          <Link
+            href={`/system/${systemId}/node/${encodeURIComponent(node.code)}`}
+            onClick={(e) => e.stopPropagation()}
+            title="View full detail"
+            className="shrink-0 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
         </span>
 
         {/* Equivalence chips - appear after expand + load */}
@@ -120,16 +191,89 @@ function NodeRow({ systemId, node, systems }: NodeRowProps) {
           </div>
         )}
 
-        {/* Detail page link - visible on hover */}
-        <Link
-          href={`/system/${systemId}/node/${encodeURIComponent(node.code)}`}
-          onClick={(e) => e.stopPropagation()}
-          title="View full detail"
-          className="w-5 h-5 flex items-center justify-center text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
-        >
-          <ExternalLink className="h-3.5 w-3.5" />
-        </Link>
       </div>
+
+      {/* Login required panel */}
+      {loginRequired && (
+        <div className="mx-2 my-1 px-3 py-2 rounded-lg border border-dashed border-purple-500/40 bg-purple-500/5 text-xs text-purple-400/80 flex items-center justify-between">
+          <span>
+            <Link href="/login" className="underline hover:text-purple-300">Sign in</Link>
+            {' '}to generate AI sub-classifications
+          </span>
+          <button
+            onClick={() => setLoginRequired(false)}
+            className="ml-3 text-muted-foreground hover:text-foreground"
+          >
+            x
+          </button>
+        </div>
+      )}
+
+      {/* AI suggestion panel */}
+      {suggestions !== null && (
+        <div className="mx-2 my-1 rounded-lg border border-dashed border-purple-500/40 bg-purple-500/5">
+          <div className="px-3 py-2 border-b border-purple-500/20 flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-purple-400/70">
+              AI-Suggested Sub-classifications
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setSelected(suggestions.map((_, i) => i))}
+                className="text-[11px] text-purple-400/60 hover:text-purple-300"
+              >
+                All
+              </button>
+              <button
+                onClick={() => { setSuggestions(null); setSelected([]) }}
+                className="text-[11px] text-muted-foreground hover:text-foreground"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+
+          {suggestions.length === 0 ? (
+            <div className="px-3 py-2 text-xs text-muted-foreground">No suggestions returned.</div>
+          ) : (
+            <>
+              <ul className="px-3 py-1 space-y-0.5">
+                {suggestions.map((s, i) => (
+                  <li key={i} className="flex items-start gap-2 py-1">
+                    <input
+                      type="checkbox"
+                      checked={selected.includes(i)}
+                      onChange={() =>
+                        setSelected((prev) =>
+                          prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i]
+                        )
+                      }
+                      className="mt-0.5 shrink-0 accent-purple-500"
+                    />
+                    <span
+                      className="font-mono text-[11px] px-1.5 py-0.5 rounded shrink-0"
+                      style={{ color: '#a855f7', backgroundColor: '#a855f718' }}
+                    >
+                      {s.code}
+                    </span>
+                    <span className="text-xs text-foreground/80">{s.title}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="px-3 pb-2 pt-1">
+                <button
+                  onClick={handleAccept}
+                  disabled={selected.length === 0 || accepting}
+                  className="px-3 py-1 rounded text-xs bg-purple-600/80 hover:bg-purple-600 text-white disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+                >
+                  {accepting && <Loader2 className="h-3 w-3 animate-spin" />}
+                  Accept {selected.length > 0 ? selected.length : ''}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Children with guide line */}
       {expanded && !node.is_leaf && (

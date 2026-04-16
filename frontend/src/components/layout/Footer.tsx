@@ -9,10 +9,10 @@ const EXPLORE_LINKS = [
 ]
 
 const DEVELOPER_LINKS = [
-  { href: 'https://github.com/colaberry/WorldOfTaxanomy',        label: 'GitHub repository', external: true },
+  { href: 'https://github.com/colaberry/WorldOfTaxonomy',        label: 'GitHub repository', external: true },
   { href: '/developers#api',                                      label: 'REST API reference', external: false },
   { href: '/developers#mcp',                                      label: 'MCP server setup', external: false },
-  { href: 'https://github.com/colaberry/WorldOfTaxanomy/issues', label: 'Report an issue', external: true },
+  { href: 'https://github.com/colaberry/WorldOfTaxonomy/issues', label: 'Report an issue', external: true },
 ]
 
 export function Footer() {
@@ -25,14 +25,14 @@ export function Footer() {
           <div className="space-y-3">
             <Link href="/" className="flex items-center gap-2 text-foreground font-semibold w-fit">
               <Globe className="h-4 w-4 text-primary" />
-              WorldOfTaxanomy
+              World Of Taxonomy
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">
-              A unified knowledge graph connecting 82 classification systems across
+              A unified knowledge graph connecting 1,000+ classification systems across
               industry, geography, health, occupations, trade, and more.
             </p>
             <Link
-              href="https://github.com/colaberry/WorldOfTaxanomy"
+              href="https://github.com/colaberry/WorldOfTaxonomy"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
@@ -82,8 +82,15 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-8 pt-6 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>WorldOfTaxanomy - Unified Global Classification Knowledge Graph</span>
-          <span>82 systems - 532k+ nodes - 58k+ edges</span>
+          <span>World Of Taxonomy - Unified Global Classification Knowledge Graph</span>
+          <span>1,000+ systems - 1.2M+ nodes - 321K+ edges</span>
+        </div>
+
+        {/* Disclaimer */}
+        <div className="mt-4 pt-4 border-t border-border/30 text-center">
+          <p className="text-[11px] text-muted-foreground/70 leading-relaxed max-w-2xl mx-auto">
+            Data is provided for informational purposes only. We do not guarantee accuracy or completeness. Use at your own risk. For authoritative codes, consult the official source.
+          </p>
         </div>
       </div>
     </footer>

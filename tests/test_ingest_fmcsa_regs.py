@@ -26,7 +26,7 @@ Codes: 'fmcsa_{category}' and 'fmcsa_{category}_{number}'
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.fmcsa_regs import (
+from world_of_taxonomy.ingest.fmcsa_regs import (
     FMCSA_NODES,
     _determine_level,
     _determine_parent,

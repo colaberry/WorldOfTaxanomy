@@ -7,7 +7,7 @@ that should have been tested before implementation.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk import _determine_match_type
+from world_of_taxonomy.ingest.crosswalk import _determine_match_type
 
 
 def _run(coro):
@@ -49,11 +49,11 @@ def test_ingest_crosswalk_from_real_file(db_pool):
     Skips if the data file hasn't been downloaded yet.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.crosswalk import ingest_crosswalk, _get_project_root
+    from world_of_taxonomy.ingest.crosswalk import ingest_crosswalk, _get_project_root
 
     xlsx_path = _get_project_root() / "data/crosswalk/2022_NAICS_to_ISIC_Rev_4.xlsx"
     if not xlsx_path.exists():
-        pytest.skip("Crosswalk data file not downloaded - run 'python -m world_of_taxanomy ingest crosswalk' first")
+        pytest.skip("Crosswalk data file not downloaded - run 'python -m world_of_taxonomy ingest crosswalk' first")
 
     async def _test():
         async with db_pool.acquire() as conn:

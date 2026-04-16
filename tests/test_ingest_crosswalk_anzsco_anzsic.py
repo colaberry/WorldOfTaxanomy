@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import pytest
-from world_of_taxanomy.ingest.crosswalk_anzsco_anzsic import (
+from world_of_taxonomy.ingest.crosswalk_anzsco_anzsic import (
     ANZSCO_ANZSIC_EDGES,
     ingest_crosswalk_anzsco_anzsic,
 )
@@ -61,8 +61,8 @@ class TestAnzscoAnzsicEdges:
 def test_ingest_crosswalk_anzsco_anzsic(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
-            from world_of_taxanomy.ingest.anzsco_2022 import ingest_anzsco_2022
-            from world_of_taxanomy.ingest.anzsic import ingest_anzsic_2006
+            from world_of_taxonomy.ingest.anzsco_2022 import ingest_anzsco_2022
+            from world_of_taxonomy.ingest.anzsic import ingest_anzsic_2006
             await ingest_anzsco_2022(conn)
             await ingest_anzsic_2006(conn)
 
@@ -82,8 +82,8 @@ def test_ingest_crosswalk_anzsco_anzsic(db_pool):
 def test_ingest_crosswalk_anzsco_anzsic_idempotent(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
-            from world_of_taxanomy.ingest.anzsco_2022 import ingest_anzsco_2022
-            from world_of_taxanomy.ingest.anzsic import ingest_anzsic_2006
+            from world_of_taxonomy.ingest.anzsco_2022 import ingest_anzsco_2022
+            from world_of_taxonomy.ingest.anzsic import ingest_anzsic_2006
             await ingest_anzsco_2022(conn)
             await ingest_anzsic_2006(conn)
 

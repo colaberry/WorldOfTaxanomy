@@ -1,6 +1,6 @@
 # OAuth Production Setup Guide
 
-Follow these steps after deploying WorldOfTaxanomy to production.
+Follow these steps after deploying WorldOfTaxonomy to production.
 Complete them in order - the database migration must run before any
 OAuth sign-ins will work.
 
@@ -58,7 +58,7 @@ https://<your-api-domain>/api/v1/auth/oauth
 ```
 
 Replace `<your-api-domain>` with your deployed FastAPI URL throughout
-this section (e.g. `worldoftaxanomy-api.fly.dev`).
+this section (e.g. `worldoftaxonomy-api.fly.dev`).
 
 ---
 
@@ -67,7 +67,7 @@ this section (e.g. `worldoftaxanomy-api.fly.dev`).
 1. Go to https://github.com/settings/developers
 2. Click **OAuth Apps** then **New OAuth App**
 3. Fill in the form:
-   - **Application name**: WorldOfTaxanomy
+   - **Application name**: WorldOfTaxonomy
    - **Homepage URL**: `https://<your-frontend-domain>`
    - **Authorization callback URL**: `https://<your-api-domain>/api/v1/auth/oauth/github/callback`
 4. Click **Register application**
@@ -90,7 +90,7 @@ GITHUB_CLIENT_SECRET=<paste client secret>
 2. Create a new project (or select an existing one)
 3. In the left menu go to **APIs & Services** - **OAuth consent screen**
    - User type: **External**
-   - App name: WorldOfTaxanomy
+   - App name: WorldOfTaxonomy
    - Support email: your email
    - Authorized domains: add your frontend domain
    - Scopes: add `email` and `profile`
@@ -98,7 +98,7 @@ GITHUB_CLIENT_SECRET=<paste client secret>
    - Save and continue through all steps
 4. Go to **APIs & Services** - **Credentials** - **Create Credentials** - **OAuth 2.0 Client ID**
    - Application type: **Web application**
-   - Name: WorldOfTaxanomy
+   - Name: WorldOfTaxonomy
    - Authorized redirect URIs: `https://<your-api-domain>/api/v1/auth/oauth/google/callback`
 5. Click **Create**
 6. Copy the **Client ID** and **Client Secret** from the dialog
@@ -125,7 +125,7 @@ If you do not have one, create a free one at linkedin.com/company/setup/new.
 
 1. Go to https://www.linkedin.com/developers/apps and click **Create app**
 2. Fill in the form:
-   - **App name**: WorldOfTaxanomy
+   - **App name**: WorldOfTaxonomy
    - **LinkedIn Page**: select your company page
    - **App logo**: upload a logo (required)
 3. Click **Create app**

@@ -12,7 +12,7 @@ Source: unstats.un.org/unsd/methodology/m49/overview (CSV download)
 License: open (UN Statistics Division)
 """
 import pytest
-from world_of_taxanomy.ingest.un_m49 import (
+from world_of_taxonomy.ingest.un_m49 import (
     _WORLD_CODE,
     _determine_level,
     _determine_parent,
@@ -69,7 +69,7 @@ def test_ingest_un_m49_from_csv(db_pool):
 
     data_path = Path("data/iso3166_all.csv")
     if not data_path.exists():
-        pytest.skip(f"Download {data_path} first: see world_of_taxanomy/ingest/un_m49.py for URL")
+        pytest.skip(f"Download {data_path} first: see world_of_taxonomy/ingest/un_m49.py for URL")
 
     async def _run():
         async with db_pool.acquire() as conn:

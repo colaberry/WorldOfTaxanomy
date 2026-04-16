@@ -7,7 +7,7 @@ CSIC - Chinese Standard Industrial Classification (GB/T 4754-2017).
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.csic_2017 import (
+from world_of_taxonomy.ingest.csic_2017 import (
     CSIC_SECTIONS,
     CSIC_TO_ISIC_MAPPING,
     ingest_csic_2017,

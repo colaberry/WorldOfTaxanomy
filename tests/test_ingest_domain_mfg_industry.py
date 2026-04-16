@@ -16,7 +16,7 @@ Food and Beverage, Chemical and Materials, Industrial Equipment.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.domain_mfg_industry import (
+from world_of_taxonomy.ingest.domain_mfg_industry import (
     MFG_INDUSTRY_NODES,
     _determine_level,
     _determine_parent,
@@ -106,7 +106,7 @@ def test_domain_mfg_industry_module_importable():
 
 def test_ingest_domain_mfg_industry(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count = await ingest_domain_mfg_industry(conn)
@@ -122,7 +122,7 @@ def test_ingest_domain_mfg_industry(db_pool):
 
 def test_ingest_domain_mfg_industry_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count1 = await ingest_domain_mfg_industry(conn)

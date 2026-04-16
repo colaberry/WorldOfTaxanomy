@@ -7,7 +7,7 @@ Source: pycountry library (wraps ISO 3166-2 data, LGPL)
 Codes: ~5,000 subdivisions across all countries
 """
 import pytest
-from world_of_taxanomy.ingest.iso3166_2 import (
+from world_of_taxonomy.ingest.iso3166_2 import (
     _determine_level,
     _determine_parent,
     _extract_country,

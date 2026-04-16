@@ -20,7 +20,7 @@ Source: https://www.ecfr.gov/current/title-49 (public domain)
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.cfr_title49 import (
+from world_of_taxonomy.ingest.cfr_title49 import (
     CFR49_NODES,
     _determine_level,
     _determine_parent,

@@ -9,7 +9,7 @@ Aligned to ISIC Rev 4.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.kbli_2020 import (
+from world_of_taxonomy.ingest.kbli_2020 import (
     KBLI_SECTIONS,
     KBLI_TO_ISIC_MAPPING,
     ingest_kbli_2020,

@@ -21,7 +21,7 @@ import asyncio
 import pytest
 from pathlib import Path
 
-from world_of_taxanomy.ingest.loinc import (
+from world_of_taxonomy.ingest.loinc import (
     _is_active,
     _find_loinc_path,
     ingest_loinc,

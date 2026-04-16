@@ -7,7 +7,7 @@ XLS parsing, and integration test with the real data file.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.anzsic import (
+from world_of_taxonomy.ingest.anzsic import (
     _determine_level,
     _determine_parent,
     _determine_sector,
@@ -112,7 +112,7 @@ def test_parse_anzsic_xls_from_real_file():
     Skips if the data file hasn't been downloaded yet.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.anzsic import _get_project_root
+    from world_of_taxonomy.ingest.anzsic import _get_project_root
 
     xls_path = _get_project_root() / "data/anzsic/ANZSIC_2006_codes_titles.xls"
     if not xls_path.exists():
@@ -193,7 +193,7 @@ def test_ingest_anzsic_2006_from_real_file(db_pool):
     Skips if the data file hasn't been downloaded yet.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.anzsic import ingest_anzsic_2006, _get_project_root
+    from world_of_taxonomy.ingest.anzsic import ingest_anzsic_2006, _get_project_root
 
     xls_path = _get_project_root() / "data/anzsic/ANZSIC_2006_codes_titles.xls"
     if not xls_path.exists():

@@ -13,7 +13,7 @@ from __future__ import annotations
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk_geo_sector import (
+from world_of_taxonomy.ingest.crosswalk_geo_sector import (
     GEO_SECTOR_EDGES,
     ingest_crosswalk_geo_sector,
 )
@@ -76,8 +76,8 @@ class TestGeoSectorEdges:
 
 def test_ingest_crosswalk_geo_sector(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.iso3166_1 import ingest_iso3166_1
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.iso3166_1 import ingest_iso3166_1
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_iso3166_1(conn)
@@ -97,8 +97,8 @@ def test_ingest_crosswalk_geo_sector(db_pool):
 
 def test_ingest_crosswalk_geo_sector_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.iso3166_1 import ingest_iso3166_1
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.iso3166_1 import ingest_iso3166_1
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_iso3166_1(conn)

@@ -25,7 +25,7 @@ The risk management process (Clause 6) is the central part:
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.iso31000 import (
+from world_of_taxonomy.ingest.iso31000 import (
     ISO31000_NODES,
     _determine_level,
     _determine_parent,

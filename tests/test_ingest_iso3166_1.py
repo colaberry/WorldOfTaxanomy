@@ -6,7 +6,7 @@ Hierarchy: continent (L0) -> sub-region (L1) -> country (L2, alpha-2 code)
 Source: github.com/lukes/ISO-3166-Countries-with-Regional-Codes (CC0)
 """
 import pytest
-from world_of_taxanomy.ingest.iso3166_1 import (
+from world_of_taxonomy.ingest.iso3166_1 import (
     _CONTINENT_CODES,
     _clean_code,
     _determine_level,
@@ -85,7 +85,7 @@ def test_ingest_iso3166_1_from_real_file(db_pool):
 
     data_path = Path("data/iso3166_all.csv")
     if not data_path.exists():
-        pytest.skip(f"Download {data_path} first: see world_of_taxanomy/ingest/iso3166_1.py for URL")
+        pytest.skip(f"Download {data_path} first: see world_of_taxonomy/ingest/iso3166_1.py for URL")
 
     async def _run():
         async with db_pool.acquire() as conn:

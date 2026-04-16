@@ -17,7 +17,7 @@ Total: 11 chapters + 99 articles = 110 nodes.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.gdpr import (
+from world_of_taxonomy.ingest.gdpr import (
     GDPR_NODES,
     _determine_level,
     _determine_parent,

@@ -12,7 +12,7 @@ Source: github.com/datasets/harmonized-system (CC0)
         https://raw.githubusercontent.com/datasets/harmonized-system/main/data/harmonized-system.csv
 """
 import pytest
-from world_of_taxanomy.ingest.hs2022 import (
+from world_of_taxonomy.ingest.hs2022 import (
     _SECTION_NAMES,
     _determine_level,
     _determine_parent,
@@ -91,7 +91,7 @@ def test_ingest_hs2022_from_csv(db_pool):
 
     data_path = Path("data/hs2022.csv")
     if not data_path.exists():
-        pytest.skip(f"Download {data_path} first: see world_of_taxanomy/ingest/hs2022.py for URL")
+        pytest.skip(f"Download {data_path} first: see world_of_taxonomy/ingest/hs2022.py for URL")
 
     async def _run():
         async with db_pool.acquire() as conn:

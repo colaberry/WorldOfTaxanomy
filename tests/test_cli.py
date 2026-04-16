@@ -8,7 +8,7 @@ These are pure unit tests - no database needed.
 
 import pytest
 
-from world_of_taxanomy.__main__ import build_parser
+from world_of_taxonomy.__main__ import build_parser
 
 
 # Mark all tests in this module to skip the autouse db fixture

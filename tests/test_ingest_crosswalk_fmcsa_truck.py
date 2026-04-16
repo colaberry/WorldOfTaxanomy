@@ -12,7 +12,7 @@ Source: Derived from FMCSA regulatory scope. Open.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk_fmcsa_truck import (
+from world_of_taxonomy.ingest.crosswalk_fmcsa_truck import (
     FMCSA_TRUCK_MAPPINGS,
     ingest_crosswalk_fmcsa_truck,
 )
@@ -61,11 +61,11 @@ def test_crosswalk_fmcsa_truck_module_importable():
 def test_ingest_crosswalk_fmcsa_truck(db_pool):
     """Integration test: edges linking FMCSA regs to truck domain taxonomies."""
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.fmcsa_regs import ingest_fmcsa_regs
-        from world_of_taxanomy.ingest.domain_truck_freight import ingest_domain_truck_freight
-        from world_of_taxanomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
-        from world_of_taxanomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.fmcsa_regs import ingest_fmcsa_regs
+        from world_of_taxonomy.ingest.domain_truck_freight import ingest_domain_truck_freight
+        from world_of_taxonomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
+        from world_of_taxonomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_fmcsa_regs(conn)
@@ -80,11 +80,11 @@ def test_ingest_crosswalk_fmcsa_truck(db_pool):
 
 def test_ingest_crosswalk_fmcsa_truck_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.fmcsa_regs import ingest_fmcsa_regs
-        from world_of_taxanomy.ingest.domain_truck_freight import ingest_domain_truck_freight
-        from world_of_taxanomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
-        from world_of_taxanomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.fmcsa_regs import ingest_fmcsa_regs
+        from world_of_taxonomy.ingest.domain_truck_freight import ingest_domain_truck_freight
+        from world_of_taxonomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
+        from world_of_taxonomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_fmcsa_regs(conn)

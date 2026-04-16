@@ -18,7 +18,7 @@ Source: derived (fmcsa.dot.gov governs NAICS 484/485 carriers)
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk_cfr_naics import ingest_crosswalk_cfr_naics
+from world_of_taxonomy.ingest.crosswalk_cfr_naics import ingest_crosswalk_cfr_naics
 
 
 def test_crosswalk_cfr_naics_module_importable():
@@ -28,9 +28,9 @@ def test_crosswalk_cfr_naics_module_importable():
 def test_ingest_crosswalk_cfr_naics(db_pool):
     """Integration test: FMCSA/CFR categories link to NAICS transportation codes."""
     async def _run():
-        from world_of_taxanomy.ingest.cfr_title49 import ingest_cfr_title49
-        from world_of_taxanomy.ingest.fmcsa_regs import ingest_fmcsa_regs
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.cfr_title49 import ingest_cfr_title49
+        from world_of_taxonomy.ingest.fmcsa_regs import ingest_fmcsa_regs
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_cfr_title49(conn)
             await ingest_fmcsa_regs(conn)
@@ -62,9 +62,9 @@ def test_ingest_crosswalk_cfr_naics(db_pool):
 def test_ingest_crosswalk_cfr_naics_idempotent(db_pool):
     """Running ingest twice returns same count."""
     async def _run():
-        from world_of_taxanomy.ingest.cfr_title49 import ingest_cfr_title49
-        from world_of_taxanomy.ingest.fmcsa_regs import ingest_fmcsa_regs
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.cfr_title49 import ingest_cfr_title49
+        from world_of_taxonomy.ingest.fmcsa_regs import ingest_fmcsa_regs
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_cfr_title49(conn)
             await ingest_fmcsa_regs(conn)

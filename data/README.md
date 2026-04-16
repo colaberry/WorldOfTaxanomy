@@ -24,5 +24,5 @@ This directory holds downloaded classification data files. Files are auto-downlo
 ```bash
 # Delete cached files and re-ingest
 rm -rf data/naics/ data/isic/ data/crosswalk/
-python -m world_of_taxanomy ingest all
+python -m world_of_taxonomy ingest all
 ```

@@ -31,7 +31,7 @@ data directory exists. Unit tests verify helper functions only.
 import os
 import pytest
 
-from world_of_taxanomy.ingest.patent_cpc import (
+from world_of_taxonomy.ingest.patent_cpc import (
     _determine_level,
     _determine_parent,
     _determine_sector,
@@ -268,5 +268,5 @@ def test_ingest_patent_cpc_skipped_without_data(db_pool):
         pytest.skip("CPC data directory found - run integration test separately")
     pytest.skip(
         f"CPC data not found in {data_dir}. "
-        "Run: python -m world_of_taxanomy ingest patent_cpc"
+        "Run: python -m world_of_taxonomy ingest patent_cpc"
     )

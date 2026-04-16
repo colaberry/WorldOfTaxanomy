@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import pytest
-from world_of_taxanomy.ingest.domain_public_admin import (
+from world_of_taxonomy.ingest.domain_public_admin import (
     PUBLIC_ADMIN_NODES,
     _determine_level,
     _determine_parent,
@@ -80,7 +80,7 @@ class TestPublicAdminNodes:
 
 def test_ingest_domain_public_admin(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count = await ingest_domain_public_admin(conn)
@@ -97,7 +97,7 @@ def test_ingest_domain_public_admin(db_pool):
 
 def test_ingest_domain_public_admin_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count1 = await ingest_domain_public_admin(conn)

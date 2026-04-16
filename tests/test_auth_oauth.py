@@ -12,8 +12,8 @@ from unittest.mock import patch, AsyncMock, MagicMock
 from urllib.parse import urlparse, parse_qs
 from httpx import AsyncClient, ASGITransport
 
-from world_of_taxanomy.api.app import create_app
-from world_of_taxanomy.api.deps import JWT_SECRET, JWT_ALGORITHM
+from world_of_taxonomy.api.app import create_app
+from world_of_taxonomy.api.deps import JWT_SECRET, JWT_ALGORITHM
 
 
 def _run(coro):
@@ -35,7 +35,7 @@ def client(app):
 
 def _valid_state(redirect_to="http://localhost:3000/auth/callback"):
     """Create a valid signed state JWT for use in callback tests."""
-    from world_of_taxanomy.api.routers.oauth import _make_state
+    from world_of_taxonomy.api.routers.oauth import _make_state
     return _make_state(redirect_to)
 
 
@@ -193,7 +193,7 @@ class TestOAuthCallback:
                 "GITHUB_CLIENT_ID": "gh_id",
                 "GITHUB_CLIENT_SECRET": "gh_secret",
             }):
-                with patch("world_of_taxanomy.api.routers.oauth.httpx.AsyncClient") as cls:
+                with patch("world_of_taxonomy.api.routers.oauth.httpx.AsyncClient") as cls:
                     cls.return_value = mock_http
                     resp = await client.get(
                         f"/api/v1/auth/oauth/github/callback?code=testcode&state={state}",
@@ -237,7 +237,7 @@ class TestOAuthCallback:
                 "GITHUB_CLIENT_ID": "gh_id",
                 "GITHUB_CLIENT_SECRET": "gh_secret",
             }):
-                with patch("world_of_taxanomy.api.routers.oauth.httpx.AsyncClient") as cls:
+                with patch("world_of_taxonomy.api.routers.oauth.httpx.AsyncClient") as cls:
                     cls.return_value = mock_http
                     await client.get(
                         f"/api/v1/auth/oauth/github/callback?code=testcode&state={state}",
@@ -269,7 +269,7 @@ class TestOAuthCallback:
                 "GITHUB_CLIENT_ID": "gh_id",
                 "GITHUB_CLIENT_SECRET": "gh_secret",
             }):
-                with patch("world_of_taxanomy.api.routers.oauth.httpx.AsyncClient") as cls:
+                with patch("world_of_taxonomy.api.routers.oauth.httpx.AsyncClient") as cls:
                     cls.return_value = mock_http
                     resp = await client.get(
                         f"/api/v1/auth/oauth/github/callback?code=testcode&state={state}",
@@ -301,7 +301,7 @@ class TestOAuthCallback:
                 "GITHUB_CLIENT_ID": "gh_id",
                 "GITHUB_CLIENT_SECRET": "gh_secret",
             }):
-                with patch("world_of_taxanomy.api.routers.oauth.httpx.AsyncClient") as cls:
+                with patch("world_of_taxonomy.api.routers.oauth.httpx.AsyncClient") as cls:
                     cls.return_value = mock_http
                     await client.get(
                         f"/api/v1/auth/oauth/github/callback?code=testcode&state={state}",

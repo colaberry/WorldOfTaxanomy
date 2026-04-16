@@ -1,8 +1,75 @@
-# WorldOfTaxanomy - Roadmap
+# WorldOfTaxonomy - Roadmap
 
-Work items organized by priority. Check off items as they are completed.
+Current state: **279 systems, 570,178 codes, 122,769 crosswalk edges, 249 countries profiled.**
 
 ---
+
+## Now - developer experience and launch readiness
+
+- [ ] **Hosted public API**
+  A free public endpoint so developers can try the API without self-hosting.
+  Primary blocker for adoption. Target: `api.worldoftaxonomy.com` with 30 req/min
+  anonymous tier and 1,000 req/min authenticated tier.
+
+- [ ] **API key dashboard (frontend UI)**
+  Backend auth is complete. Users need a UI to create/revoke API keys.
+  Pages: key list, create key, revoke key, usage stats.
+
+- [ ] **Production DB ingestion**
+  Run `ingest all` against the production database so the hosted API
+  and world map reflect all 279 systems.
+
+- [ ] **Docker image on Docker Hub / GitHub Container Registry**
+  `docker pull ghcr.io/colaberry/worldoftaxonomy:latest`
+  Removes the need to build locally for self-hosting.
+
+---
+
+## Short-term - data completeness
+
+- [ ] **Remaining EU NACE national adaptations**
+  Target: all 27 EU member states. Currently missing: GR, MT, LU, CY, IE.
+
+- [ ] **Additional ISIC national adaptations**
+  Central Asia (KZ, UZ), West Africa (GH, SN, CM),
+  South Asia (MM, NP, LK).
+
+- [ ] **SITC-NAICS crosswalk**
+  Map UN SITC Rev 4 product codes to NAICS economic activity codes.
+
+---
+
+## Medium-term - developer ecosystem
+
+- [ ] **Python client library** (`pip install world-of-taxonomy-client`)
+- [ ] **JavaScript / TypeScript client** (`npm install world-of-taxonomy-client`)
+- [ ] **Bulk export: Hugging Face Datasets** - monthly Parquet snapshots
+- [ ] **dbt package** - warehouse-native crosswalk join macros
+- [ ] **Email digest** for contributors on new system additions
+
+---
+
+## Long-term - knowledge graph intelligence
+
+- [ ] **Semantic similarity crosswalk** - embedding-based suggested equivalences
+- [ ] **Change tracking** - detect when system editions change, flag broken crosswalk edges
+- [ ] **GraphQL API** - traversal-style queries as an alternative to REST
+- [ ] **Embedded SQLite snapshot** - for air-gapped / mobile use
+- [ ] **Taxonomy authoring UI** - contribute systems without touching code
+
+---
+
+## Community asks (domain expertise needed)
+
+- Healthcare: SNOMED CT mapping to ICD-11
+- Legal: EU ELI / ECLI legal act classifications
+- Agriculture: FAO commodity codes and AGROVOC
+- Finance: LEI entity -> GICS sector mapping
+- Environment: CBD habitat classifications
+
+---
+
+## Previously completed
 
 ## Immediate - next 1-2 sessions
 

@@ -94,7 +94,7 @@ export default function LoginPage() {
               <Globe className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <h1 className="text-xl font-semibold tracking-tight">Sign in to WorldOfTaxanomy</h1>
+          <h1 className="text-xl font-semibold tracking-tight">Sign in to WorldOfTaxonomy</h1>
           <p className="text-sm text-muted-foreground">
             Access the API, save searches, and manage API keys.
           </p>

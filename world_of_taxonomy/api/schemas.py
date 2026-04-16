@@ -32,6 +32,12 @@ class NodeResponse(BaseModel):
     sector_code: Optional[str] = None
     is_leaf: bool = False
     seq_order: int = 0
+    # Provenance fields (from parent classification_system)
+    data_provenance: Optional[str] = None
+    license: Optional[str] = None
+    source_url: Optional[str] = None
+    source_date: Optional[str] = None
+    source_file_hash: Optional[str] = None
 
 
 class SystemDetailResponse(SystemResponse):
@@ -155,3 +161,22 @@ class GenerateTaxonomyResponse(BaseModel):
 
 class AcceptTaxonomyRequest(BaseModel):
     nodes: List[GeneratedNode]  # the subset the user chose to keep
+
+
+# -- Audit schemas -----------------------------------------------------------
+
+
+class ProvenanceTierSummary(BaseModel):
+    data_provenance: Optional[str]
+    system_count: int
+    node_count: int
+
+
+class AuditProvenanceResponse(BaseModel):
+    total_systems: int
+    total_nodes: int
+    provenance_tiers: List[ProvenanceTierSummary]
+    official_missing_hash: List[SystemResponse]
+    structural_derivation_count: int
+    structural_derivation_nodes: int
+    skeleton_systems: List[SystemResponse]

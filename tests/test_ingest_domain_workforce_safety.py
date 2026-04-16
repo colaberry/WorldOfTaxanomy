@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import pytest
-from world_of_taxanomy.ingest.domain_workforce_safety import (
+from world_of_taxonomy.ingest.domain_workforce_safety import (
     WORKFORCE_SAFETY_NODES,
     _determine_level,
     _determine_parent,

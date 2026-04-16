@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import pytest
-from world_of_taxanomy.ingest.isced_2011 import (
+from world_of_taxonomy.ingest.isced_2011 import (
     ISCED_NODES,
     _determine_level,
     _determine_parent,

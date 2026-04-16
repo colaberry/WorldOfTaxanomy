@@ -18,7 +18,7 @@ import asyncio
 import os
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk_esco_isco import ingest_crosswalk_esco_isco
+from world_of_taxonomy.ingest.crosswalk_esco_isco import ingest_crosswalk_esco_isco
 
 _OCC_PATH = "data/esco_occupations_en.csv"
 _JSONLD_ZIP_PATH = "data/ESCO dataset - v1.2.1 - classification -  - json-ld.zip"
@@ -36,8 +36,8 @@ def test_crosswalk_esco_isco_module_importable():
 def test_ingest_crosswalk_esco_isco(db_pool):
     """Integration test: creates bidirectional ESCO <-> ISCO-08 edges."""
     async def _run():
-        from world_of_taxanomy.ingest.esco_occupations import ingest_esco_occupations
-        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
+        from world_of_taxonomy.ingest.esco_occupations import ingest_esco_occupations
+        from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
             # Setup: ingest prerequisite systems (auto-detects CSV or JSON-LD)
             if os.path.exists(_OCC_PATH):
@@ -81,8 +81,8 @@ def test_ingest_crosswalk_esco_isco(db_pool):
 def test_ingest_crosswalk_esco_isco_idempotent(db_pool):
     """Running ingest twice returns consistent count."""
     async def _run():
-        from world_of_taxanomy.ingest.esco_occupations import ingest_esco_occupations
-        from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
+        from world_of_taxonomy.ingest.esco_occupations import ingest_esco_occupations
+        from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
         async with db_pool.acquire() as conn:
             if os.path.exists(_OCC_PATH):
                 await ingest_esco_occupations(conn, path=_OCC_PATH)

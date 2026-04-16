@@ -7,7 +7,7 @@ that should have been tested before implementation.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.naics import (
+from world_of_taxonomy.ingest.naics import (
     _determine_level,
     _determine_parent,
     _determine_sector,
@@ -120,11 +120,11 @@ def test_ingest_naics_2022_from_real_file(db_pool):
     Skips if the data file hasn't been downloaded yet.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.naics import ingest_naics_2022, _get_project_root
+    from world_of_taxonomy.ingest.naics import ingest_naics_2022, _get_project_root
 
     xlsx_path = _get_project_root() / "data/naics/2022_NAICS_Codes.xlsx"
     if not xlsx_path.exists():
-        pytest.skip("NAICS data file not downloaded - run 'python -m world_of_taxanomy ingest naics' first")
+        pytest.skip("NAICS data file not downloaded - run 'python -m world_of_taxonomy ingest naics' first")
 
     async def _test():
         async with db_pool.acquire() as conn:

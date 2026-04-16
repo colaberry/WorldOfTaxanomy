@@ -14,7 +14,7 @@ import asyncio
 import pytest
 from pathlib import Path
 
-from world_of_taxanomy.ingest.crosswalk_cip_soc import ingest_crosswalk_cip_soc
+from world_of_taxonomy.ingest.crosswalk_cip_soc import ingest_crosswalk_cip_soc
 
 
 def test_crosswalk_cip_soc_module_importable():
@@ -31,8 +31,8 @@ def test_ingest_crosswalk_cip_soc(db_pool):
         pytest.skip("Download cip2020_soc2018.xlsx, cip_2020.csv, soc_2018.csv first")
 
     async def _run():
-        from world_of_taxanomy.ingest.cip_2020 import ingest_cip_2020
-        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxonomy.ingest.cip_2020 import ingest_cip_2020
+        from world_of_taxonomy.ingest.soc_2018 import ingest_soc_2018
         async with db_pool.acquire() as conn:
             await ingest_cip_2020(conn, path=str(cip_path))
             await ingest_soc_2018(conn, path=str(soc_path))
@@ -70,8 +70,8 @@ def test_ingest_crosswalk_cip_soc_idempotent(db_pool):
         pytest.skip("Download data files first")
 
     async def _run():
-        from world_of_taxanomy.ingest.cip_2020 import ingest_cip_2020
-        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxonomy.ingest.cip_2020 import ingest_cip_2020
+        from world_of_taxonomy.ingest.soc_2018 import ingest_soc_2018
         async with db_pool.acquire() as conn:
             await ingest_cip_2020(conn, path=str(cip_path))
             await ingest_soc_2018(conn, path=str(soc_path))
@@ -91,8 +91,8 @@ def test_crosswalk_excludes_no_match_rows(db_pool):
         pytest.skip("Download data files first")
 
     async def _run():
-        from world_of_taxanomy.ingest.cip_2020 import ingest_cip_2020
-        from world_of_taxanomy.ingest.soc_2018 import ingest_soc_2018
+        from world_of_taxonomy.ingest.cip_2020 import ingest_cip_2020
+        from world_of_taxonomy.ingest.soc_2018 import ingest_soc_2018
         async with db_pool.acquire() as conn:
             await ingest_cip_2020(conn, path=str(cip_path))
             await ingest_soc_2018(conn, path=str(soc_path))

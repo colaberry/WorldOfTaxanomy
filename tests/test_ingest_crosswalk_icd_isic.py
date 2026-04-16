@@ -14,7 +14,7 @@ No external data file required - links are hand-coded in the ingester.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk_icd_isic import (
+from world_of_taxonomy.ingest.crosswalk_icd_isic import (
     ICD_ISIC_LINKS,
     ingest_crosswalk_icd_isic,
 )

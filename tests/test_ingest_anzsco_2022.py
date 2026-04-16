@@ -9,7 +9,7 @@ from __future__ import annotations
 import asyncio
 import pytest
 from pathlib import Path
-from world_of_taxanomy.ingest.anzsco_2022 import (
+from world_of_taxonomy.ingest.anzsco_2022 import (
     _determine_level,
     _determine_parent,
     _determine_sector,
@@ -80,7 +80,7 @@ class TestAnzsco2022DetermineSector:
 def test_ingest_anzsco_2022(db_pool):
     """Integration test: download from ABS SDMX or use cached file."""
     async def _run():
-        from world_of_taxanomy.ingest.anzsco_2022 import ingest_anzsco_2022
+        from world_of_taxonomy.ingest.anzsco_2022 import ingest_anzsco_2022
         async with db_pool.acquire() as conn:
             count = await ingest_anzsco_2022(conn)
             assert count > 1000, f"Expected >1000 codes, got {count}"
@@ -101,7 +101,7 @@ def test_ingest_anzsco_2022(db_pool):
 
 def test_ingest_anzsco_2022_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.anzsco_2022 import ingest_anzsco_2022
+        from world_of_taxonomy.ingest.anzsco_2022 import ingest_anzsco_2022
         async with db_pool.acquire() as conn:
             count1 = await ingest_anzsco_2022(conn)
             count2 = await ingest_anzsco_2022(conn)

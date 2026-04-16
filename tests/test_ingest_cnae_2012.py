@@ -7,7 +7,7 @@ CNAE - Classificacao Nacional de Atividades Economicas, version 2.0 (2007).
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.cnae_2012 import (
+from world_of_taxonomy.ingest.cnae_2012 import (
     CNAE_SECTIONS,
     CNAE_TO_ISIC_MAPPING,
     ingest_cnae_2012,

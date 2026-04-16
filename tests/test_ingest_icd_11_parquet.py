@@ -8,7 +8,7 @@ from __future__ import annotations
 import asyncio
 import pytest
 from pathlib import Path
-from world_of_taxanomy.ingest.icd_11 import (
+from world_of_taxonomy.ingest.icd_11 import (
     ingest_icd_11_from_parquet,
     _derive_icd11_parent,
     _derive_icd11_level,

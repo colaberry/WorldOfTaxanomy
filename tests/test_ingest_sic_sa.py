@@ -9,7 +9,7 @@ Aligned to ISIC Rev 4.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.sic_sa import (
+from world_of_taxonomy.ingest.sic_sa import (
     SIC_SA_SECTIONS,
     SIC_SA_TO_ISIC_MAPPING,
     ingest_sic_sa,

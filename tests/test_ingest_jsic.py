@@ -7,7 +7,7 @@ with the database.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.jsic import (
+from world_of_taxonomy.ingest.jsic import (
     JSIC_DIVISIONS,
     JSIC_TO_ISIC_MAPPING,
     ingest_jsic_2013,

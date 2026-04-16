@@ -11,7 +11,7 @@ import pytest
 import tempfile
 from pathlib import Path
 
-from world_of_taxanomy.ingest.sic import (
+from world_of_taxonomy.ingest.sic import (
     _determine_level,
     _determine_parent,
     _determine_sector,
@@ -162,7 +162,7 @@ class TestParseOshaHtml:
 
     def test_parses_real_osha_file(self):
         """Parse the actual downloaded OSHA HTML if available."""
-        from world_of_taxanomy.ingest.sic import _get_project_root
+        from world_of_taxonomy.ingest.sic import _get_project_root
         html_path = _get_project_root() / "data/sic/OSHA_SIC.html"
         if not html_path.exists():
             pytest.skip("OSHA HTML file not downloaded")
@@ -275,7 +275,7 @@ def test_ingest_sic_from_synthetic_data(db_pool):
         csv_path = Path(cf.name)
 
     async def _test():
-        from world_of_taxanomy.ingest.sic import ingest_sic_1987
+        from world_of_taxonomy.ingest.sic import ingest_sic_1987
 
         async with db_pool.acquire() as conn:
             # Clear any existing SIC data
@@ -343,7 +343,7 @@ def test_ingest_sic_from_real_files(db_pool):
 
     Skips if the data files haven't been downloaded yet.
     """
-    from world_of_taxanomy.ingest.sic import ingest_sic_1987, _get_project_root
+    from world_of_taxonomy.ingest.sic import ingest_sic_1987, _get_project_root
 
     root = _get_project_root()
     html_path = root / "data/sic/OSHA_SIC.html"

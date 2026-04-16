@@ -27,7 +27,7 @@ import asyncio
 import os
 import pytest
 
-from world_of_taxanomy.ingest.onet_soc import (
+from world_of_taxonomy.ingest.onet_soc import (
     _determine_sector,
     _is_base_occupation,
     ingest_onet_soc,
@@ -80,7 +80,7 @@ def test_onet_soc_module_importable():
 @pytest.mark.skipif(
     not os.path.exists(_DATA_PATH),
     reason=f"O*NET Occupation Data not found at {_DATA_PATH}. "
-           "Run: python -m world_of_taxanomy ingest onet_soc",
+           "Run: python -m world_of_taxonomy ingest onet_soc",
 )
 def test_ingest_onet_soc_from_real_file(db_pool):
     """Integration test: ingest O*NET-SOC from downloaded data file."""

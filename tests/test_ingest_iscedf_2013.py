@@ -14,7 +14,7 @@ import asyncio
 import pytest
 from pathlib import Path
 
-from world_of_taxanomy.ingest.iscedf_2013 import (
+from world_of_taxonomy.ingest.iscedf_2013 import (
     _determine_level,
     _determine_parent,
     _determine_sector,

@@ -17,11 +17,19 @@ from world_of_taxonomy.query.equivalence import (
     get_equivalences as _get_equivalences,
     translate_code as _translate_code,
 )
+from world_of_taxonomy.query.provenance import (
+    get_system_provenance_map,
+    enrich_node_dict,
+    get_audit_report,
+)
 
 
-def _node_to_dict(node) -> Dict[str, Any]:
-    """Convert a ClassificationNode to a JSON-serializable dict."""
-    return {
+def _node_to_dict(node, prov: Dict[str, Any] = None) -> Dict[str, Any]:
+    """Convert a ClassificationNode to a JSON-serializable dict.
+
+    If prov is provided, attaches system-level provenance fields.
+    """
+    d = {
         "system_id": node.system_id,
         "code": node.code,
         "title": node.title,
@@ -31,6 +39,9 @@ def _node_to_dict(node) -> Dict[str, Any]:
         "sector_code": node.sector_code,
         "is_leaf": node.is_leaf,
     }
+    if prov:
+        enrich_node_dict(d, prov)
+    return d
 
 
 def _system_to_dict(system) -> Dict[str, Any]:
@@ -84,7 +95,8 @@ async def handle_get_industry(
     code = args.get("code", "")
     try:
         node = await get_node(conn, system_id, code)
-        return _node_to_dict(node)
+        prov_map = await get_system_provenance_map(conn, [system_id])
+        return _node_to_dict(node, prov_map.get(system_id))
     except NodeNotFoundError:
         return {"error": f"Node '{code}' not found in '{system_id}'"}
 
@@ -96,7 +108,9 @@ async def handle_browse_children(
     system_id = args.get("system_id", "")
     parent_code = args.get("parent_code", "")
     children = await get_children(conn, system_id, parent_code)
-    return [_node_to_dict(c) for c in children]
+    prov_map = await get_system_provenance_map(conn, [system_id])
+    prov = prov_map.get(system_id)
+    return [_node_to_dict(c, prov) for c in children]
 
 
 async def handle_get_ancestors(
@@ -106,7 +120,9 @@ async def handle_get_ancestors(
     system_id = args.get("system_id", "")
     code = args.get("code", "")
     ancestors_list = await get_ancestors(conn, system_id, code)
-    return [_node_to_dict(a) for a in ancestors_list]
+    prov_map = await get_system_provenance_map(conn, [system_id])
+    prov = prov_map.get(system_id)
+    return [_node_to_dict(a, prov) for a in ancestors_list]
 
 
 async def handle_search_classifications(
@@ -117,7 +133,9 @@ async def handle_search_classifications(
     system_id = args.get("system_id")
     limit = args.get("limit", 20)
     results = await search_nodes(conn, query, system_id=system_id, limit=limit)
-    return [_node_to_dict(r) for r in results]
+    sys_ids = list({r.system_id for r in results})
+    prov_map = await get_system_provenance_map(conn, sys_ids)
+    return [_node_to_dict(r, prov_map.get(r.system_id)) for r in results]
 
 
 async def handle_get_equivalences(
@@ -147,7 +165,9 @@ async def handle_get_sector_overview(
     """Get top-level sectors/sections for a system."""
     system_id = args.get("system_id", "")
     roots = await get_roots(conn, system_id)
-    return [_node_to_dict(r) for r in roots]
+    prov_map = await get_system_provenance_map(conn, [system_id])
+    prov = prov_map.get(system_id)
+    return [_node_to_dict(r, prov) for r in roots]
 
 
 # ── Extended tool handlers ────────────────────────────────────
@@ -171,9 +191,10 @@ async def handle_compare_sector(
     system_id_b = args.get("system_id_b", "")
     roots_a = await get_roots(conn, system_id_a)
     roots_b = await get_roots(conn, system_id_b)
+    prov_map = await get_system_provenance_map(conn, [system_id_a, system_id_b])
     return {
-        "system_a": [_node_to_dict(n) for n in roots_a],
-        "system_b": [_node_to_dict(n) for n in roots_b],
+        "system_a": [_node_to_dict(n, prov_map.get(system_id_a)) for n in roots_a],
+        "system_b": [_node_to_dict(n, prov_map.get(system_id_b)) for n in roots_b],
     }
 
 
@@ -184,11 +205,13 @@ async def handle_find_by_keyword_all_systems(
     query = args.get("query", "")
     limit_per_system = args.get("limit_per_system", 10)
     results = await search_nodes(conn, query, limit=200)
+    sys_ids = list({r.system_id for r in results})
+    prov_map = await get_system_provenance_map(conn, sys_ids)
     grouped: Dict[str, List[Dict]] = {}
     for node in results:
         bucket = grouped.setdefault(node.system_id, [])
         if len(bucket) < limit_per_system:
-            bucket.append(_node_to_dict(node))
+            bucket.append(_node_to_dict(node, prov_map.get(node.system_id)))
     return grouped
 
 
@@ -227,7 +250,9 @@ async def handle_get_system_diff(
         system_id_a, system_id_b,
     )
     from world_of_taxonomy.query.browse import _row_to_node
-    return [_node_to_dict(_row_to_node(r)) for r in rows]
+    prov_map = await get_system_provenance_map(conn, [system_id_a])
+    prov = prov_map.get(system_id_a)
+    return [_node_to_dict(_row_to_node(r), prov) for r in rows]
 
 
 async def handle_get_siblings(
@@ -243,7 +268,9 @@ async def handle_get_siblings(
     if row is None or row["parent_code"] is None:
         return []
     siblings = await get_children(conn, system_id, row["parent_code"])
-    return [_node_to_dict(s) for s in siblings if s.code != code]
+    prov_map = await get_system_provenance_map(conn, [system_id])
+    prov = prov_map.get(system_id)
+    return [_node_to_dict(s, prov) for s in siblings if s.code != code]
 
 
 async def handle_get_subtree_summary(
@@ -296,7 +323,9 @@ async def handle_resolve_ambiguous_code(
         code,
     )
     from world_of_taxonomy.query.browse import _row_to_node
-    return [_node_to_dict(_row_to_node(r)) for r in rows]
+    sys_ids = list({r["system_id"] for r in rows})
+    prov_map = await get_system_provenance_map(conn, sys_ids)
+    return [_node_to_dict(_row_to_node(r), prov_map.get(r["system_id"])) for r in rows]
 
 
 async def handle_get_leaf_count(
@@ -365,16 +394,34 @@ async def handle_explore_industry_tree(
     system_id = args.get("system_id")
     limit = args.get("limit", 10)
     matches = await search_nodes(conn, query, system_id=system_id, limit=limit)
+    sys_ids = list({m.system_id for m in matches})
+    prov_map = await get_system_provenance_map(conn, sys_ids)
     results = []
     for node in matches:
         ancestors = await get_ancestors(conn, node.system_id, node.code)
         children = await get_children(conn, node.system_id, node.code)
-        entry = _node_to_dict(node)
-        # ancestors list includes the node itself - exclude it
-        entry["ancestors"] = [_node_to_dict(a) for a in ancestors if a.code != node.code]
-        entry["children"] = [_node_to_dict(c) for c in children]
+        prov = prov_map.get(node.system_id)
+        entry = _node_to_dict(node, prov)
+        entry["ancestors"] = [_node_to_dict(a, prov) for a in ancestors if a.code != node.code]
+        entry["children"] = [_node_to_dict(c, prov) for c in children]
         results.append(entry)
     return results
+
+
+async def handle_get_audit_report(
+    conn, args: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Return aggregate audit report for data trustworthiness review."""
+    report = await get_audit_report(conn)
+    # Convert system rows to dicts for JSON serialization
+    from world_of_taxonomy.query.browse import _row_to_system
+    report["official_missing_hash"] = [
+        _system_to_dict(_row_to_system(r)) for r in report["official_missing_hash"]
+    ]
+    report["skeleton_systems"] = [
+        _system_to_dict(_row_to_system(r)) for r in report["skeleton_systems"]
+    ]
+    return report
 
 
 async def handle_get_country_taxonomy_profile(
@@ -410,3 +457,25 @@ async def handle_get_country_taxonomy_profile(
             "'recommended' (ISIC Rev 4) for international/UN comparisons."
         ),
     }
+
+
+async def handle_classify_business(
+    conn, args: Dict[str, Any],
+) -> Dict[str, Any]:
+    """Classify free-text against taxonomy systems."""
+    from world_of_taxonomy.classify import classify_text
+
+    text = args.get("text", "")
+    if not text or len(text) < 2:
+        return {"error": "text must be at least 2 characters"}
+
+    systems = args.get("systems")
+    limit = args.get("limit", 5)
+
+    result = await classify_text(
+        conn,
+        text=text,
+        system_ids=systems,
+        limit=limit,
+    )
+    return result

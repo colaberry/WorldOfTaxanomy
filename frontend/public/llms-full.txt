@@ -1,0 +1,150 @@
+# WorldOfTaxonomy - Full Reference
+
+> Unified global classification knowledge graph.
+> 1,000+ systems, 1.2M+ nodes, 321K+ crosswalk edges.
+> Open source (MIT license). Data provided for informational purposes only - use at your own risk.
+
+## Categories (16)
+
+1. Industry - NAICS, ISIC, NACE, SIC, NIC, ANZSIC, and 170+ national systems
+2. Health / Clinical - ICD-10-CM, ICD-11, LOINC, MeSH, NCI Thesaurus, ATC, NDC
+3. Product / Trade - HS, CPC, UNSPSC, PRODCOM, TARIC, Schedule B
+4. Occupational - SOC, ISCO, ESCO, O*NET, ANZSCO, NOC, ROME
+5. Education - CIP, ISCED, ISCED-F
+6. Financial / Investment - GICS, ICB, SASB SICS, EU Taxonomy, Basel
+7. Geographic - ISO 3166-1/2, UN M.49, EU NUTS, US FIPS
+8. Regulatory & Governance - HIPAA, SOX, GDPR, CCPA, PCI DSS, NIST, CMMC, and 70+ frameworks
+9. ISO Standards - ISO 9001, 14001, 27001, 42001, and 20+ management system standards
+10. International Treaties - Basel III, FATF, ILO, WTO, Paris Agreement, and 15+ treaties
+11. Research & Knowledge - arXiv, JEL, MSC, LCC, LCSH, Scopus ASJC
+12. Environmental & Earth Sciences - IUCN, CITES, Ramsar, Stockholm Convention
+13. Technology Standards - IETF, W3C, IEEE, USB, Bluetooth, 3GPP
+14. Scales & Reference - SI Units, Periodic Table, Beaufort Scale, BMI, APGAR
+15. Transport & Logistics - IATA, IMO, ICAO, FAA, UIC
+16. Domain Taxonomies - 400+ sector-specific vocabularies across 49 industry sectors
+
+## API Reference
+
+Base URL: https://worldoftaxonomy.com/api/v1
+Content-Type: application/json
+
+### Systems
+
+GET /systems
+  Returns: Array of { id, name, full_name, region, node_count, ... }
+  Example: curl https://worldoftaxonomy.com/api/v1/systems
+
+GET /systems/{id}
+  Returns: System detail with root nodes
+  Example: curl https://worldoftaxonomy.com/api/v1/systems/naics_2022
+
+### Nodes
+
+GET /systems/{id}/nodes/{code}
+  Returns: { code, title, description, level, parent_code, is_leaf, ... }
+  Example: curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/5112
+
+GET /systems/{id}/nodes/{code}/children
+  Returns: Array of child nodes
+  Example: curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/51/children
+
+GET /systems/{id}/nodes/{code}/ancestors
+  Returns: Array of ancestor nodes from root to parent
+  Example: curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/511210/ancestors
+
+### Cross-system Mappings
+
+GET /systems/{id}/nodes/{code}/equivalences
+  Returns: Array of { target_system, target_code, target_title, match_type }
+  match_type: "exact" | "partial" | "broad" | "narrow"
+  Example: curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/5112/equivalences
+
+GET /equivalences/stats
+  Returns: Array of { source_system, target_system, edge_count, exact_count }
+
+### Search
+
+GET /search?q={query}&system={id}&limit={n}&context=true
+  Full-text search across all systems (or filtered to one)
+  context=true includes ancestor path for each match
+  Example: curl "https://worldoftaxonomy.com/api/v1/search?q=software+publishing&limit=10"
+
+### Classify (Pro+ tier)
+
+POST /classify
+  Body: { "text": "organic baby food manufacturer", "systems": ["naics_2022"], "limit": 5 }
+  Returns: Matched codes per system with relevance scores
+  Requires: Pro or Enterprise tier API key
+
+### Countries
+
+GET /countries/stats
+  Returns: Per-country taxonomy coverage statistics
+
+GET /countries/{code}
+  Returns: Country taxonomy profile with official/recommended systems and sector strengths
+  Example: curl https://worldoftaxonomy.com/api/v1/countries/US
+
+### Authentication
+
+POST /auth/register - Create account (email, password)
+POST /auth/login - Get JWT token (15 min expiry)
+POST /auth/keys - Create long-lived API key (wot_ prefix)
+
+Header: Authorization: Bearer <jwt_or_api_key>
+
+### Rate Limits
+
+| Tier       | Per Minute | Daily   | Classify |
+|------------|-----------|---------|----------|
+| Anonymous  | 30        | 1,000   | No       |
+| Free       | 100       | 5,000   | 10/day   |
+| Pro        | 1,000     | 100,000 | 1,000/day|
+| Enterprise | 10,000    | Unlimited| Unlimited|
+
+## MCP Server Tools
+
+Transport: stdio (JSON-RPC)
+Run: python3 -m world_of_taxonomy mcp
+
+| Tool | Description |
+|------|-------------|
+| list_classification_systems | List all systems with node counts |
+| get_industry | Fetch a code by system + code |
+| search_classifications | Full-text search across all nodes |
+| browse_children | Navigate hierarchy downward |
+| get_ancestors | Get full path to root |
+| get_equivalences | Get crosswalk edges for a code |
+| translate_code | Convert code between two systems |
+| translate_across_all_systems | Translate to every linked system |
+| classify_business | Classify free-text against all systems |
+| get_country_taxonomy_profile | Full taxonomy profile for a country |
+| explore_industry_tree | Step-by-step hierarchy exploration |
+| get_sector_overview | Summary stats for a sector |
+| compare_sector | Compare sector across systems |
+| find_by_keyword_all_systems | Search in every system |
+| get_crosswalk_coverage | Edge counts between system pairs |
+| get_system_diff | Structural diff of two systems |
+| get_siblings | Sibling codes at same level |
+| get_subtree_summary | Count nodes under a parent |
+| resolve_ambiguous_code | Disambiguate multi-system codes |
+| get_leaf_count | Count leaf nodes in subtree |
+| get_region_mapping | Map region to its systems |
+| describe_match_types | Explain crosswalk match qualities |
+
+## Data Provenance
+
+Every system has a data_provenance field:
+- official_download: Parsed from official source files (highest trust)
+- structural_derivation: National system that adopts an international standard verbatim
+- manual_transcription: Transcribed from official documentation
+- expert_curated: Domain expert-assembled vocabulary
+
+Every official_download system includes a source_file_hash (SHA-256) for audit verification.
+
+## Disclaimer
+
+Data is provided for informational purposes only. We do not guarantee accuracy
+or completeness. Use at your own risk. For authoritative codes, consult the
+official source. Report data issues at:
+https://github.com/colaberry/WorldOfTaxonomy/issues/new?template=data_issue.yml

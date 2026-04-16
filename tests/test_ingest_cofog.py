@@ -16,7 +16,7 @@ Hierarchy:
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.cofog import (
+from world_of_taxonomy.ingest.cofog import (
     _determine_level,
     _determine_parent,
     _determine_sector,

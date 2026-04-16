@@ -9,21 +9,21 @@ exact equivalence edge.
 ~249 countries x 2 directions = ~498 edges.
 """
 import pytest
-from world_of_taxanomy.ingest.crosswalk_iso3166 import (
+from world_of_taxonomy.ingest.crosswalk_iso3166 import (
     ingest_crosswalk_iso3166,
 )
 
 
 def test_crosswalk_iso3166_module_importable():
     """The module exists and is importable."""
-    from world_of_taxanomy.ingest import crosswalk_iso3166  # noqa: F401
+    from world_of_taxonomy.ingest import crosswalk_iso3166  # noqa: F401
 
 
 def test_ingest_crosswalk_iso3166(db_pool):
     """Integration test - links iso_3166_1 and iso_3166_2 countries."""
     import asyncio
-    from world_of_taxanomy.ingest.iso3166_1 import ingest_iso3166_1
-    from world_of_taxanomy.ingest.iso3166_2 import ingest_iso3166_2
+    from world_of_taxonomy.ingest.iso3166_1 import ingest_iso3166_1
+    from world_of_taxonomy.ingest.iso3166_2 import ingest_iso3166_2
 
     async def _run():
         async with db_pool.acquire() as conn:
@@ -71,8 +71,8 @@ def test_ingest_crosswalk_iso3166(db_pool):
 def test_ingest_crosswalk_iso3166_idempotent(db_pool):
     """Running the crosswalk twice does not create duplicate edges."""
     import asyncio
-    from world_of_taxanomy.ingest.iso3166_1 import ingest_iso3166_1
-    from world_of_taxanomy.ingest.iso3166_2 import ingest_iso3166_2
+    from world_of_taxonomy.ingest.iso3166_1 import ingest_iso3166_1
+    from world_of_taxonomy.ingest.iso3166_2 import ingest_iso3166_2
 
     async def _run():
         async with db_pool.acquire() as conn:

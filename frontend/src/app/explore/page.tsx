@@ -4,7 +4,7 @@ import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { search, getSystems } from '@/lib/api'
-import { SYSTEM_CATEGORIES, getCategoryForSystem } from '@/lib/categories'
+import { SYSTEM_CATEGORIES, getCategoryForSystem, DOMAIN_SECTORS, getDomainSector } from '@/lib/categories'
 import { getSystemColor } from '@/lib/colors'
 import Link from 'next/link'
 import { Search, X, ChevronDown, Leaf } from 'lucide-react'
@@ -115,7 +115,8 @@ function ExploreContent() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Explore Classifications</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Search across all 82 classification systems and 532,651 codes
+          Search across all {systems?.length ?? '...'} classification systems
+          {systems && ` and ${systems.reduce((s, x) => s + x.node_count, 0).toLocaleString()} codes`}
         </p>
       </div>
 
@@ -202,6 +203,93 @@ function ExploreContent() {
         <div className="space-y-8">
           {activeBuckets.map(({ catId, nodes }) => {
             const cat = SYSTEM_CATEGORIES.find((c) => c.id === catId)!
+
+            // Domain category: sub-group by sector
+            if (catId === 'domain') {
+              // Build sector groups preserving DOMAIN_SECTORS order
+              const sectorMap = new Map<string, typeof nodes>()
+              for (const node of nodes) {
+                const sector = getDomainSector(node.system_id)
+                const key = sector?.id ?? '_other'
+                if (!sectorMap.has(key)) sectorMap.set(key, [])
+                sectorMap.get(key)!.push(node)
+              }
+              // Ordered list: known sectors first, then _other
+              const orderedSectors: Array<{ sectorId: string; sectorNodes: typeof nodes }> = []
+              for (const sector of DOMAIN_SECTORS) {
+                if (sectorMap.has(sector.id)) {
+                  orderedSectors.push({ sectorId: sector.id, sectorNodes: sectorMap.get(sector.id)! })
+                }
+              }
+              if (sectorMap.has('_other')) {
+                orderedSectors.push({ sectorId: '_other', sectorNodes: sectorMap.get('_other')! })
+              }
+
+              return (
+                <section key={catId}>
+                  {/* Category header */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: cat.accent }} />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      {cat.label}
+                    </span>
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {nodes.length} match{nodes.length !== 1 ? 'es' : ''}
+                    </span>
+                    <div className="flex-1 h-px bg-border/30" />
+                  </div>
+
+                  {/* Sector sub-groups */}
+                  <div className="space-y-4">
+                    {orderedSectors.map(({ sectorId, sectorNodes }) => {
+                      const sectorDef = DOMAIN_SECTORS.find((s) => s.id === sectorId)
+                      const expandKey = `domain_${sectorId}`
+                      const visible = expanded[expandKey] ?? INITIAL_VISIBLE
+                      const shown = sectorNodes.slice(0, visible)
+                      const remaining = sectorNodes.length - shown.length
+                      return (
+                        <div key={sectorId}>
+                          {/* Sector sub-header */}
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <span
+                              className="w-1.5 h-1.5 rounded-full shrink-0"
+                              style={{ backgroundColor: sectorDef?.accent ?? cat.accent }}
+                            />
+                            <span className="text-[11px] font-semibold text-muted-foreground/80">
+                              {sectorDef?.label ?? 'Other'}
+                            </span>
+                            <span className="text-[11px] text-muted-foreground/50 font-mono">
+                              {sectorNodes.length}
+                            </span>
+                          </div>
+                          <div className="space-y-0.5 pl-3">
+                            {shown.map((node, i) => (
+                              <ResultRow
+                                key={`${node.system_id}-${node.code}-${i}`}
+                                node={node}
+                                systems={systems ?? []}
+                                query={debouncedQuery}
+                              />
+                            ))}
+                          </div>
+                          {remaining > 0 && (
+                            <button
+                              onClick={() => handleExpand(expandKey, sectorNodes.length)}
+                              className="mt-1.5 flex items-center gap-1.5 pl-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              <ChevronDown className="h-3.5 w-3.5" />
+                              Show {remaining} more in {sectorDef?.label ?? 'Other'}
+                            </button>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </section>
+              )
+            }
+
+            // All other categories: flat list
             const visible = expanded[catId] ?? INITIAL_VISIBLE
             const shown = nodes.slice(0, visible)
             const remaining = nodes.length - shown.length
@@ -309,6 +397,11 @@ function ResultRow({
       href={`/system/${node.system_id}/node/${encodeURIComponent(node.code)}`}
       className="flex items-start gap-3 px-3 py-2.5 rounded-lg hover:bg-card border border-transparent hover:border-border/40 transition-all group"
     >
+      {/* Leaf indicator */}
+      <span className="shrink-0 w-4 pt-1 flex justify-center">
+        {node.is_leaf && <Leaf className="h-3 w-3 text-emerald-500/60" />}
+      </span>
+
       {/* System indicator */}
       <div className="flex items-center gap-1.5 shrink-0 w-28 pt-0.5">
         <span
@@ -343,11 +436,6 @@ function ResultRow({
           </p>
         )}
       </div>
-
-      {/* Leaf badge */}
-      {node.is_leaf && (
-        <Leaf className="h-3 w-3 text-emerald-500/40 shrink-0 mt-1" />
-      )}
     </Link>
   )
 }

@@ -52,7 +52,7 @@ export function Header() {
           className="flex items-center gap-2 text-foreground font-semibold tracking-tight"
         >
           <Globe className="h-5 w-5 text-primary" />
-          <span className="hidden sm:inline">WorldOfTaxanomy</span>
+          <span className="hidden sm:inline">World Of Taxonomy</span>
           <span className="sm:hidden">WoT</span>
         </Link>
 
@@ -91,7 +91,7 @@ export function Header() {
               {/* Header row with count + link to dashboard */}
               <div className="flex items-center justify-between px-3 py-2 border-b border-border/50 sticky top-0 bg-popover z-10">
                 <span className="text-xs text-muted-foreground font-medium">
-                  {systems?.length ?? 82} classification systems
+                  {systems?.length ?? '...'} classification systems
                 </span>
                 <Link
                   href="/dashboard"

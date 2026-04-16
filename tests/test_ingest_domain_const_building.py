@@ -13,7 +13,7 @@ Source: International Building Code (IBC) occupancy classifications. Public doma
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.domain_const_building import (
+from world_of_taxonomy.ingest.domain_const_building import (
     BUILDING_NODES,
     _determine_level,
     _determine_parent,
@@ -100,7 +100,7 @@ def test_domain_const_building_module_importable():
 
 def test_ingest_domain_const_building(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count = await ingest_domain_const_building(conn)
@@ -116,7 +116,7 @@ def test_ingest_domain_const_building(db_pool):
 
 def test_ingest_domain_const_building_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count1 = await ingest_domain_const_building(conn)

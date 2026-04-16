@@ -9,7 +9,7 @@ SCIAN is the Spanish-language version of NAICS, co-developed by Mexico, Canada, 
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.scian_2018 import (
+from world_of_taxonomy.ingest.scian_2018 import (
     SCIAN_SECTORS,
     SCIAN_TO_NAICS_MAPPING,
     ingest_scian_2018,

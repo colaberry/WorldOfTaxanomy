@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import pytest
-from world_of_taxanomy.ingest.crosswalk_isced_isco import (
+from world_of_taxonomy.ingest.crosswalk_isced_isco import (
     ISCED_ISCO_EDGES,
     ingest_crosswalk_isced_isco,
 )
@@ -54,8 +54,8 @@ def test_ingest_crosswalk_isced_isco(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
             # Seed prerequisite systems
-            from world_of_taxanomy.ingest.isced_2011 import ingest_isced_2011
-            from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
+            from world_of_taxonomy.ingest.isced_2011 import ingest_isced_2011
+            from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
             await ingest_isced_2011(conn)
             await ingest_isco_08(conn)
 
@@ -76,8 +76,8 @@ def test_ingest_crosswalk_isced_isco(db_pool):
 def test_ingest_crosswalk_isced_isco_idempotent(db_pool):
     async def _run():
         async with db_pool.acquire() as conn:
-            from world_of_taxanomy.ingest.isced_2011 import ingest_isced_2011
-            from world_of_taxanomy.ingest.isco_08 import ingest_isco_08
+            from world_of_taxonomy.ingest.isced_2011 import ingest_isced_2011
+            from world_of_taxonomy.ingest.isco_08 import ingest_isco_08
             await ingest_isced_2011(conn)
             await ingest_isco_08(conn)
 

@@ -5,7 +5,7 @@ RED tests - written before any implementation exists.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.domain_health_payer import (
+from world_of_taxonomy.ingest.domain_health_payer import (
     HEALTH_PAYER_NODES,
     _determine_level,
     _determine_parent,
@@ -92,7 +92,7 @@ def test_module_importable():
 
 def test_ingest(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count = await ingest_domain_health_payer(conn)
@@ -108,7 +108,7 @@ def test_ingest(db_pool):
 
 def test_ingest_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             count1 = await ingest_domain_health_payer(conn)

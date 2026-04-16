@@ -15,7 +15,7 @@ Covers:
 import pytest
 from httpx import AsyncClient, ASGITransport
 
-from world_of_taxanomy.api.app import create_app
+from world_of_taxonomy.api.app import create_app
 
 
 @pytest.fixture

@@ -1,79 +1,279 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import * as d3 from 'd3'
 import type { ClassificationSystem, CrosswalkStat } from '@/lib/types'
 import { getSystemColor } from '@/lib/colors'
+import {
+  SYSTEM_CATEGORIES,
+  DOMAIN_SECTORS,
+  getCategoryForSystem,
+  groupSystemsByCategory,
+} from '@/lib/categories'
+import { ChevronRight } from 'lucide-react'
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 interface Props {
   systems: ClassificationSystem[]
   stats: CrosswalkStat[]
 }
 
-interface GalaxyNode extends d3.SimulationNodeDatum {
+type ViewMode = 'overview' | 'category' | 'sector'
+
+interface DrillState {
+  mode: ViewMode
+  categoryId: string | null
+  sectorId: string | null
+}
+
+interface ViewNode extends d3.SimulationNodeDatum {
   id: string
-  name: string
-  nodeCount: number
+  label: string
+  subLabel: string
   radius: number
   color: string
   phase: number
   breathSpeed: number
+  type: 'category' | 'sector' | 'system'
 }
 
-interface GalaxyLink extends d3.SimulationLinkDatum<GalaxyNode> {
+interface ViewLink extends d3.SimulationLinkDatum<ViewNode> {
   weight: number
 }
+
+interface BreadcrumbItem {
+  label: string
+  state: DrillState
+}
+
+// ── Data builder ──────────────────────────────────────────────────────────────
+
+function buildView(
+  drill: DrillState,
+  systems: ClassificationSystem[],
+  stats: CrosswalkStat[],
+  grouped: ReturnType<typeof groupSystemsByCategory>
+): { nodes: ViewNode[]; links: ViewLink[]; breadcrumb: BreadcrumbItem[] } {
+  const OVERVIEW_STATE: DrillState = { mode: 'overview', categoryId: null, sectorId: null }
+
+  // ── OVERVIEW: one bubble per category ──
+  if (drill.mode === 'overview') {
+    const maxCount = Math.max(...grouped.map((g) => g.systems.length), 1)
+    const nodes: ViewNode[] = grouped.map(({ category, systems: catSystems }, i) => ({
+      id: category.id,
+      label: category.label,
+      subLabel: `${catSystems.length} system${catSystems.length !== 1 ? 's' : ''}`,
+      radius: Math.sqrt(catSystems.length / maxCount) * 55 + 38,
+      color: category.accent,
+      phase: (i / grouped.length) * Math.PI * 2,
+      breathSpeed: 0.35 + Math.random() * 0.25,
+      type: 'category' as const,
+    }))
+
+    // Derive category-to-category links from crosswalk stats
+    const catLinkMap = new Map<string, number>()
+    for (const s of stats) {
+      const src = getCategoryForSystem(s.source_system).id
+      const tgt = getCategoryForSystem(s.target_system).id
+      if (src !== tgt) {
+        const key = [src, tgt].sort().join('|')
+        catLinkMap.set(key, (catLinkMap.get(key) || 0) + s.edge_count)
+      }
+    }
+    const links: ViewLink[] = Array.from(catLinkMap.entries()).map(([key, weight]) => {
+      const [source, target] = key.split('|')
+      return { source, target, weight }
+    })
+
+    return { nodes, links, breadcrumb: [] }
+  }
+
+  // ── CATEGORY: systems or sector clusters ──
+  if (drill.mode === 'category') {
+    const catGroup = grouped.find((g) => g.category.id === drill.categoryId)
+    const catSystems = catGroup?.systems ?? []
+    const category = SYSTEM_CATEGORIES.find((c) => c.id === drill.categoryId)!
+    const breadcrumb: BreadcrumbItem[] = [
+      { label: 'All Categories', state: OVERVIEW_STATE },
+      { label: category.label, state: { ...drill } },
+    ]
+
+    // Domain: show 36 sector bubbles instead of 149 systems
+    if (drill.categoryId === 'domain') {
+      const sectorsPresent = DOMAIN_SECTORS.filter((sector) =>
+        catSystems.some((s) =>
+          s.id === 'domain_adv_materials'
+            ? sector.id === 'materials'
+            : s.id.startsWith(sector.prefix)
+        )
+      )
+      const maxCount = Math.max(...sectorsPresent.map((sec) => {
+        return catSystems.filter((s) =>
+          s.id === 'domain_adv_materials'
+            ? sec.id === 'materials'
+            : s.id.startsWith(sec.prefix)
+        ).length
+      }), 1)
+
+      const nodes: ViewNode[] = sectorsPresent.map((sector, i) => {
+        const count = catSystems.filter((s) =>
+          s.id === 'domain_adv_materials'
+            ? sector.id === 'materials'
+            : s.id.startsWith(sector.prefix)
+        ).length
+        return {
+          id: sector.id,
+          label: sector.label,
+          subLabel: `${count} system${count !== 1 ? 's' : ''}`,
+          radius: Math.sqrt(count / maxCount) * 38 + 30,
+          color: sector.accent,
+          phase: (i / sectorsPresent.length) * Math.PI * 2,
+          breathSpeed: 0.35 + Math.random() * 0.25,
+          type: 'sector' as const,
+        }
+      })
+      return { nodes, links: [], breadcrumb }
+    }
+
+    // Non-domain: show individual system bubbles
+    const maxNodeCount = Math.max(...catSystems.map((s) => s.node_count), 1)
+    const nodes: ViewNode[] = catSystems.map((sys, i) => ({
+      id: sys.id,
+      label: sys.name,
+      subLabel: `${sys.node_count.toLocaleString()} codes`,
+      radius: Math.sqrt(sys.node_count / maxNodeCount) * 38 + 18,
+      color: sys.tint_color || category.accent,
+      phase: (i / catSystems.length) * Math.PI * 2,
+      breathSpeed: 0.35 + Math.random() * 0.25,
+      type: 'system' as const,
+    }))
+
+    const sysIds = new Set(catSystems.map((s) => s.id))
+    const linkMap = new Map<string, number>()
+    for (const s of stats) {
+      if (sysIds.has(s.source_system) && sysIds.has(s.target_system)) {
+        const key = [s.source_system, s.target_system].sort().join('|')
+        linkMap.set(key, (linkMap.get(key) || 0) + s.edge_count)
+      }
+    }
+    const links: ViewLink[] = Array.from(linkMap.entries()).map(([key, weight]) => {
+      const [source, target] = key.split('|')
+      return { source, target, weight }
+    })
+
+    return { nodes, links, breadcrumb }
+  }
+
+  // ── SECTOR: systems within one domain sector ──
+  const sector = DOMAIN_SECTORS.find((s) => s.id === drill.sectorId)!
+  const domainGroup = grouped.find((g) => g.category.id === 'domain')
+  const allDomain = domainGroup?.systems ?? []
+  const sectorSystems = allDomain.filter((s) =>
+    s.id === 'domain_adv_materials'
+      ? sector.id === 'materials'
+      : s.id.startsWith(sector.prefix)
+  )
+
+  const domainCat = SYSTEM_CATEGORIES.find((c) => c.id === 'domain')!
+  const breadcrumb: BreadcrumbItem[] = [
+    { label: 'All Categories', state: OVERVIEW_STATE },
+    { label: domainCat.label, state: { mode: 'category', categoryId: 'domain', sectorId: null } },
+    { label: sector.label, state: { ...drill } },
+  ]
+
+  const maxNodeCount = Math.max(...sectorSystems.map((s) => s.node_count), 1)
+  const nodes: ViewNode[] = sectorSystems.map((sys, i) => ({
+    id: sys.id,
+    label: sys.name,
+    subLabel: `${sys.node_count.toLocaleString()} codes`,
+    radius: Math.sqrt(sys.node_count / maxNodeCount) * 38 + 22,
+    color: sys.tint_color || sector.accent,
+    phase: (i / sectorSystems.length) * Math.PI * 2,
+    breathSpeed: 0.35 + Math.random() * 0.25,
+    type: 'system' as const,
+  }))
+
+  const sysIds = new Set(sectorSystems.map((s) => s.id))
+  const linkMap = new Map<string, number>()
+  for (const s of stats) {
+    if (sysIds.has(s.source_system) && sysIds.has(s.target_system)) {
+      const key = [s.source_system, s.target_system].sort().join('|')
+      linkMap.set(key, (linkMap.get(key) || 0) + s.edge_count)
+    }
+  }
+  const links: ViewLink[] = Array.from(linkMap.entries()).map(([key, weight]) => {
+    const [source, target] = key.split('|')
+    return { source, target, weight }
+  })
+
+  return { nodes, links, breadcrumb }
+}
+
+// ── Component ─────────────────────────────────────────────────────────────────
 
 export function GalaxyView({ systems, stats }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const { resolvedTheme } = useTheme()
 
+  const [drill, setDrill] = useState<DrillState>({
+    mode: 'overview',
+    categoryId: null,
+    sectorId: null,
+  })
+
+  const grouped = useMemo(() => groupSystemsByCategory(systems), [systems])
+
+  const { nodes: viewNodes, links: viewLinks, breadcrumb } = useMemo(
+    () => buildView(drill, systems, stats, grouped),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [drill.mode, drill.categoryId, drill.sectorId, systems, stats, grouped]
+  )
+
+  const handleNodeClick = useCallback(
+    (node: ViewNode) => {
+      if (node.type === 'category') {
+        setDrill({ mode: 'category', categoryId: node.id, sectorId: null })
+      } else if (node.type === 'sector') {
+        setDrill({ mode: 'sector', categoryId: 'domain', sectorId: node.id })
+      } else {
+        router.push(`/system/${node.id}`)
+      }
+    },
+    [router]
+  )
+
+  const handleBack = useCallback(() => {
+    setDrill((prev) => {
+      if (prev.mode === 'sector') {
+        return { mode: 'category', categoryId: 'domain', sectorId: null }
+      }
+      if (prev.mode === 'category') {
+        return { mode: 'overview', categoryId: null, sectorId: null }
+      }
+      return prev
+    })
+  }, [])
+
   useEffect(() => {
-    if (!containerRef.current || systems.length === 0) return
+    if (!containerRef.current || viewNodes.length === 0) return
 
     const isDark = resolvedTheme === 'dark'
     const el = containerRef.current
     el.innerHTML = ''
 
-    const width = el.clientWidth
-    const height = el.clientHeight || 700
+    const width = el.clientWidth || 800
+    const height = el.clientHeight || 680
     const isMobile = width < 600
 
-    const maxRadius = isMobile ? 38 : 58
-    const minRadius = isMobile ? 20 : 27
-    const maxNodeCount = Math.max(...systems.map((s) => s.node_count))
-
-    const nodes: GalaxyNode[] = systems.map((s, i) => {
-      const t = Math.sqrt(s.node_count / maxNodeCount)
-      return {
-        id: s.id,
-        name: s.name,
-        nodeCount: s.node_count,
-        radius: minRadius + t * (maxRadius - minRadius),
-        color: getSystemColor(s.id),
-        phase: (i / systems.length) * Math.PI * 2,
-        breathSpeed: 0.4 + Math.random() * 0.3,
-      }
-    })
-
-    const links: GalaxyLink[] = []
-    const seen = new Set<string>()
-    stats.forEach((s) => {
-      const key = [s.source_system, s.target_system].sort().join('|')
-      if (!seen.has(key)) {
-        seen.add(key)
-        links.push({ source: s.source_system, target: s.target_system, weight: s.edge_count })
-      }
-    })
-
-    // Theme-aware colors
+    // ── Theme colors ──
     const bgColor = isDark ? '#0a0a0a' : '#f8fafc'
     const textColor = isDark ? '#ffffff' : '#111827'
-    const textShadowColor = isDark ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)'
-    const subtextColor = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(55, 65, 81, 0.9)'
+    const textShadowColor = isDark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)'
+    const subtextColor = isDark ? 'rgba(255,255,255,0.7)' : 'rgba(55,65,81,0.9)'
     const linkColor = isDark ? '#3B82F6' : '#6366F1'
     const linkOpacity = isDark ? 0.12 : 0.2
     const starColor = isDark ? '#ffffff' : '#94a3b8'
@@ -81,7 +281,7 @@ export function GalaxyView({ systems, stats }: Props) {
     const orbFillOpacity = isDark ? 0.15 : 0.18
     const orbStrokeWidth = isDark ? 1.5 : 2.5
 
-    // SVG
+    // ── SVG ──
     const svg = d3
       .select(el)
       .append('svg')
@@ -107,7 +307,6 @@ export function GalaxyView({ systems, stats }: Props) {
     gsMerge.append('feMergeNode').attr('in', 'blur')
     gsMerge.append('feMergeNode').attr('in', 'SourceGraphic')
 
-    // Text shadow filter for legibility - thicker halo in light mode
     const shadowBlur = isDark ? 2 : 3
     const textShadow = defs.append('filter').attr('id', 'text-bg').attr('x', '-15%').attr('y', '-15%').attr('width', '130%').attr('height', '130%')
     textShadow.append('feFlood').attr('flood-color', textShadowColor).attr('result', 'flood')
@@ -115,10 +314,10 @@ export function GalaxyView({ systems, stats }: Props) {
     textShadow.append('feGaussianBlur').attr('in', 'shadow').attr('stdDeviation', shadowBlur).attr('result', 'blur')
     const tbMerge = textShadow.append('feMerge')
     tbMerge.append('feMergeNode').attr('in', 'blur')
-    tbMerge.append('feMergeNode').attr('in', 'blur')  // double blur layer for stronger halo
+    tbMerge.append('feMergeNode').attr('in', 'blur')
     tbMerge.append('feMergeNode').attr('in', 'SourceGraphic')
 
-    // Background stars
+    // ── Background stars ──
     const starCount = isMobile ? 40 : 80
     const starsG = svg.append('g')
     for (let i = 0; i < starCount; i++) {
@@ -130,33 +329,73 @@ export function GalaxyView({ systems, stats }: Props) {
         .attr('opacity', Math.random() * starMaxOpacity + 0.05)
     }
 
-    // Force simulation
-    const padding = maxRadius + 20
-    const linkDist = isMobile ? 80 : 140
-    const chargeStrength = isMobile ? -180 : -380
+    // ── Click hint (overview only) ──
+    if (drill.mode === 'overview') {
+      svg.append('text')
+        .attr('x', width / 2)
+        .attr('y', height - 14)
+        .attr('text-anchor', 'middle')
+        .attr('fill', isDark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.2)')
+        .attr('font-size', '11px')
+        .text('Click any category to explore')
+    }
 
-    const simulation = d3.forceSimulation(nodes)
-      .force('link', d3.forceLink<GalaxyNode, GalaxyLink>(links).id((d) => d.id).distance(linkDist).strength(0.4))
+    // ── Force simulation ──
+    const maxRadius = Math.max(...viewNodes.map((n) => n.radius))
+    const padding = maxRadius + 16
+    const linkDist = isMobile ? 90 : 160
+    const chargeStrength = viewNodes.length <= 15
+      ? -(isMobile ? 900 : 1600)
+      : isMobile ? -200 : -420
+
+    const simNodes = viewNodes.map((n) => ({ ...n }))
+
+    const simLinks: ViewLink[] = viewLinks.map((l) => ({
+      ...l,
+      source: typeof l.source === 'string' ? l.source : (l.source as ViewNode).id,
+      target: typeof l.target === 'string' ? l.target : (l.target as ViewNode).id,
+    }))
+
+    const simulation = d3
+      .forceSimulation(simNodes)
+      .force(
+        'link',
+        d3
+          .forceLink<ViewNode, ViewLink>(simLinks)
+          .id((d) => d.id)
+          .distance(linkDist)
+          .strength(0.35)
+      )
       .force('charge', d3.forceManyBody().strength(chargeStrength))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide<GalaxyNode>().radius((d) => d.radius + (isMobile ? 14 : 22)))
-      .force('x', d3.forceX(width / 2).strength(0.05))
-      .force('y', d3.forceY(height / 2).strength(0.05))
+      .force(
+        'collision',
+        d3.forceCollide<ViewNode>().radius((d) => d.radius + (isMobile ? 14 : 20))
+      )
+      .force('x', d3.forceX(width / 2).strength(0.06))
+      .force('y', d3.forceY(height / 2).strength(0.06))
       .velocityDecay(0.45)
 
-    // Edges
-    const linkLine = svg.append('g')
+    // ── Edges ──
+    const linkLine = svg
+      .append('g')
       .selectAll('line')
-      .data(links)
+      .data(simLinks)
       .join('line')
       .attr('stroke', linkColor)
       .attr('stroke-opacity', linkOpacity)
-      .attr('stroke-width', (d) => Math.max(1, Math.log(d.weight) * 0.6))
+      .attr('stroke-width', (d) => Math.max(0.8, Math.log(d.weight + 1) * 0.5))
 
-    // Data-flow particles
+    // ── Particles along edges ──
     const particlesPerLink = isMobile ? 1 : 2
-    const particles: Array<{ link: GalaxyLink; t: number; speed: number; size: number; reverse: boolean }> = []
-    links.forEach((l) => {
+    const particles: Array<{
+      link: ViewLink
+      t: number
+      speed: number
+      size: number
+      reverse: boolean
+    }> = []
+    simLinks.forEach((l) => {
       for (let p = 0; p < particlesPerLink; p++) {
         particles.push({
           link: l,
@@ -168,7 +407,8 @@ export function GalaxyView({ systems, stats }: Props) {
       }
     })
 
-    const particleDots = svg.append('g')
+    const particleDots = svg
+      .append('g')
       .selectAll('circle.particle')
       .data(particles)
       .join('circle')
@@ -176,30 +416,48 @@ export function GalaxyView({ systems, stats }: Props) {
       .attr('fill', '#fff')
       .attr('opacity', 0)
 
-    // Nodes
-    const node = svg.append('g')
-      .selectAll<SVGGElement, GalaxyNode>('g')
-      .data(nodes)
+    // ── Node groups ──
+    const LARGE = isMobile ? 38 : 44
+    const MEDIUM = isMobile ? 28 : 32
+
+    function truncate(str: string, max: number) {
+      return str.length <= max ? str : str.slice(0, max - 1) + '\u2026'
+    }
+
+    let hoveredId: string | null = null
+
+    const node = svg
+      .append('g')
+      .selectAll<SVGGElement, ViewNode>('g')
+      .data(simNodes)
       .join('g')
-      .attr('cursor', 'pointer')
+      .attr('cursor', (d) => d.type === 'system' ? 'pointer' : 'pointer')
       .on('click', (_event, d) => {
-        router.push(`/system/${d.id}`)
+        handleNodeClick(d)
       })
       .call(
-        d3.drag<SVGGElement, GalaxyNode>()
+        d3
+          .drag<SVGGElement, ViewNode>()
           .on('start', (event, d) => {
             if (!event.active) simulation.alphaTarget(0.3).restart()
-            d.fx = d.x; d.fy = d.y
+            d.fx = d.x
+            d.fy = d.y
           })
-          .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y })
+          .on('drag', (event, d) => {
+            d.fx = event.x
+            d.fy = event.y
+          })
           .on('end', (event, d) => {
             if (!event.active) simulation.alphaTarget(0)
-            d.fx = null; d.fy = null
+            d.fx = null
+            d.fy = null
           })
       )
 
     // Halo
-    node.append('circle').attr('class', 'halo')
+    node
+      .append('circle')
+      .attr('class', 'halo')
       .attr('r', (d) => d.radius + 6)
       .attr('fill', 'none')
       .attr('stroke', (d) => d.color)
@@ -207,7 +465,9 @@ export function GalaxyView({ systems, stats }: Props) {
       .attr('stroke-opacity', 0)
 
     // Orb
-    node.append('circle').attr('class', 'orb')
+    node
+      .append('circle')
+      .attr('class', 'orb')
       .attr('r', (d) => d.radius)
       .attr('fill', (d) => d.color)
       .attr('fill-opacity', orbFillOpacity)
@@ -216,42 +476,48 @@ export function GalaxyView({ systems, stats }: Props) {
       .attr('filter', 'url(#glow)')
 
     // Core
-    node.append('circle').attr('class', 'core')
+    node
+      .append('circle')
+      .attr('class', 'core')
       .attr('r', (d) => d.radius * 0.15)
       .attr('fill', (d) => d.color)
       .attr('fill-opacity', 0.4)
 
-    // Labels - all nodes get a name; size/truncation scales with orb radius
-    const fontWeight = '600'
+    // "Drill-in" ring for non-system nodes
+    node
+      .filter((d) => d.type !== 'system')
+      .append('circle')
+      .attr('class', 'drill-ring')
+      .attr('r', (d) => d.radius + 3)
+      .attr('fill', 'none')
+      .attr('stroke', (d) => d.color)
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4 3')
+      .attr('stroke-opacity', 0.35)
 
-    // Thresholds (radius px)
-    const LARGE  = isMobile ? 34 : 38  // full name + code count
-    const MEDIUM = isMobile ? 27 : 30  // full name, no count
-
-    function truncate(str: string, max: number) {
-      return str.length <= max ? str : str.slice(0, max - 1) + '\u2026'
-    }
-
-    node.append('text')
+    // Label - primary
+    node
+      .append('text')
       .attr('text-anchor', 'middle')
-      .attr('dy', (d) => d.radius >= LARGE ? -6 : 1)
+      .attr('dy', (d) => d.radius >= LARGE ? -7 : 1)
       .attr('fill', textColor)
       .attr('font-size', (d) => {
-        if (d.radius >= LARGE)  return isMobile ? '10px' : '12px'
-        if (d.radius >= MEDIUM) return isMobile ?  '9px' : '10px'
+        if (d.radius >= LARGE) return isMobile ? '10px' : '12px'
+        if (d.radius >= MEDIUM) return isMobile ? '9px' : '10px'
         return isMobile ? '8px' : '9px'
       })
-      .attr('font-weight', fontWeight)
+      .attr('font-weight', '600')
       .attr('pointer-events', 'none')
       .attr('filter', 'url(#text-bg)')
       .text((d) => {
-        if (d.radius >= LARGE)  return d.name
-        if (d.radius >= MEDIUM) return truncate(d.name, 18)
-        return truncate(d.name, 13)
+        if (d.radius >= LARGE) return d.label
+        if (d.radius >= MEDIUM) return truncate(d.label, 18)
+        return truncate(d.label, 12)
       })
 
-    // Code count line only for large orbs
-    node.filter((d) => d.radius >= LARGE)
+    // Sub-label (code/system count) - only for larger orbs
+    node
+      .filter((d) => d.radius >= LARGE)
       .append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', 10)
@@ -261,90 +527,172 @@ export function GalaxyView({ systems, stats }: Props) {
       .attr('font-weight', '500')
       .attr('pointer-events', 'none')
       .attr('filter', 'url(#text-bg)')
-      .text((d) => `${d.nodeCount.toLocaleString()} codes`)
+      .text((d) => d.subLabel)
 
-    // Hover tooltip - shows full name + count for any node on mouseover
+    // ── Hover tooltip for small orbs ──
     const hoverLabel = svg.append('g').attr('pointer-events', 'none').attr('opacity', 0)
-    const hoverBg = hoverLabel.append('rect')
-      .attr('rx', 4).attr('ry', 4)
+    const hoverBg = hoverLabel
+      .append('rect')
+      .attr('rx', 4)
+      .attr('ry', 4)
       .attr('fill', isDark ? 'rgba(15,23,42,0.92)' : 'rgba(255,255,255,0.95)')
       .attr('stroke', isDark ? '#334155' : '#cbd5e1')
       .attr('stroke-width', 1)
-    const hoverText = hoverLabel.append('text')
+    const hoverText = hoverLabel
+      .append('text')
       .attr('font-size', '11px')
       .attr('font-weight', '600')
       .attr('fill', textColor)
       .attr('text-anchor', 'middle')
-    const LABEL_RADIUS_THRESHOLD = MEDIUM  // keep for hover logic below
 
-    // Hover
-    let hoveredNode: string | null = null
+    node
+      .on('mouseover', function (_event, d) {
+        hoveredId = d.id
+        d3.select(this).select('.orb')
+          .transition().duration(200)
+          .attr('fill-opacity', isDark ? 0.35 : 0.45)
+          .attr('stroke-width', 2.5)
+          .attr('filter', 'url(#glow-strong)')
+        d3.select(this).select('.core')
+          .transition().duration(200)
+          .attr('r', d.radius * 0.25)
+          .attr('fill-opacity', 0.7)
+        d3.select(this).select('.halo')
+          .transition().duration(200)
+          .attr('stroke-opacity', 0.45)
+          .attr('r', d.radius + 14)
 
-    node.on('mouseover', function (_event, d) {
-      hoveredNode = d.id
-      d3.select(this).select('.orb')
-        .transition().duration(200)
-        .attr('fill-opacity', isDark ? 0.35 : 0.45).attr('stroke-width', 2.5).attr('filter', 'url(#glow-strong)')
-      d3.select(this).select('.core')
-        .transition().duration(200)
-        .attr('r', d.radius * 0.25).attr('fill-opacity', 0.7)
-      d3.select(this).select('.halo')
-        .transition().duration(200)
-        .attr('stroke-opacity', 0.4).attr('r', d.radius + 12)
+        linkLine
+          .transition().duration(200)
+          .attr('stroke-opacity', (l) => {
+            const src = (l.source as ViewNode).id
+            const tgt = (l.target as ViewNode).id
+            return src === d.id || tgt === d.id ? 0.55 : 0.04
+          })
 
-      linkLine.transition().duration(200)
-        .attr('stroke-opacity', (l) => {
-          const src = (l.source as GalaxyNode).id
-          const tgt = (l.target as GalaxyNode).id
-          return src === d.id || tgt === d.id ? 0.5 : 0.04
+        if (d.radius < MEDIUM) {
+          hoverText.text(`${d.label} - ${d.subLabel}`)
+          const bb = (hoverText.node() as SVGTextElement).getBBox()
+          const pad = 6
+          const bw = bb.width + pad * 2
+          const bh = bb.height + pad * 2
+          const lx = Math.min(Math.max(d.x ?? 0, bw / 2 + 4), width - bw / 2 - 4)
+          const ly = (d.y ?? 0) - d.radius - bh - 6
+          hoverBg.attr('x', lx - bw / 2).attr('y', ly).attr('width', bw).attr('height', bh)
+          hoverText.attr('x', lx).attr('y', ly + bh - pad)
+          hoverLabel.attr('opacity', 1)
+        }
+      })
+      .on('mouseout', function (_event, d) {
+        hoveredId = null
+        d3.select(this).select('.orb')
+          .transition().duration(300)
+          .attr('fill-opacity', orbFillOpacity)
+          .attr('stroke-width', orbStrokeWidth)
+          .attr('filter', 'url(#glow)')
+        d3.select(this).select('.core')
+          .transition().duration(300)
+          .attr('r', d.radius * 0.15)
+          .attr('fill-opacity', 0.4)
+        d3.select(this).select('.halo')
+          .transition().duration(300)
+          .attr('stroke-opacity', 0)
+          .attr('r', d.radius + 6)
+        linkLine.transition().duration(300).attr('stroke-opacity', linkOpacity)
+        hoverLabel.attr('opacity', 0)
+      })
+
+    // ── In-chart back button (top-left pill) ──
+    if (drill.mode !== 'overview') {
+      const prevLabel =
+        drill.mode === 'sector'
+          ? (SYSTEM_CATEGORIES.find((c) => c.id === 'domain')?.label ?? 'Domain Deep-Dives')
+          : 'All Categories'
+
+      const btnW = isMobile ? 110 : 136
+      const btnH = 32
+      const btnX = 14
+      const btnY = 14
+
+      const backBtn = svg
+        .append('g')
+        .attr('class', 'back-btn')
+        .attr('cursor', 'pointer')
+        .on('click', (event) => {
+          event.stopPropagation()
+          handleBack()
         })
 
-      // Show floating label for small orbs that have no persistent text
-      if (d.radius < LABEL_RADIUS_THRESHOLD) {
-        hoverText.text(d.name)
-        const textBBox = (hoverText.node() as SVGTextElement).getBBox()
-        const pad = 6
-        const bw = textBBox.width + pad * 2
-        const bh = textBBox.height + pad * 2
-        const lx = Math.min(Math.max(d.x! , bw / 2 + 4), width - bw / 2 - 4)
-        const ly = d.y! - d.radius - bh - 4
-        hoverBg.attr('x', lx - bw / 2).attr('y', ly).attr('width', bw).attr('height', bh)
-        hoverText.attr('x', lx).attr('y', ly + bh - pad)
-        hoverLabel.attr('opacity', 1)
-      }
-    }).on('mouseout', function (_event, d) {
-      hoveredNode = null
-      d3.select(this).select('.orb')
-        .transition().duration(300)
-        .attr('fill-opacity', orbFillOpacity).attr('stroke-width', orbStrokeWidth).attr('filter', 'url(#glow)')
-      d3.select(this).select('.core')
-        .transition().duration(300)
-        .attr('r', d.radius * 0.15).attr('fill-opacity', 0.4)
-      d3.select(this).select('.halo')
-        .transition().duration(300)
-        .attr('stroke-opacity', 0).attr('r', d.radius + 6)
+      // Pill background
+      backBtn
+        .append('rect')
+        .attr('x', btnX)
+        .attr('y', btnY)
+        .attr('width', btnW)
+        .attr('height', btnH)
+        .attr('rx', btnH / 2)
+        .attr('fill', isDark ? 'rgba(15,23,42,0.82)' : 'rgba(248,250,252,0.88)')
+        .attr('stroke', isDark ? 'rgba(148,163,184,0.35)' : 'rgba(100,116,139,0.35)')
+        .attr('stroke-width', 1.2)
 
-      linkLine.transition().duration(300).attr('stroke-opacity', linkOpacity)
-      hoverLabel.attr('opacity', 0)
-    })
+      // Arrow symbol
+      backBtn
+        .append('text')
+        .attr('x', btnX + 14)
+        .attr('y', btnY + btnH / 2 + 4.5)
+        .attr('fill', isDark ? '#94a3b8' : '#475569')
+        .attr('font-size', isMobile ? '13px' : '14px')
+        .attr('pointer-events', 'none')
+        .text('\u2190')
 
-    // Tick
+      // Label
+      backBtn
+        .append('text')
+        .attr('x', btnX + 28)
+        .attr('y', btnY + btnH / 2 + 4.5)
+        .attr('fill', isDark ? '#cbd5e1' : '#334155')
+        .attr('font-size', isMobile ? '10px' : '11px')
+        .attr('font-weight', '600')
+        .attr('pointer-events', 'none')
+        .text(prevLabel.length > 14 ? prevLabel.slice(0, 13) + '\u2026' : prevLabel)
+
+      // Hover effect
+      backBtn
+        .on('mouseover', function () {
+          d3.select(this)
+            .select('rect')
+            .transition()
+            .duration(150)
+            .attr('fill', isDark ? 'rgba(51,65,85,0.92)' : 'rgba(226,232,240,0.95)')
+            .attr('stroke', isDark ? 'rgba(148,163,184,0.7)' : 'rgba(100,116,139,0.7)')
+        })
+        .on('mouseout', function () {
+          d3.select(this)
+            .select('rect')
+            .transition()
+            .duration(200)
+            .attr('fill', isDark ? 'rgba(15,23,42,0.82)' : 'rgba(248,250,252,0.88)')
+            .attr('stroke', isDark ? 'rgba(148,163,184,0.35)' : 'rgba(100,116,139,0.35)')
+        })
+    }
+
+    // ── Simulation tick ──
     simulation.on('tick', () => {
-      nodes.forEach((d) => {
-        d.x = Math.max(padding, Math.min(width - padding, d.x!))
-        d.y = Math.max(padding, Math.min(height - padding, d.y!))
+      simNodes.forEach((d) => {
+        d.x = Math.max(padding, Math.min(width - padding, d.x ?? width / 2))
+        d.y = Math.max(padding, Math.min(height - padding, d.y ?? height / 2))
       })
 
       linkLine
-        .attr('x1', (d) => (d.source as GalaxyNode).x!)
-        .attr('y1', (d) => (d.source as GalaxyNode).y!)
-        .attr('x2', (d) => (d.target as GalaxyNode).x!)
-        .attr('y2', (d) => (d.target as GalaxyNode).y!)
+        .attr('x1', (d) => (d.source as ViewNode).x ?? 0)
+        .attr('y1', (d) => (d.source as ViewNode).y ?? 0)
+        .attr('x2', (d) => (d.target as ViewNode).x ?? 0)
+        .attr('y2', (d) => (d.target as ViewNode).y ?? 0)
 
-      node.attr('transform', (d) => `translate(${d.x},${d.y})`)
+      node.attr('transform', (d) => `translate(${d.x ?? 0},${d.y ?? 0})`)
     })
 
-    // Animation loop
+    // ── Animation loop ──
     const t0 = performance.now()
     let animId: number
 
@@ -352,19 +700,21 @@ export function GalaxyView({ systems, stats }: Props) {
       const elapsed = (now - t0) / 1000
 
       node.select('.orb').each(function (d) {
-        if (hoveredNode === d.id) return
+        if (hoveredId === d.id) return
         const breath = 1 + Math.sin(elapsed * d.breathSpeed + d.phase) * 0.04
         d3.select(this).attr('r', d.radius * breath)
       })
 
       node.select('.halo').each(function (d) {
-        if (hoveredNode === d.id) return
+        if (hoveredId === d.id) return
         const pulse = Math.sin(elapsed * 0.8 + d.phase) * 0.5 + 0.5
-        d3.select(this).attr('r', d.radius + 4 + pulse * 4).attr('stroke-opacity', pulse * 0.12)
+        d3.select(this)
+          .attr('r', d.radius + 4 + pulse * 4)
+          .attr('stroke-opacity', pulse * 0.12)
       })
 
       node.select('.core').each(function (d) {
-        if (hoveredNode === d.id) return
+        if (hoveredId === d.id) return
         const shimmer = 0.3 + Math.sin(elapsed * 1.2 + d.phase + 1) * 0.15
         d3.select(this).attr('fill-opacity', shimmer)
       })
@@ -378,24 +728,25 @@ export function GalaxyView({ systems, stats }: Props) {
         d.t += d.reverse ? -d.speed : d.speed
         if (d.t > 1) d.t -= 1
         if (d.t < 0) d.t += 1
-        const src = d.link.source as GalaxyNode
-        const tgt = d.link.target as GalaxyNode
+        const src = d.link.source as ViewNode
+        const tgt = d.link.target as ViewNode
         if (!src.x || !tgt.x) return
         const x = src.x + (tgt.x - src.x) * d.t
-        const y = src.y! + (tgt.y! - src.y!) * d.t
+        const y = (src.y ?? 0) + ((tgt.y ?? 0) - (src.y ?? 0)) * d.t
         const edgeFade = Math.sin(d.t * Math.PI)
-        const isConnected = hoveredNode && (src.id === hoveredNode || tgt.id === hoveredNode)
+        const isConnected = hoveredId && (src.id === hoveredId || tgt.id === hoveredId)
         d3.select(this)
-          .attr('cx', x).attr('cy', y)
+          .attr('cx', x)
+          .attr('cy', y)
           .attr('opacity', edgeFade * (isConnected ? 0.7 : 0.3))
           .attr('fill', src.color)
       })
 
       if (simulation.alpha() < 0.01) {
-        nodes.forEach((d) => {
+        simNodes.forEach((d) => {
           if (d.fx !== null && d.fx !== undefined) return
-          d.vx = (d.vx || 0) + (Math.random() - 0.5) * 0.15
-          d.vy = (d.vy || 0) + (Math.random() - 0.5) * 0.15
+          d.vx = (d.vx ?? 0) + (Math.random() - 0.5) * 0.15
+          d.vy = (d.vy ?? 0) + (Math.random() - 0.5) * 0.15
         })
         simulation.alpha(0.015).restart()
       }
@@ -405,7 +756,7 @@ export function GalaxyView({ systems, stats }: Props) {
 
     const startTimer = setTimeout(() => {
       animId = requestAnimationFrame(animate)
-    }, 1500)
+    }, 1200)
 
     return () => {
       clearTimeout(startTimer)
@@ -413,13 +764,80 @@ export function GalaxyView({ systems, stats }: Props) {
       simulation.stop()
       el.innerHTML = ''
     }
-  }, [systems, stats, router, resolvedTheme])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resolvedTheme, viewNodes, viewLinks, handleNodeClick, handleBack, drill.mode])
+
+  // ── Category label for header ──
+  const categoryLabel = drill.categoryId
+    ? SYSTEM_CATEGORIES.find((c) => c.id === drill.categoryId)?.label ?? ''
+    : ''
+  const sectorLabel = drill.sectorId
+    ? DOMAIN_SECTORS.find((s) => s.id === drill.sectorId)?.label ?? ''
+    : ''
 
   return (
-    <div
-      ref={containerRef}
-      className="w-full rounded-lg overflow-hidden"
-      style={{ minHeight: 680, maxHeight: 900, aspectRatio: '4/3' }}
-    />
+    <div className="space-y-2">
+      {/* Breadcrumb nav */}
+      {breadcrumb.length > 0 && (
+        <div className="flex items-center gap-1 px-1 text-xs text-muted-foreground flex-wrap">
+          {breadcrumb.map((item, i) => {
+            const isLast = i === breadcrumb.length - 1
+            return (
+              <span key={i} className="flex items-center gap-1">
+                {i > 0 && <ChevronRight className="h-3 w-3 opacity-40 shrink-0" />}
+                {isLast ? (
+                  <span className="font-semibold text-foreground">{item.label}</span>
+                ) : (
+                  <button
+                    onClick={() => setDrill(item.state)}
+                    className="hover:text-foreground transition-colors underline underline-offset-2"
+                  >
+                    {item.label}
+                  </button>
+                )}
+              </span>
+            )
+          })}
+
+          {/* Count badge */}
+          <span className="ml-2 px-2 py-0.5 rounded-full bg-muted text-muted-foreground text-[10px] font-mono">
+            {viewNodes.length}{' '}
+            {drill.mode === 'overview'
+              ? 'categories'
+              : drill.mode === 'category' && drill.categoryId === 'domain'
+              ? 'sectors'
+              : drill.mode === 'sector'
+              ? 'systems'
+              : 'systems'}
+          </span>
+
+          {/* Context hint for drillable views */}
+          {drill.mode !== 'overview' && drill.mode !== 'sector' && (
+            <span className="ml-1 text-[10px] opacity-50">
+              {drill.categoryId === 'domain'
+                ? '- click a sector to explore'
+                : '- click a system to open it'}
+            </span>
+          )}
+          {drill.mode === 'overview' && null}
+        </div>
+      )}
+
+      {/* Visualization */}
+      <div
+        ref={containerRef}
+        className="w-full rounded-lg overflow-hidden"
+        style={{ minHeight: 620, maxHeight: 860, aspectRatio: '4/3' }}
+      />
+
+      {/* Footer hint on overview */}
+      {drill.mode === 'overview' && (
+        <p className="text-center text-[11px] text-muted-foreground/50">
+          {categoryLabel || sectorLabel
+            ? null
+            : 'Click any bubble to drill into its systems'}
+        </p>
+      )}
+    </div>
   )
 }

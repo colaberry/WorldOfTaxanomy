@@ -9,7 +9,7 @@ Two crosswalks:
 Match type: 'exact' when both partial flags are 0, 'partial' otherwise.
 """
 import pytest
-from world_of_taxanomy.ingest.crosswalk_cpc import (
+from world_of_taxonomy.ingest.crosswalk_cpc import (
     ingest_crosswalk_cpc_isic,
     ingest_crosswalk_cpc_hs,
 )
@@ -32,7 +32,7 @@ def test_ingest_crosswalk_cpc_isic(db_pool):
 
     data_path = Path("data/cpc21_isic4.txt")
     if not data_path.exists():
-        pytest.skip(f"Download {data_path} first: see world_of_taxanomy/ingest/crosswalk_cpc.py")
+        pytest.skip(f"Download {data_path} first: see world_of_taxonomy/ingest/crosswalk_cpc.py")
 
     async def _run():
         async with db_pool.acquire() as conn:
@@ -126,7 +126,7 @@ def test_ingest_crosswalk_cpc_hs(db_pool):
 
     data_path = Path("data/cpc21_hs2017.csv")
     if not data_path.exists():
-        pytest.skip(f"Download {data_path} first: see world_of_taxanomy/ingest/crosswalk_cpc.py")
+        pytest.skip(f"Download {data_path} first: see world_of_taxonomy/ingest/crosswalk_cpc.py")
 
     async def _run():
         async with db_pool.acquire() as conn:

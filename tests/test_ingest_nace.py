@@ -7,7 +7,7 @@ with the database.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.nace import (
+from world_of_taxonomy.ingest.nace import (
     _nace_level,
     _nace_parent,
     _nace_sector,
@@ -147,7 +147,7 @@ class TestSortKey:
 class TestParseCrosswalk:
     def test_parse_real_file(self):
         from pathlib import Path
-        from world_of_taxanomy.ingest.nace import _get_project_root
+        from world_of_taxonomy.ingest.nace import _get_project_root
 
         csv_path = _get_project_root() / "data/crosswalk/ISIC4_to_NACE2.txt"
         if not csv_path.exists():
@@ -181,8 +181,8 @@ def test_ingest_nace_rev2_from_real_file(db_pool):
     Skips if data files haven't been downloaded yet.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.isic import ingest_isic_rev4, _get_project_root as isic_root
-    from world_of_taxanomy.ingest.nace import ingest_nace_rev2, _get_project_root
+    from world_of_taxonomy.ingest.isic import ingest_isic_rev4, _get_project_root as isic_root
+    from world_of_taxonomy.ingest.nace import ingest_nace_rev2, _get_project_root
 
     isic_path = isic_root() / "data/isic/ISIC_Rev_4_structure.txt"
     nace_crosswalk_path = _get_project_root() / "data/crosswalk/ISIC4_to_NACE2.txt"
@@ -265,7 +265,7 @@ def test_ingest_nace_isic_crosswalk_from_real_file(db_pool):
     Skips if the crosswalk file hasn't been downloaded.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.nace import ingest_nace_isic_crosswalk, _get_project_root
+    from world_of_taxonomy.ingest.nace import ingest_nace_isic_crosswalk, _get_project_root
 
     csv_path = _get_project_root() / "data/crosswalk/ISIC4_to_NACE2.txt"
     if not csv_path.exists():

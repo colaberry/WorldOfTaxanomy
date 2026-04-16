@@ -1,0 +1,47 @@
+"""Ingest University Ranking Types."""
+from __future__ import annotations
+
+_SYSTEM_ROW = ("domain_univ_ranking", "University Ranking", "University Ranking Types", "1.0", "Global", "Industry Consensus")
+_SOURCE_URL = None
+_DATA_PROVENANCE = "expert_curated"
+_LICENSE = "CC BY 4.0"
+
+NODES: list[tuple[str, str, int, str | None]] = [
+    ("UR", "University Ranking Types", 1, None),
+    ("UR.01", "QS World University Rankings", 2, 'UR'),
+    ("UR.02", "THE World University Rankings", 2, 'UR'),
+    ("UR.03", "ARWU (Shanghai Ranking)", 2, 'UR'),
+    ("UR.04", "US News Global Universities", 2, 'UR'),
+    ("UR.05", "CWTS Leiden Ranking", 2, 'UR'),
+    ("UR.06", "Webometrics Ranking", 2, 'UR'),
+    ("UR.07", "Subject-Specific Ranking", 2, 'UR'),
+    ("UR.08", "Regional Ranking", 2, 'UR'),
+    ("UR.09", "Employer Reputation Score", 2, 'UR'),
+    ("UR.10", "Research Impact Score", 2, 'UR'),
+    ("UR.11", "Teaching Quality Score", 2, 'UR'),
+    ("UR.12", "International Diversity Score", 2, 'UR'),
+    ("UR.13", "Sustainability Ranking", 2, 'UR'),
+]
+
+async def ingest_domain_univ_ranking(conn) -> int:
+    sid, short, full, ver, region, authority = _SYSTEM_ROW
+    await conn.execute(
+        """INSERT INTO classification_system (id, name, full_name, version, region, authority,
+                  source_url, source_date, data_provenance, license)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,CURRENT_DATE,$8,$9)
+           ON CONFLICT (id) DO UPDATE SET name=$2,full_name=$3,version=$4,region=$5,
+                  authority=$6,source_url=$7,source_date=CURRENT_DATE,
+                  data_provenance=$8,license=$9""",
+        sid, short, full, ver, region, authority,
+        _SOURCE_URL, _DATA_PROVENANCE, _LICENSE,
+    )
+    await conn.execute("DELETE FROM classification_node WHERE system_id = $1", sid)
+    for code, title, level, parent_code in NODES:
+        await conn.execute(
+            """INSERT INTO classification_node (system_id, code, title, level, parent_code)
+               VALUES ($1,$2,$3,$4,$5)""",
+            sid, code, title, level, parent_code,
+        )
+    count = len(NODES)
+    await conn.execute("UPDATE classification_system SET node_count = $1 WHERE id = $2", count, sid)
+    return count

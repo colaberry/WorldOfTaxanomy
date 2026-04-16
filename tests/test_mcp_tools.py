@@ -8,7 +8,7 @@ format results for MCP clients.
 import asyncio
 import pytest
 
-from world_of_taxanomy.mcp.handlers import (
+from world_of_taxonomy.mcp.handlers import (
     handle_list_classification_systems,
     handle_get_industry,
     handle_browse_children,

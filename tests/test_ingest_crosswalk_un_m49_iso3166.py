@@ -10,7 +10,7 @@ Source: iso3166_all.csv has both country-code (M.49) and alpha-2 columns.
 Match type: exact (same country, different code format).
 """
 import pytest
-from world_of_taxanomy.ingest.crosswalk_un_m49_iso3166 import (
+from world_of_taxonomy.ingest.crosswalk_un_m49_iso3166 import (
     ingest_crosswalk_un_m49_iso3166,
 )
 

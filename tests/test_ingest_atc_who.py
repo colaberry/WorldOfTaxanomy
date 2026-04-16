@@ -19,7 +19,7 @@ import asyncio
 import pytest
 from pathlib import Path
 
-from world_of_taxanomy.ingest.atc_who import (
+from world_of_taxonomy.ingest.atc_who import (
     _determine_level,
     _determine_parent,
     _determine_sector,

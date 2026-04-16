@@ -15,7 +15,7 @@ Sector code = the code itself.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.gics_bridge import (
+from world_of_taxonomy.ingest.gics_bridge import (
     GICS_SECTORS,
     ingest_gics_bridge,
 )

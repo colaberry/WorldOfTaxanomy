@@ -7,7 +7,7 @@ that should have been tested before implementation.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.isic import (
+from world_of_taxonomy.ingest.isic import (
     _determine_level,
     _determine_parent,
     _determine_sector,
@@ -120,11 +120,11 @@ def test_ingest_isic_rev4_from_real_file(db_pool):
     Skips if the data file hasn't been downloaded yet.
     """
     from pathlib import Path
-    from world_of_taxanomy.ingest.isic import ingest_isic_rev4, _get_project_root
+    from world_of_taxonomy.ingest.isic import ingest_isic_rev4, _get_project_root
 
     txt_path = _get_project_root() / "data/isic/ISIC_Rev_4_structure.txt"
     if not txt_path.exists():
-        pytest.skip("ISIC data file not downloaded - run 'python -m world_of_taxanomy ingest isic' first")
+        pytest.skip("ISIC data file not downloaded - run 'python -m world_of_taxonomy ingest isic' first")
 
     async def _test():
         async with db_pool.acquire() as conn:

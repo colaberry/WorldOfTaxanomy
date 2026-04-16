@@ -8,7 +8,7 @@ Based on NACE Rev 2 / ISIC Rev 4 structure.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.okved_2 import (
+from world_of_taxonomy.ingest.okved_2 import (
     OKVED2_SECTIONS,
     OKVED2_TO_ISIC_MAPPING,
     ingest_okved_2,

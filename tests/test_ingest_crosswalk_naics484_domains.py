@@ -11,7 +11,7 @@ Source: Derived from NAICS industry scope. Open.
 import asyncio
 import pytest
 
-from world_of_taxanomy.ingest.crosswalk_naics484_domains import (
+from world_of_taxonomy.ingest.crosswalk_naics484_domains import (
     NAICS_DOMAIN_LINKS,
     ingest_crosswalk_naics484_domains,
 )
@@ -62,11 +62,11 @@ def test_crosswalk_naics484_domains_module_importable():
 def test_ingest_crosswalk_naics484_domains(db_pool):
     """Integration test: edges linking NAICS 484 to all truck domain taxonomies."""
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.domain_truck_freight import ingest_domain_truck_freight
-        from world_of_taxanomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
-        from world_of_taxanomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
-        from world_of_taxanomy.ingest.domain_truck_ops import ingest_domain_truck_ops
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.domain_truck_freight import ingest_domain_truck_freight
+        from world_of_taxonomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
+        from world_of_taxonomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
+        from world_of_taxonomy.ingest.domain_truck_ops import ingest_domain_truck_ops
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_domain_truck_freight(conn)
@@ -81,11 +81,11 @@ def test_ingest_crosswalk_naics484_domains(db_pool):
 
 def test_ingest_crosswalk_naics484_domains_idempotent(db_pool):
     async def _run():
-        from world_of_taxanomy.ingest.naics import ingest_naics_2022
-        from world_of_taxanomy.ingest.domain_truck_freight import ingest_domain_truck_freight
-        from world_of_taxanomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
-        from world_of_taxanomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
-        from world_of_taxanomy.ingest.domain_truck_ops import ingest_domain_truck_ops
+        from world_of_taxonomy.ingest.naics import ingest_naics_2022
+        from world_of_taxonomy.ingest.domain_truck_freight import ingest_domain_truck_freight
+        from world_of_taxonomy.ingest.domain_truck_vehicle import ingest_domain_truck_vehicle
+        from world_of_taxonomy.ingest.domain_truck_cargo import ingest_domain_truck_cargo
+        from world_of_taxonomy.ingest.domain_truck_ops import ingest_domain_truck_ops
         async with db_pool.acquire() as conn:
             await ingest_naics_2022(conn)
             await ingest_domain_truck_freight(conn)

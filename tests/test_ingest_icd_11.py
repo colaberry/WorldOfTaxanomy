@@ -22,7 +22,7 @@ import asyncio
 import pytest
 from pathlib import Path
 
-from world_of_taxanomy.ingest.icd_11 import (
+from world_of_taxonomy.ingest.icd_11 import (
     _parse_level,
     _parse_sector,
     ingest_icd_11,

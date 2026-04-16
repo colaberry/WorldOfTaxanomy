@@ -12,7 +12,7 @@ Hierarchy (all determined by code length):
 Source: unstats.un.org/unsd/classifications (open)
 """
 import pytest
-from world_of_taxanomy.ingest.cpc_v21 import (
+from world_of_taxonomy.ingest.cpc_v21 import (
     _determine_level,
     _determine_parent,
     _determine_sector,
@@ -87,7 +87,7 @@ def test_ingest_cpc_v21_from_file(db_pool):
 
     data_path = Path("data/cpc_v21.txt")
     if not data_path.exists():
-        pytest.skip(f"Download {data_path} first: see world_of_taxanomy/ingest/cpc_v21.py for URL")
+        pytest.skip(f"Download {data_path} first: see world_of_taxonomy/ingest/cpc_v21.py for URL")
 
     async def _run():
         async with db_pool.acquire() as conn:

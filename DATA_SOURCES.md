@@ -1,8 +1,8 @@
 # Data Sources
 
-Attribution and licensing for all classification systems in WorldOfTaxanomy.
+Attribution and licensing for all classification systems in WorldOfTaxonomy.
 
-WorldOfTaxanomy does NOT redistribute raw data files. Every ingester downloads data directly from the authoritative source at ingest time (or requires manual download where license terms prohibit automated access). The ingested structured data in the database is derived from these sources and remains under the original licenses.
+WorldOfTaxonomy does NOT redistribute raw data files. Every ingester downloads data directly from the authoritative source at ingest time (or requires manual download where license terms prohibit automated access). The ingested structured data in the database is derived from these sources and remains under the original licenses.
 
 ---
 
@@ -97,46 +97,46 @@ WorldOfTaxanomy does NOT redistribute raw data files. Every ingester downloads d
 
 | System ID | Full Name | Authority | License | Notes |
 |-----------|-----------|-----------|---------|-------|
-| `domain_truck_freight` | Truck Freight Types | WorldOfTaxanomy | Open | Mode, equipment, service level, cargo type |
-| `domain_truck_vehicle` | Truck Vehicle Classes | WorldOfTaxanomy / DOT | Public domain | DOT GVWR Classes 1-8 + body types |
-| `domain_truck_cargo` | Truck Cargo Classification | WorldOfTaxanomy | Open | NMFC-pattern commodity groups + DOT hazmat classes 1-9 |
-| `domain_truck_ops` | Truck Carrier Operations | WorldOfTaxanomy / FMCSA | Public domain | Carrier type, fleet size, business model, route pattern |
+| `domain_truck_freight` | Truck Freight Types | WorldOfTaxonomy | Open | Mode, equipment, service level, cargo type |
+| `domain_truck_vehicle` | Truck Vehicle Classes | WorldOfTaxonomy / DOT | Public domain | DOT GVWR Classes 1-8 + body types |
+| `domain_truck_cargo` | Truck Cargo Classification | WorldOfTaxonomy | Open | NMFC-pattern commodity groups + DOT hazmat classes 1-9 |
+| `domain_truck_ops` | Truck Carrier Operations | WorldOfTaxonomy / FMCSA | Public domain | Carrier type, fleet size, business model, route pattern |
 
 ### Domain Deep-Dives (Agriculture, Mining, Utilities, Construction, Cross-sector)
 
 | System ID | Full Name | Authority | License |
 |-----------|-----------|-----------|---------|
-| `domain_ag_crop` | Agricultural Crop Types | WorldOfTaxanomy / USDA | Open |
-| `domain_ag_livestock` | Agricultural Livestock Categories | WorldOfTaxanomy | Open |
-| `domain_ag_method` | Agricultural Farming Methods | WorldOfTaxanomy | Open |
-| `domain_ag_grade` | Agricultural Commodity Grades | WorldOfTaxanomy / USDA | Open |
-| `domain_mining_mineral` | Mining Mineral Types | WorldOfTaxanomy | Open |
-| `domain_mining_method` | Mining Extraction Methods | WorldOfTaxanomy | Open |
-| `domain_mining_reserve` | Mining Reserve Classification | WorldOfTaxanomy / SPE-PRMS | Open |
-| `domain_util_energy` | Utility Energy Sources | WorldOfTaxanomy / IEA | Open |
-| `domain_util_grid` | Utility Grid Regions | WorldOfTaxanomy / NERC | Open |
-| `domain_const_trade` | Construction Trade Types | WorldOfTaxanomy | Open |
-| `domain_const_building` | Construction Building Types | WorldOfTaxanomy | Open |
-| `domain_mfg_process` | Manufacturing Process Types | WorldOfTaxanomy | Open |
-| `domain_retail_channel` | Retail Channel Types | WorldOfTaxanomy | Open |
-| `domain_finance_instrument` | Finance Instrument Types | WorldOfTaxanomy | Open |
-| `domain_health_setting` | Health Care Settings | WorldOfTaxanomy | Open |
-| `domain_transport_mode` | Transportation Modes | WorldOfTaxanomy | Open |
-| `domain_info_media` | Information and Media Types | WorldOfTaxanomy | Open |
-| `domain_realestate_type` | Real Estate Property Types | WorldOfTaxanomy | Open |
-| `domain_food_service` | Food Service and Accommodation Types | WorldOfTaxanomy | Open |
-| `domain_wholesale_channel` | Wholesale Trade Channels | WorldOfTaxanomy | Open |
-| `domain_prof_services` | Professional Services Types | WorldOfTaxanomy | Open |
-| `domain_education_type` | Education Program Types | WorldOfTaxanomy | Open |
-| `domain_arts_content` | Arts and Entertainment Content Types | WorldOfTaxanomy | Open |
-| `domain_other_services` | Other Services Types | WorldOfTaxanomy | Open |
-| `domain_public_admin` | Public Administration Types | WorldOfTaxanomy | Open |
-| `domain_supply_chain` | Supply Chain and Trade Terms | WorldOfTaxanomy | Open |
-| `domain_workforce_safety` | Workforce Safety and Health | WorldOfTaxanomy / OSHA | Open |
+| `domain_ag_crop` | Agricultural Crop Types | WorldOfTaxonomy / USDA | Open |
+| `domain_ag_livestock` | Agricultural Livestock Categories | WorldOfTaxonomy | Open |
+| `domain_ag_method` | Agricultural Farming Methods | WorldOfTaxonomy | Open |
+| `domain_ag_grade` | Agricultural Commodity Grades | WorldOfTaxonomy / USDA | Open |
+| `domain_mining_mineral` | Mining Mineral Types | WorldOfTaxonomy | Open |
+| `domain_mining_method` | Mining Extraction Methods | WorldOfTaxonomy | Open |
+| `domain_mining_reserve` | Mining Reserve Classification | WorldOfTaxonomy / SPE-PRMS | Open |
+| `domain_util_energy` | Utility Energy Sources | WorldOfTaxonomy / IEA | Open |
+| `domain_util_grid` | Utility Grid Regions | WorldOfTaxonomy / NERC | Open |
+| `domain_const_trade` | Construction Trade Types | WorldOfTaxonomy | Open |
+| `domain_const_building` | Construction Building Types | WorldOfTaxonomy | Open |
+| `domain_mfg_process` | Manufacturing Process Types | WorldOfTaxonomy | Open |
+| `domain_retail_channel` | Retail Channel Types | WorldOfTaxonomy | Open |
+| `domain_finance_instrument` | Finance Instrument Types | WorldOfTaxonomy | Open |
+| `domain_health_setting` | Health Care Settings | WorldOfTaxonomy | Open |
+| `domain_transport_mode` | Transportation Modes | WorldOfTaxonomy | Open |
+| `domain_info_media` | Information and Media Types | WorldOfTaxonomy | Open |
+| `domain_realestate_type` | Real Estate Property Types | WorldOfTaxonomy | Open |
+| `domain_food_service` | Food Service and Accommodation Types | WorldOfTaxonomy | Open |
+| `domain_wholesale_channel` | Wholesale Trade Channels | WorldOfTaxonomy | Open |
+| `domain_prof_services` | Professional Services Types | WorldOfTaxonomy | Open |
+| `domain_education_type` | Education Program Types | WorldOfTaxonomy | Open |
+| `domain_arts_content` | Arts and Entertainment Content Types | WorldOfTaxonomy | Open |
+| `domain_other_services` | Other Services Types | WorldOfTaxonomy | Open |
+| `domain_public_admin` | Public Administration Types | WorldOfTaxonomy | Open |
+| `domain_supply_chain` | Supply Chain and Trade Terms | WorldOfTaxonomy | Open |
+| `domain_workforce_safety` | Workforce Safety and Health | WorldOfTaxonomy / OSHA | Open |
 
 ### Magna Compass Emerging Sector Domain Taxonomies
 
-All hand-coded by WorldOfTaxanomy, open license.
+All hand-coded by WorldOfTaxonomy, open license.
 
 | System ID | Full Name | Codes |
 |-----------|-----------|-------|
@@ -198,10 +198,10 @@ All hand-coded by WorldOfTaxanomy, open license.
 - **GICS Bridge**: Contains only the 11 publicly known sector names available in financial press. No proprietary GICS data is stored or redistributed.
 - **ICD-11**: Requires manual download from icd.who.int. The CC BY-ND 3.0 IGO license prohibits automated redistribution of derivative works.
 - **LOINC**: Requires free registration and manual download from loinc.org. The Regenstrief LOINC License prohibits automated download.
-- The WorldOfTaxanomy codebase is MIT licensed. Ingested classification data remains under its original license.
+- The WorldOfTaxonomy codebase is MIT licensed. Ingested classification data remains under its original license.
 
 ---
 
 ## Reporting a Licensing Issue
 
-If you believe any data is being used in violation of its license, please open a GitHub issue immediately at https://github.com/colaberry/WorldOfTaxanomy/issues.
+If you believe any data is being used in violation of its license, please open a GitHub issue immediately at https://github.com/colaberry/WorldOfTaxonomy/issues.

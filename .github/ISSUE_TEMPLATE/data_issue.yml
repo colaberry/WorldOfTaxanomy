@@ -1,0 +1,42 @@
+name: Data Issue Report
+description: Report incorrect, missing, or outdated classification data
+title: "[Data] "
+labels: ["data-issue"]
+body:
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      options:
+        - Incorrect code or title
+        - Missing code
+        - Wrong parent/hierarchy
+        - Incorrect cross-system mapping
+        - Outdated data
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: system
+    attributes:
+      label: Classification System
+      placeholder: e.g., NAICS 2022, ICD-10-CM
+    validations:
+      required: true
+  - type: input
+    id: code
+    attributes:
+      label: Code
+      placeholder: e.g., 5112, E11.40
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      placeholder: What is wrong and what the correct data should be
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official Source URL
+      placeholder: Link to the authoritative source showing the correct data
