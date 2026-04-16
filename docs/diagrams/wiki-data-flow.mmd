@@ -1,0 +1,10 @@
+graph LR
+  MD["wiki/*.md - Source of Truth"] --> CH1["Channel 1: Next.js /guide/slug - SEO Web Pages"]
+  MD --> CH2["Channel 2: MCP instructions - AI Agent Context"]
+  MD --> CH3["Channel 3: llms-full.txt - AI Crawler Discovery"]
+  MD --> CH4["Channel 4: GET /api/v1/wiki - Developer API"]
+  CH1 --> GOOGLE["Search Engines"]
+  CH1 --> HUMANS["Human Readers"]
+  CH2 --> AGENTS["AI Agents"]
+  CH3 --> CRAWLERS["AI Crawlers"]
+  CH4 --> DEVS["Developer Apps"]

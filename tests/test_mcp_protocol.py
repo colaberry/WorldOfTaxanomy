@@ -68,9 +68,10 @@ def test_tools_have_schema():
 
 def test_resources_list():
     resources = build_resources_list()
-    assert len(resources) == 2
+    assert len(resources) == 12  # 2 core + 10 wiki pages
     uris = {r["uri"] for r in resources}
     assert "taxonomy://systems" in uris
+    assert "taxonomy://wiki/getting-started" in uris
 
 
 # ── JSON-RPC handling ─────────────────────────────────────────
@@ -163,7 +164,7 @@ def test_handle_resources_list():
         response = await handle_jsonrpc_request(request, conn=None)
         assert response["id"] == 5
         assert "result" in response
-        assert len(response["result"]["resources"]) == 2
+        assert len(response["result"]["resources"]) == 12  # 2 core + 10 wiki pages
     _run(_test())
 
 

@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant AI as AI Agent
+  participant MCP as MCP Server
+  participant WIKI as Wiki Loader
+  participant DB as PostgreSQL
+
+  AI->>MCP: initialize - JSON-RPC
+  MCP->>WIKI: build_wiki_context()
+  WIKI-->>MCP: Structural knowledge - ~15K tokens
+  MCP-->>AI: serverInfo + instructions + capabilities
+  Note over AI: Agent now knows all 1,000 systems and crosswalk topology
+  AI->>MCP: tools/call search_classifications
+  MCP->>DB: Query nodes
+  DB-->>MCP: Results
+  MCP-->>AI: Tool response as JSON
+  AI->>MCP: resources/read taxonomy://wiki/crosswalk-map
+  MCP->>WIKI: load_wiki_page - crosswalk-map
+  WIKI-->>MCP: Full markdown content
+  MCP-->>AI: Resource content

@@ -1138,6 +1138,30 @@ Test isolation: `conftest.py` creates a `test_wot` PostgreSQL schema, seeds NAIC
 - **Galaxy View**: D3 force simulation in a React `useEffect`, with `useTheme()` for theme-aware rendering. Cleanup properly (stop simulation, cancel animation frame)
 - **IndustryMap**: Links to `/explore?q=<term>`, Explore page reads `useSearchParams()` wrapped in `<Suspense>`
 
+## Wiki system (Karpathy LLM Wiki pattern)
+
+Curated markdown files in `wiki/` serve four channels from one source of truth:
+
+1. **Web pages** at `/guide/[slug]` - server-rendered HTML with SEO metadata
+2. **MCP instructions** - injected into the `instructions` field of the MCP initialize response
+3. **llms-full.txt** - concatenated plain text for AI crawlers
+4. **Wiki API** at `GET /api/v1/wiki` - JSON for developers and RAG pipelines
+
+Key files:
+- `wiki/_meta.json` - page metadata (slug, title, description, order)
+- `wiki/*.md` - 10 curated guide pages
+- `world_of_taxonomy/wiki.py` - Python wiki loader (`load_wiki_meta`, `load_wiki_page`, `build_wiki_context`, `build_llms_full_txt`)
+- `world_of_taxonomy/api/routers/wiki.py` - Wiki API router
+- `frontend/src/lib/wiki.ts` - Server-side wiki utilities for Next.js
+- `frontend/src/app/guide/` - Guide pages (index + [slug] dynamic route)
+- `scripts/build_llms_txt.py` - Regenerates `frontend/public/llms-full.txt` from wiki content
+- `docs/diagrams/*.mmd` - Mermaid diagram source files
+
+When adding/modifying wiki content:
+- Run `python scripts/build_llms_txt.py` to regenerate llms-full.txt
+- Wiki files must not contain em-dashes (U+2014)
+- Each page should have at least one `##` heading and stay under 10K tokens
+
 ## What's NOT done yet
 
 - ~~Node detail page~~ ✓ done - `/system/[id]/node/[code]/page.tsx` with breadcrumb, typographic depth, children panel, cross-system equivalences, inline API endpoint

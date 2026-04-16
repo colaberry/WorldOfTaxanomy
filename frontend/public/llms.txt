@@ -1,50 +1,28 @@
 # WorldOfTaxonomy
 
-> Unified global classification knowledge graph. 1,000+ systems, 1.2M+ nodes, 321K+ crosswalk edges.
-> Connects NAICS, ISIC, NACE, HS, ICD, LOINC, SOC, ISCO, CPC, UNSPSC, and 990+ more as equal peers.
-> Open source (MIT license). Data provided for informational purposes only - use at your own risk.
+> Unified Global Classification Knowledge Graph
+> 1,000+ systems, 1.2M+ nodes, 321K+ crosswalk edges.
+> Open source (MIT). Data is informational only - use at your own risk.
+
+Full classification guides available at: https://worldoftaxonomy.com/guide/
+Full LLM reference: https://worldoftaxonomy.com/llms-full.txt
+
+## Guide Pages
+
+- [Getting Started with WorldOfTaxonomy](https://worldoftaxonomy.com/guide/getting-started)
+- [Systems Catalog - All 1,000+ Classification Systems](https://worldoftaxonomy.com/guide/systems-catalog)
+- [Crosswalk Map - How Classification Systems Connect](https://worldoftaxonomy.com/guide/crosswalk-map)
+- [Industry Classification Guide - Which System to Use](https://worldoftaxonomy.com/guide/industry-classification)
+- [Medical and Health Classification Systems Compared](https://worldoftaxonomy.com/guide/medical-coding)
+- [Trade and Product Classification Guide](https://worldoftaxonomy.com/guide/trade-codes)
+- [Occupation Classification Systems Compared](https://worldoftaxonomy.com/guide/occupation-systems)
+- [Categories and Sectors - How Systems Are Organized](https://worldoftaxonomy.com/guide/categories-and-sectors)
+- [Data Quality and Provenance](https://worldoftaxonomy.com/guide/data-quality)
+- [System Architecture and Data Flows](https://worldoftaxonomy.com/guide/architecture)
 
 ## API
-
 Base URL: https://worldoftaxonomy.com/api/v1
 
-- GET /systems - List all classification systems
-- GET /systems/{id} - System detail with metadata and root nodes
-- GET /systems/{id}/nodes/{code} - Node detail with parent, children
-- GET /systems/{id}/nodes/{code}/children - Child nodes
-- GET /systems/{id}/nodes/{code}/ancestors - Ancestor chain to root
-- GET /systems/{id}/nodes/{code}/equivalences - Cross-system mappings
-- GET /search?q={query} - Full-text search across all systems
-- GET /equivalences/stats - Crosswalk edge counts per system pair
-- GET /countries/{code} - Country taxonomy profile
-- POST /classify - Classify free-text against all systems (Pro+ tier)
-
-Authentication: Bearer token (JWT or API key with wot_ prefix).
-Rate limits: 30 req/min anonymous, 100/min free, 1K/min pro, 10K/min enterprise.
-
 ## MCP Server
-
-Transport: stdio
-Install: pip install -r requirements.txt
-Run: python3 -m world_of_taxonomy mcp
-
-22 tools including: list_classification_systems, search_classifications,
-translate_code, translate_across_all_systems, classify_business,
-get_country_taxonomy_profile, explore_industry_tree
-
-## Key Use Cases for AI Agents
-
-- Industry classification: "What NAICS/ISIC/NACE codes match a cloud kitchen?"
-- Trade code lookup: "What HS code for lithium-ion battery packs?"
-- Regulatory mapping: "Which regulations apply to a fintech in the EU?"
-- Occupation matching: "Map 'data engineer' across SOC, ISCO, ESCO, O*NET"
-- Medical coding: "ICD-10-CM code for Type 2 diabetes with neuropathy"
-- Cross-system translation: "Convert NAICS 5112 to ISIC, NACE, and SIC"
-
-## Links
-
-- Website: https://worldoftaxonomy.com
-- Documentation: https://worldoftaxonomy.com/developers
-- GitHub: https://github.com/colaberry/WorldOfTaxonomy
-- API Keys: https://worldoftaxonomy.com/login
-- Full reference: https://worldoftaxonomy.com/llms-full.txt
+Install: python -m world_of_taxonomy mcp
+Transport: stdio, 23 tools, wiki resources

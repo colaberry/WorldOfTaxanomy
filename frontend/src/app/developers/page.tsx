@@ -226,6 +226,44 @@ cd frontend && npm install && npm run dev`}
       </section>
 
       {/* ── REST API ── */}
+      {/* ── Guides ── */}
+      <section id="guides" className="space-y-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+            <BookOpen className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">Guides</h2>
+            <p className="text-sm text-muted-foreground">Curated knowledge to use the data effectively</p>
+          </div>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            { slug: 'getting-started', title: 'Getting Started', desc: 'API + MCP quickstart, auth, rate limits' },
+            { slug: 'crosswalk-map', title: 'Crosswalk Map', desc: 'How 321K+ edges connect classification systems' },
+            { slug: 'industry-classification', title: 'Industry Classification', desc: 'Which system to use by country and purpose' },
+            { slug: 'medical-coding', title: 'Medical Coding', desc: 'ICD-10 vs ICD-11 vs MeSH vs LOINC compared' },
+            { slug: 'trade-codes', title: 'Trade Codes', desc: 'How HS, CPC, UNSPSC, and SITC relate' },
+            { slug: 'architecture', title: 'Architecture', desc: 'System design, data flows, and diagrams' },
+          ].map((guide) => (
+            <Link
+              key={guide.slug}
+              href={`/guide/${guide.slug}`}
+              className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-card hover:bg-secondary/30 transition-colors group"
+            >
+              <div>
+                <span className="text-sm font-medium group-hover:text-primary transition-colors">{guide.title}</span>
+                <p className="text-xs text-muted-foreground mt-0.5">{guide.desc}</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+            </Link>
+          ))}
+        </div>
+        <Link href="/guide" className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline">
+          View all guides <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
+      </section>
+
       <section id="api" className="space-y-5">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">

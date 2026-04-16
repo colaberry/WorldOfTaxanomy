@@ -1,0 +1,30 @@
+graph TD
+  subgraph Sources["Official Sources"]
+    CSV["CSV files - NAICS, ISIC"]
+    XLSX["Excel files - NACE, ANZSIC"]
+    HTML["HTML/PDF - SIC, NIC"]
+    CURATED["Expert-Curated - Domain taxonomies"]
+  end
+  subgraph Pipeline["Ingestion Pipeline"]
+    PARSE["Parse and Validate"]
+    UPSERT["Upsert Nodes into classification_node"]
+    XWALK["Build Crosswalks into equivalence"]
+    PROV["Set Provenance - 4-tier audit"]
+  end
+  subgraph DB["Database Tables"]
+    SYS["classification_system - 1,000+ systems"]
+    NODE["classification_node - 1.2M+ nodes"]
+    EQUIV["equivalence - 321K+ edges"]
+  end
+  CSV --> PARSE
+  XLSX --> PARSE
+  HTML --> PARSE
+  CURATED --> PARSE
+  PARSE --> UPSERT
+  PARSE --> XWALK
+  PARSE --> PROV
+  UPSERT --> NODE
+  XWALK --> EQUIV
+  PROV --> SYS
+  SYS --- NODE
+  NODE --- EQUIV

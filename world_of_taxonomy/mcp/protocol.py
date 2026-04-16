@@ -7,6 +7,8 @@ Handles initialize, tools/list, tools/call, resources/list, resources/read.
 import json
 from typing import Any, Dict, List, Optional
 
+from world_of_taxonomy.wiki import build_wiki_context, load_wiki_meta, load_wiki_page
+
 from world_of_taxonomy.mcp.handlers import (
     handle_list_classification_systems,
     handle_get_industry,
@@ -383,7 +385,7 @@ def build_tools_list() -> List[Dict[str, Any]]:
 
 def build_resources_list() -> List[Dict[str, Any]]:
     """Return the list of available MCP resources."""
-    return [
+    resources = [
         {
             "uri": "taxonomy://systems",
             "name": "Classification Systems",
@@ -397,6 +399,15 @@ def build_resources_list() -> List[Dict[str, Any]]:
             "mimeType": "application/json",
         },
     ]
+    # Add wiki page resources
+    for entry in load_wiki_meta():
+        resources.append({
+            "uri": f"taxonomy://wiki/{entry['slug']}",
+            "name": entry["title"],
+            "description": entry["description"],
+            "mimeType": "text/markdown",
+        })
+    return resources
 
 
 # ── Tool dispatch ────────────────────────────────────────────
@@ -467,6 +478,20 @@ async def _handle_resource_read(conn, uri: str) -> Dict[str, Any]:
             }]
         }
 
+    # Wiki page resources
+    if uri.startswith("taxonomy://wiki/"):
+        slug = uri[len("taxonomy://wiki/"):]
+        content = load_wiki_page(slug)
+        if content is None:
+            return None
+        return {
+            "contents": [{
+                "uri": uri,
+                "mimeType": "text/markdown",
+                "text": content,
+            }]
+        }
+
     return None
 
 
@@ -505,6 +530,7 @@ async def handle_jsonrpc_request(
                     "name": "WorldOfTaxonomy",
                     "version": "0.1.0",
                 },
+                "instructions": build_wiki_context(),
             },
         }
 

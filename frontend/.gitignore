@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# wiki content (copied from root wiki/ at build time)
+/src/content/wiki/

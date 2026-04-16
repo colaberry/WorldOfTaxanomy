@@ -180,3 +180,19 @@ class AuditProvenanceResponse(BaseModel):
     structural_derivation_count: int
     structural_derivation_nodes: int
     skeleton_systems: List[SystemResponse]
+
+
+# -- Wiki schemas ------------------------------------------------------------
+
+
+class WikiPageSummary(BaseModel):
+    slug: str
+    title: str
+    description: str
+
+
+class WikiPageDetail(BaseModel):
+    slug: str
+    title: str
+    description: str
+    content_markdown: str

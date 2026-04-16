@@ -19,8 +19,10 @@ from world_of_taxonomy.api.routers import audit as audit_router
 from world_of_taxonomy.api.routers import classify as classify_router
 from world_of_taxonomy.api.routers import contact as contact_router
 from world_of_taxonomy.api.routers import bulk_export as bulk_export_router
+from world_of_taxonomy.api.routers import wiki as wiki_router
 from world_of_taxonomy.api.middleware import limiter, rate_limit_middleware
 from world_of_taxonomy.db import get_pool
+from world_of_taxonomy.wiki import build_llms_full_txt
 
 
 @asynccontextmanager
@@ -236,6 +238,7 @@ def create_app() -> FastAPI:
     app.include_router(classify_router.router)
     app.include_router(contact_router.router)
     app.include_router(bulk_export_router.router)
+    app.include_router(wiki_router.router)
 
     # Bot protection routes
     @app.get("/robots.txt", response_class=PlainTextResponse)
@@ -245,5 +248,9 @@ def create_app() -> FastAPI:
     @app.get("/llms.txt", response_class=PlainTextResponse)
     async def llms_txt():
         return LLMS_TXT
+
+    @app.get("/llms-full.txt", response_class=PlainTextResponse)
+    async def llms_full_txt():
+        return build_llms_full_txt()
 
     return app
