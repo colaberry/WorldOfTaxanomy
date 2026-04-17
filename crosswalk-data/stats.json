@@ -1,0 +1,2851 @@
+[
+  {
+    "source_system": "anzsco_2022",
+    "target_system": "anzsic_2006",
+    "edge_count": 48,
+    "exact_count": 0,
+    "partial_count": 48
+  },
+  {
+    "source_system": "ateco_2007",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "bsic",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "caeb",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "caem_md",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "caen_rev2",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "cae_rev3",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "cfr_title_49",
+    "target_system": "naics_2022",
+    "edge_count": 437,
+    "exact_count": 0,
+    "partial_count": 437
+  },
+  {
+    "source_system": "ciiu_ar",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_cl",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_co",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_cr",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_do",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_ec",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_gt",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_pa",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_pe",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_py",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_uy",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ciiu_ve",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "cip_2020",
+    "target_system": "iscedf_2013",
+    "edge_count": 1615,
+    "exact_count": 2,
+    "partial_count": 1613
+  },
+  {
+    "source_system": "cip_2020",
+    "target_system": "soc_2018",
+    "edge_count": 5903,
+    "exact_count": 0,
+    "partial_count": 5903
+  },
+  {
+    "source_system": "cnae_2009",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "cnae_2012",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "cpc_v21",
+    "target_system": "hs_2022",
+    "edge_count": 5843,
+    "exact_count": 539,
+    "partial_count": 5304
+  },
+  {
+    "source_system": "cpc_v21",
+    "target_system": "isic_rev4",
+    "edge_count": 2715,
+    "exact_count": 120,
+    "partial_count": 2595
+  },
+  {
+    "source_system": "csic_2017",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 7,
+    "partial_count": 14
+  },
+  {
+    "source_system": "cz_nace",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "db07",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "emtak",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "esco_occupations",
+    "target_system": "isco_08",
+    "edge_count": 3024,
+    "exact_count": 0,
+    "partial_count": 3024
+  },
+  {
+    "source_system": "eu_nuts_2021",
+    "target_system": "iso_3166_1",
+    "edge_count": 31,
+    "exact_count": 31,
+    "partial_count": 0
+  },
+  {
+    "source_system": "fmcsa_regs",
+    "target_system": "domain_truck_cargo",
+    "edge_count": 15,
+    "exact_count": 0,
+    "partial_count": 15
+  },
+  {
+    "source_system": "fmcsa_regs",
+    "target_system": "domain_truck_freight",
+    "edge_count": 23,
+    "exact_count": 0,
+    "partial_count": 23
+  },
+  {
+    "source_system": "fmcsa_regs",
+    "target_system": "domain_truck_vehicle",
+    "edge_count": 9,
+    "exact_count": 0,
+    "partial_count": 9
+  },
+  {
+    "source_system": "fmcsa_regs",
+    "target_system": "naics_2022",
+    "edge_count": 357,
+    "exact_count": 0,
+    "partial_count": 357
+  },
+  {
+    "source_system": "gbt_4754",
+    "target_system": "isic_rev4",
+    "edge_count": 20,
+    "exact_count": 0,
+    "partial_count": 20
+  },
+  {
+    "source_system": "hs_2022",
+    "target_system": "cpc_v21",
+    "edge_count": 5843,
+    "exact_count": 539,
+    "partial_count": 5304
+  },
+  {
+    "source_system": "hs_2022",
+    "target_system": "isic_rev4",
+    "edge_count": 1505,
+    "exact_count": 0,
+    "partial_count": 1505
+  },
+  {
+    "source_system": "hs_2022",
+    "target_system": "sitc_rev4",
+    "edge_count": 10,
+    "exact_count": 0,
+    "partial_count": 10
+  },
+  {
+    "source_system": "hts_us",
+    "target_system": "hs_2022",
+    "edge_count": 97,
+    "exact_count": 0,
+    "partial_count": 97
+  },
+  {
+    "source_system": "icd_11",
+    "target_system": "isic_rev4",
+    "edge_count": 48,
+    "exact_count": 0,
+    "partial_count": 48
+  },
+  {
+    "source_system": "isat_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isced_2011",
+    "target_system": "isco_08",
+    "edge_count": 25,
+    "exact_count": 0,
+    "partial_count": 25
+  },
+  {
+    "source_system": "iscedf_2013",
+    "target_system": "cip_2020",
+    "edge_count": 1615,
+    "exact_count": 2,
+    "partial_count": 1613
+  },
+  {
+    "source_system": "isco_08",
+    "target_system": "esco_occupations",
+    "edge_count": 3024,
+    "exact_count": 0,
+    "partial_count": 3024
+  },
+  {
+    "source_system": "isco_08",
+    "target_system": "isic_rev4",
+    "edge_count": 44,
+    "exact_count": 0,
+    "partial_count": 44
+  },
+  {
+    "source_system": "isco_08",
+    "target_system": "soc_2018",
+    "edge_count": 992,
+    "exact_count": 0,
+    "partial_count": 992
+  },
+  {
+    "source_system": "isic_ae",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_af",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ag",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ao",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_az",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bb",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bf",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bh",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bi",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bj",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bn",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bs",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bt",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bw",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_bz",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_cd",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_cg",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ci",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_cm",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_cu",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_cv",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_dj",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_dm",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_dz",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_eg",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_er",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_et",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_fj",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ga",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_gd",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_gh",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_gm",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_gn",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_gq",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_gw",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_gy",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_hn",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ht",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_il",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_iq",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ir",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_jm",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_jo",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ke",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_kg",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_kh",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_km",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_kn",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_kw",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_kz",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_la",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_lb",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_lc",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_lr",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ls",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ly",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ma",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mg",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ml",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mm",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mn",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mr",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mu",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mv",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mw",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_mz",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_na",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ne",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ng",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ni",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_np",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_om",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_pg",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ps",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_qa",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "bsic",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "caeb",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_ar",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_cl",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_co",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_cr",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_do",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_ec",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_gt",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_pa",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_pe",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_py",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_uy",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ciiu_ve",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "cnae_2012",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "cpc_v21",
+    "edge_count": 2715,
+    "exact_count": 120,
+    "partial_count": 2595
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "csic_2017",
+    "edge_count": 21,
+    "exact_count": 7,
+    "partial_count": 14
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "gbt_4754",
+    "edge_count": 20,
+    "exact_count": 0,
+    "partial_count": 20
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "hs_2022",
+    "edge_count": 1505,
+    "exact_count": 0,
+    "partial_count": 1505
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ae",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_af",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ag",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ao",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_az",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bb",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bf",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bh",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bi",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bj",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bn",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bs",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bt",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bw",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_bz",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_cd",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_cg",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ci",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_cm",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_cu",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_cv",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_dj",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_dm",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_dz",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_eg",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_er",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_et",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_fj",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ga",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_gd",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_gh",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_gm",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_gn",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_gq",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_gw",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_gy",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_hn",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ht",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_il",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_iq",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ir",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_jm",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_jo",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ke",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_kg",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_kh",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_km",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_kn",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_kw",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_kz",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_la",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_lb",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_lc",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_lr",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ls",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ly",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ma",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mg",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ml",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mm",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mn",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mr",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mu",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mv",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mw",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_mz",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_na",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ne",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ng",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ni",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_np",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_om",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_pg",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ps",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_qa",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_rw",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sa",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sb",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sc",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sl",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sn",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_so",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sr",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ss",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sv",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sy",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_sz",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_td",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_tg",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_tj",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_tl",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_tm",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_tn",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_to",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_tt",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_tz",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ug",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_uz",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_vc",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_vu",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ws",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_ye",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_zm",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "isic_zw",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "jsic_2013",
+    "edge_count": 17,
+    "exact_count": 0,
+    "partial_count": 17
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "kbli_2020",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "kbli_id",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ksic_2017",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "msic_2008",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 640,
+    "partial_count": 356
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "naics_2022",
+    "edge_count": 1709,
+    "exact_count": 63,
+    "partial_count": 1646
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "okved_2",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "psic_2009",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "psic_pk",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "sic_sa",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "slsic",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "ssic_2020",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "tsic_2009",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "isic_rev4",
+    "target_system": "vsic_2018",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_rw",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sa",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sb",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sc",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sl",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sn",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_so",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sr",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ss",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sv",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sy",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_sz",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_td",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_tg",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_tj",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_tl",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_tm",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_tn",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_to",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_tt",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_tz",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ug",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_uz",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_vc",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_vu",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ws",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_ye",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_zm",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "isic_zw",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "iso_3166_1",
+    "target_system": "iso_3166_2",
+    "edge_count": 200,
+    "exact_count": 200,
+    "partial_count": 0
+  },
+  {
+    "source_system": "iso_3166_1",
+    "target_system": "naics_2022",
+    "edge_count": 98,
+    "exact_count": 0,
+    "partial_count": 98
+  },
+  {
+    "source_system": "iso_3166_1",
+    "target_system": "un_m49",
+    "edge_count": 249,
+    "exact_count": 249,
+    "partial_count": 0
+  },
+  {
+    "source_system": "iso_3166_2",
+    "target_system": "iso_3166_1",
+    "edge_count": 200,
+    "exact_count": 200,
+    "partial_count": 0
+  },
+  {
+    "source_system": "jsic_2013",
+    "target_system": "isic_rev4",
+    "edge_count": 17,
+    "exact_count": 0,
+    "partial_count": 17
+  },
+  {
+    "source_system": "kbli_2020",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "kbli_id",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "kd_ba",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "kd_me",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "kd_rs",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "kd_xk",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ksic_2017",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "kved_ua",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "msic_2008",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "nace_am",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_bel",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_cy",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_ge",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_ie",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_lt",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_lu",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_mt",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "ateco_2007",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "caem_md",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "caen_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "cae_rev3",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "cnae_2009",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "cz_nace",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "db07",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "emtak",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "isat_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "isic_rev4",
+    "edge_count": 996,
+    "exact_count": 640,
+    "partial_count": 356
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "kd_ba",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "kd_me",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "kd_rs",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "kd_xk",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "kved_ua",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_am",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_bel",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_cy",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_ge",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_ie",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_lt",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_lu",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_mt",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nace_tr",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "naf_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nkd_2007",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nkd_mk",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nkid",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nk_lv",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "noga_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "nve_al",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "onace_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "pkd_2007",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "sbi_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "skd_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "sk_nace",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "sn_2007",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "sni_2007",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "stakod_08",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "teaor_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "tol_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_rev2",
+    "target_system": "wz_2008",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nace_tr",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "naf_rev2",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_ag_crop",
+    "edge_count": 16,
+    "exact_count": 0,
+    "partial_count": 16
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_ag_grade",
+    "edge_count": 6,
+    "exact_count": 0,
+    "partial_count": 6
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_ag_livestock",
+    "edge_count": 13,
+    "exact_count": 0,
+    "partial_count": 13
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_ag_method",
+    "edge_count": 5,
+    "exact_count": 0,
+    "partial_count": 5
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_const_building",
+    "edge_count": 10,
+    "exact_count": 0,
+    "partial_count": 10
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_const_trade",
+    "edge_count": 16,
+    "exact_count": 0,
+    "partial_count": 16
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_mining_method",
+    "edge_count": 13,
+    "exact_count": 0,
+    "partial_count": 13
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_mining_mineral",
+    "edge_count": 13,
+    "exact_count": 0,
+    "partial_count": 13
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_mining_reserve",
+    "edge_count": 5,
+    "exact_count": 0,
+    "partial_count": 5
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_truck_cargo",
+    "edge_count": 40,
+    "exact_count": 0,
+    "partial_count": 40
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_truck_freight",
+    "edge_count": 36,
+    "exact_count": 0,
+    "partial_count": 36
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_truck_ops",
+    "edge_count": 32,
+    "exact_count": 0,
+    "partial_count": 32
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_truck_vehicle",
+    "edge_count": 18,
+    "exact_count": 0,
+    "partial_count": 18
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_util_energy",
+    "edge_count": 12,
+    "exact_count": 0,
+    "partial_count": 12
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "domain_util_grid",
+    "edge_count": 7,
+    "exact_count": 0,
+    "partial_count": 7
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "isic_rev4",
+    "edge_count": 1709,
+    "exact_count": 63,
+    "partial_count": 1646
+  },
+  {
+    "source_system": "naics_2022",
+    "target_system": "scian_2018",
+    "edge_count": 24,
+    "exact_count": 20,
+    "partial_count": 4
+  },
+  {
+    "source_system": "nkd_2007",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nkd_mk",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nkid",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nk_lv",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "noga_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "nve_al",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "okved_2",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "onace_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "onet_soc",
+    "target_system": "soc_2018",
+    "edge_count": 867,
+    "exact_count": 867,
+    "partial_count": 0
+  },
+  {
+    "source_system": "pkd_2007",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "prodcom",
+    "target_system": "nace_rev2",
+    "edge_count": 34,
+    "exact_count": 0,
+    "partial_count": 34
+  },
+  {
+    "source_system": "psic_2009",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "psic_pk",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "sbi_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "scian_2018",
+    "target_system": "naics_2022",
+    "edge_count": 24,
+    "exact_count": 20,
+    "partial_count": 4
+  },
+  {
+    "source_system": "sic_sa",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 21,
+    "partial_count": 0
+  },
+  {
+    "source_system": "sitc_rev4",
+    "target_system": "hs_2022",
+    "edge_count": 10,
+    "exact_count": 0,
+    "partial_count": 10
+  },
+  {
+    "source_system": "skd_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "sk_nace",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "slsic",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "sn_2007",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "sni_2007",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "soc_2018",
+    "target_system": "cip_2020",
+    "edge_count": 5903,
+    "exact_count": 0,
+    "partial_count": 5903
+  },
+  {
+    "source_system": "soc_2018",
+    "target_system": "isco_08",
+    "edge_count": 992,
+    "exact_count": 0,
+    "partial_count": 992
+  },
+  {
+    "source_system": "soc_2018",
+    "target_system": "naics_2022",
+    "edge_count": 55,
+    "exact_count": 0,
+    "partial_count": 55
+  },
+  {
+    "source_system": "soc_2018",
+    "target_system": "onet_soc",
+    "edge_count": 867,
+    "exact_count": 867,
+    "partial_count": 0
+  },
+  {
+    "source_system": "ssic_2020",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "stakod_08",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "teaor_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "tol_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  },
+  {
+    "source_system": "tsic_2009",
+    "target_system": "isic_rev4",
+    "edge_count": 21,
+    "exact_count": 0,
+    "partial_count": 21
+  },
+  {
+    "source_system": "un_m49",
+    "target_system": "iso_3166_1",
+    "edge_count": 249,
+    "exact_count": 249,
+    "partial_count": 0
+  },
+  {
+    "source_system": "vsic_2018",
+    "target_system": "isic_rev4",
+    "edge_count": 766,
+    "exact_count": 766,
+    "partial_count": 0
+  },
+  {
+    "source_system": "wz_2008",
+    "target_system": "nace_rev2",
+    "edge_count": 996,
+    "exact_count": 996,
+    "partial_count": 0
+  }
+]

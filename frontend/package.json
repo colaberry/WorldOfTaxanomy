@@ -5,9 +5,10 @@
   "scripts": {
     "wiki:copy": "rm -rf src/content/wiki && mkdir -p src/content && cp -r ../wiki src/content/wiki",
     "blog:copy": "rm -rf src/content/blog && mkdir -p src/content && cp -r ../blog src/content/blog",
-    "predev": "npm run wiki:copy && npm run blog:copy",
+    "crosswalk:copy": "rm -rf src/content/crosswalk && mkdir -p src/content/crosswalk && cp ../crosswalk-data/*.json src/content/crosswalk/",
+    "predev": "npm run wiki:copy && npm run blog:copy && npm run crosswalk:copy",
     "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
-    "prebuild": "npm run wiki:copy && npm run blog:copy",
+    "prebuild": "npm run wiki:copy && npm run blog:copy && npm run crosswalk:copy",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

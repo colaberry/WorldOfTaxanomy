@@ -1,11 +1,9 @@
-import { serverGetSystems, serverGetStats } from '@/lib/server-api'
+import { getStaticSystems, getStaticStats } from '@/lib/crosswalk-data'
 import CrosswalkExplorerClient from './CrosswalkExplorerClient'
 
-export default async function CrosswalkExplorerPage() {
-  const [systems, stats] = await Promise.all([
-    serverGetSystems(),
-    serverGetStats(),
-  ])
+export default function CrosswalkExplorerPage() {
+  const systems = getStaticSystems()
+  const stats = getStaticStats()
 
   return <CrosswalkExplorerClient systems={systems} stats={stats} />
 }
