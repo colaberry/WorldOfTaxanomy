@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { GitFork, Terminal, Braces, ArrowRight, Key, Zap, BookOpen, ChevronRight, Star, PlusCircle, Network } from 'lucide-react'
+import { GitFork, Terminal, Braces, ArrowRight, Zap, BookOpen, ChevronRight, Star, PlusCircle, Network } from 'lucide-react'
 
 async function fetchGithubStars(): Promise<number | null> {
   try {
@@ -15,104 +15,23 @@ async function fetchGithubStars(): Promise<number | null> {
   }
 }
 
-const ENDPOINTS = [
-  { method: 'GET',  path: '/api/v1/systems',                                       desc: 'List all classification systems' },
-  { method: 'GET',  path: '/api/v1/systems/{id}',                                  desc: 'System detail with node count and metadata' },
-  { method: 'GET',  path: '/api/v1/search?q={term}',                               desc: 'Full-text search across 1.2M+ nodes' },
-  { method: 'GET',  path: '/api/v1/systems/{id}/nodes/{code}',                     desc: 'Fetch a specific classification code' },
-  { method: 'GET',  path: '/api/v1/systems/{id}/nodes/{code}/children',            desc: 'Browse hierarchy downward' },
-  { method: 'GET',  path: '/api/v1/systems/{id}/nodes/{code}/ancestors',           desc: 'Get full path to root' },
-  { method: 'GET',  path: '/api/v1/systems/{id}/nodes/{code}/equivalences',        desc: 'Crosswalk mappings to other systems' },
-  { method: 'GET',  path: '/api/v1/equivalences/stats',                            desc: 'Crosswalk edge counts per system pair' },
-  { method: 'GET',  path: '/api/v1/countries/stats',                               desc: 'Taxonomy coverage stats for all countries' },
-  { method: 'GET',  path: '/api/v1/countries/{code}',                              desc: 'Country taxonomy profile (official + recommended systems)' },
-  { method: 'POST', path: '/api/v1/classify',                                      desc: 'Classify free-text against all systems (Pro+)' },
-  { method: 'GET',  path: '/api/v1/export/systems.jsonl',                          desc: 'Bulk export all systems as JSONL (Pro+)' },
-  { method: 'GET',  path: '/api/v1/export/systems/{id}/nodes.jsonl',               desc: 'Bulk export system nodes as JSONL (Pro+)' },
-  { method: 'POST', path: '/api/v1/contact',                                       desc: 'Submit enterprise inquiry' },
-  { method: 'POST', path: '/api/v1/auth/register',                                 desc: 'Create an account' },
-  { method: 'POST', path: '/api/v1/auth/login',                                    desc: 'Authenticate and receive a JWT' },
-  { method: 'POST', path: '/api/v1/auth/keys',                                     desc: 'Create a long-lived API key' },
+const API_ENDPOINT_COUNT = 50
+const MCP_TOOL_COUNT = 22
+
+const API_HIGHLIGHTS = [
+  { method: 'GET',  path: '/api/v1/search?q={term}',                        desc: 'Full-text search across 1.2M+ nodes' },
+  { method: 'GET',  path: '/api/v1/systems/{id}/nodes/{code}/equivalences', desc: 'Crosswalk mappings to other systems' },
+  { method: 'POST', path: '/api/v1/classify',                               desc: 'Classify free-text against all systems (Pro+)' },
+  { method: 'GET',  path: '/api/v1/countries/{code}',                       desc: 'Country taxonomy profile' },
+  { method: 'GET',  path: '/api/v1/export/systems.jsonl',                   desc: 'Bulk export as JSONL (Pro+)' },
 ]
 
-const MCP_TOOLS = [
-  { name: 'list_classification_systems',   desc: 'List all available systems with node counts' },
-  { name: 'get_industry',                  desc: 'Fetch a code by system + code identifier' },
+const MCP_HIGHLIGHTS = [
   { name: 'search_classifications',        desc: 'Full-text search across all nodes' },
-  { name: 'browse_children',               desc: 'Navigate hierarchy downward from a parent code' },
-  { name: 'get_ancestors',                 desc: 'Get full path from a code back to the root' },
-  { name: 'get_equivalences',              desc: 'Get all crosswalk edges for a code' },
   { name: 'translate_code',               desc: 'Convert a code from one system to another' },
-  { name: 'translate_across_all_systems', desc: 'Translate a code to every linked system at once' },
-  { name: 'get_sector_overview',           desc: 'Summary stats and structure for a sector' },
-  { name: 'compare_sector',               desc: 'Compare how a sector is represented across systems' },
-  { name: 'find_by_keyword_all_systems',  desc: 'Keyword search in every system simultaneously' },
-  { name: 'get_crosswalk_coverage',        desc: 'Show edge counts between system pairs' },
-  { name: 'get_system_diff',               desc: 'Diff two classification systems structurally' },
-  { name: 'get_siblings',                  desc: 'Get sibling codes at the same hierarchy level' },
-  { name: 'get_subtree_summary',           desc: 'Count nodes under a parent code' },
-  { name: 'resolve_ambiguous_code',        desc: 'Disambiguate a code that appears in multiple systems' },
-  { name: 'get_leaf_count',                desc: 'Count leaf nodes in a subtree' },
-  { name: 'get_region_mapping',            desc: 'Map a region or country to its classification systems' },
-  { name: 'get_country_taxonomy_profile',  desc: 'Full taxonomy profile for a country by ISO code' },
-  { name: 'explore_industry_tree',         desc: 'Interactive step-by-step hierarchy exploration' },
-  { name: 'describe_match_types',          desc: 'Explain the crosswalk match quality types (exact, broad, etc.)' },
-  { name: 'classify_business',             desc: 'Classify free-text against all taxonomy systems (Pro+)' },
-]
-
-const PRICING_TIERS = [
-  {
-    name: 'Free',
-    price: '$0',
-    period: '/month',
-    features: [
-      '5,000 requests/day',
-      '100 req/min rate limit',
-      'Full search & browse',
-      'Classify: 10/day',
-      'MCP server: 10/day',
-      'Community support',
-    ],
-    cta: 'Get started',
-    ctaHref: '/login',
-    highlighted: false,
-  },
-  {
-    name: 'Pro',
-    price: '$49',
-    period: '/month',
-    features: [
-      '100,000 requests/day',
-      '1,000 req/min rate limit',
-      'Full search & browse',
-      'Classify: 1,000/day',
-      'JSONL bulk export',
-      'MCP server: unlimited',
-      'Email support',
-      '99.9% SLA',
-    ],
-    cta: 'Start Pro trial',
-    ctaHref: '/login',
-    highlighted: true,
-  },
-  {
-    name: 'Enterprise',
-    price: 'Custom',
-    period: '',
-    features: [
-      'Unlimited requests',
-      '10,000 req/min rate limit',
-      'Full search & browse',
-      'Classify: unlimited',
-      'JSONL + custom export',
-      'MCP server: unlimited',
-      'Dedicated support',
-      '99.99% SLA',
-    ],
-    cta: 'Contact sales',
-    ctaHref: '#contact',
-    highlighted: false,
-  },
+  { name: 'classify_business',             desc: 'Classify free-text against taxonomy systems' },
+  { name: 'explore_industry_tree',         desc: 'Interactive hierarchy exploration' },
+  { name: 'get_country_taxonomy_profile',  desc: 'Full taxonomy profile for a country' },
 ]
 
 const METHOD_COLORS: Record<string, string> = {
@@ -165,6 +84,93 @@ export default async function DevelopersPage() {
             Explore the data
           </Link>
         </div>
+      </div>
+
+      {/* ── Quick-glance cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <a
+          href="#github"
+          className="group flex flex-col gap-3 p-5 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+              <GitFork className="h-5 w-5" />
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <div>
+            <p className="font-semibold text-sm">Open Source</p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              Fork, self-host, or contribute. Full source for the API, ingesters, and frontend.
+            </p>
+          </div>
+          <code className="text-[11px] font-mono text-muted-foreground bg-secondary/60 px-2.5 py-1.5 rounded-md w-fit">
+            colaberry/WorldOfTaxonomy
+          </code>
+        </a>
+
+        <Link
+          href="/api"
+          className="group flex flex-col gap-3 p-5 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+              <Braces className="h-5 w-5" />
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <div>
+            <p className="font-semibold text-sm">REST API</p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              {API_ENDPOINT_COUNT} endpoints - search, browse, translate codes, and explore crosswalks. No SDK needed.
+            </p>
+          </div>
+          <code className="text-[11px] font-mono text-muted-foreground bg-secondary/60 px-2.5 py-1.5 rounded-md w-fit">
+            GET /api/v1/search?q=physician
+          </code>
+        </Link>
+
+        <Link
+          href="/mcp"
+          className="group flex flex-col gap-3 p-5 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+              <Terminal className="h-5 w-5" />
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <div>
+            <p className="font-semibold text-sm">MCP Server</p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              Connect Claude, Cursor, VS Code, or any MCP client. {MCP_TOOL_COUNT} tools for search, translation, and hierarchy navigation.
+            </p>
+          </div>
+          <code className="text-[11px] font-mono text-muted-foreground bg-secondary/60 px-2.5 py-1.5 rounded-md w-fit">
+            python3 -m world_of_taxonomy mcp
+          </code>
+        </Link>
+
+        <a
+          href="#add-system"
+          className="group flex flex-col gap-3 p-5 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+              <PlusCircle className="h-5 w-5" />
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <div>
+            <p className="font-semibold text-sm">Add a System</p>
+            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+              Contribute a classification system using our TDD guide. Three paths: NACE-derived, ISIC-derived, or standalone.
+            </p>
+          </div>
+          <code className="text-[11px] font-mono text-muted-foreground bg-secondary/60 px-2.5 py-1.5 rounded-md w-fit">
+            ingest/my_system.py
+          </code>
+        </a>
       </div>
 
       {/* ── GitHub ── */}
@@ -264,7 +270,60 @@ cd frontend && npm install && npm run dev`}
         </div>
       </section>
 
-      {/* ── REST API ── */}
+      {/* ── REST API (summary - full reference at /api) ── */}
+      <section id="api" className="space-y-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
+            <Braces className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">REST API</h2>
+            <p className="text-sm text-muted-foreground">HTTP JSON API - {API_ENDPOINT_COUNT} endpoints, no SDK needed</p>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-border/50 bg-card divide-y divide-border/50">
+          <div className="p-6 space-y-4">
+            <div className="grid sm:grid-cols-3 gap-4 text-sm">
+              {[
+                { label: 'Base URL',    value: '/api/v1' },
+                { label: 'Auth',        value: 'Bearer token or API key' },
+                { label: 'Rate limits', value: '30/min anon, 1,000/min auth' },
+              ].map(({ label, value }) => (
+                <div key={label}>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">{label}</p>
+                  <p className="font-mono text-xs text-foreground/80">{value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-6 space-y-3">
+            <p className="text-sm font-medium">Popular endpoints</p>
+            <div className="space-y-1">
+              {API_HIGHLIGHTS.map(({ method, path, desc }) => (
+                <div key={path} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 py-2 border-b border-border/30 last:border-0 text-sm">
+                  <span className={`inline-flex items-center rounded px-2 py-0.5 text-[11px] font-mono font-semibold w-fit shrink-0 ${METHOD_COLORS[method] ?? ''}`}>
+                    {method}
+                  </span>
+                  <code className="font-mono text-xs text-foreground/80 flex-1 truncate">{path}</code>
+                  <span className="text-xs text-muted-foreground sm:text-right shrink-0 max-w-xs">{desc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-4">
+            <Link
+              href="/api"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium"
+            >
+              View full API reference ({API_ENDPOINT_COUNT} endpoints) <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── Guides ── */}
       <section id="guides" className="space-y-5">
         <div className="flex items-center gap-3">
@@ -303,93 +362,7 @@ cd frontend && npm install && npm run dev`}
         </Link>
       </section>
 
-      <section id="api" className="space-y-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
-            <Braces className="h-5 w-5" />
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold">REST API</h2>
-            <p className="text-sm text-muted-foreground">HTTP JSON API - no SDK needed</p>
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-border/50 bg-card divide-y divide-border/50">
-
-          {/* Base URL + auth overview */}
-          <div className="p-6 space-y-4">
-            <div className="grid sm:grid-cols-3 gap-4 text-sm">
-              {[
-                { label: 'Base URL',      value: 'https://your-deployment/api/v1' },
-                { label: 'Auth',          value: 'Bearer token or API key header' },
-                { label: 'Rate limits',   value: '30 req/min anon - 1000 req/min auth' },
-              ].map(({ label, value }) => (
-                <div key={label}>
-                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">{label}</p>
-                  <p className="font-mono text-xs text-foreground/80">{value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick example */}
-          <div className="p-6 space-y-2">
-            <p className="text-sm font-medium">Example - search across all systems</p>
-            <pre className="rounded-lg bg-secondary/60 px-4 py-3 text-xs font-mono overflow-x-auto text-foreground/90 leading-relaxed">
-{`# Anonymous (no auth required for read endpoints)
-curl "https://your-deployment/api/v1/search?q=physician&limit=5"
-
-# Authenticated (higher rate limit)
-curl "https://your-deployment/api/v1/search?q=physician" \\
-  -H "Authorization: Bearer <your-token>"
-
-# Translate NAICS -> ISIC
-curl "https://your-deployment/api/v1/systems/naics_2022/nodes/6211/equivalences"`}
-            </pre>
-          </div>
-
-          {/* Auth flow */}
-          <div className="p-6 space-y-3">
-            <p className="text-sm font-medium flex items-center gap-2">
-              <Key className="h-4 w-4 text-muted-foreground" />
-              Authentication flow
-            </p>
-            <ol className="space-y-2 text-sm text-muted-foreground list-none">
-              {[
-                'POST /api/v1/auth/register  - create an account',
-                'POST /api/v1/auth/login     - receive a short-lived JWT (15 min)',
-                'POST /api/v1/auth/keys      - create a long-lived API key',
-                'Include key in requests:    Authorization: Bearer wot_<your-key>',
-              ].map((step, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-medium text-foreground">
-                    {i + 1}
-                  </span>
-                  <code className="font-mono text-xs text-foreground/80 pt-0.5">{step}</code>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Endpoints table */}
-          <div className="p-6 space-y-3">
-            <p className="text-sm font-medium">Endpoints</p>
-            <div className="space-y-1">
-              {ENDPOINTS.map(({ method, path, desc }) => (
-                <div key={path} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 py-2 border-b border-border/30 last:border-0 text-sm">
-                  <span className={`inline-flex items-center rounded px-2 py-0.5 text-[11px] font-mono font-semibold w-fit shrink-0 ${METHOD_COLORS[method] ?? ''}`}>
-                    {method}
-                  </span>
-                  <code className="font-mono text-xs text-foreground/80 flex-1 truncate">{path}</code>
-                  <span className="text-xs text-muted-foreground sm:text-right shrink-0 max-w-xs">{desc}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── MCP Server ── */}
+      {/* ── MCP Server (summary - full reference at /mcp) ── */}
       <section id="mcp" className="space-y-5">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary border border-border/50">
@@ -397,25 +370,22 @@ curl "https://your-deployment/api/v1/systems/naics_2022/nodes/6211/equivalences"
           </div>
           <div>
             <h2 className="text-xl font-semibold">MCP Server</h2>
-            <p className="text-sm text-muted-foreground">Connect Claude Desktop or any MCP-compatible AI assistant</p>
+            <p className="text-sm text-muted-foreground">Works with Claude, Cursor, VS Code, Windsurf, and any MCP client</p>
           </div>
         </div>
 
         <div className="rounded-xl border border-border/50 bg-card divide-y divide-border/50">
-
-          {/* What it is */}
           <div className="p-6 space-y-3">
             <p className="text-sm leading-relaxed text-muted-foreground">
               The MCP (Model Context Protocol) server lets AI assistants like Claude query the
               taxonomy graph directly - searching codes, translating between systems, navigating
               hierarchies, and exploring country profiles - all from within a conversation.
-              No API key or HTTP client needed on the AI side.
             </p>
             <div className="grid sm:grid-cols-3 gap-4 text-sm pt-2">
               {[
                 { label: 'Protocol',   value: 'JSON-RPC over stdio' },
                 { label: 'Transport',  value: 'stdin / stdout' },
-                { label: 'Tools',      value: '21 available' },
+                { label: 'Tools',      value: `${MCP_TOOL_COUNT} available` },
               ].map(({ label, value }) => (
                 <div key={label}>
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide mb-1">{label}</p>
@@ -425,49 +395,18 @@ curl "https://your-deployment/api/v1/systems/naics_2022/nodes/6211/equivalences"
             </div>
           </div>
 
-          {/* Claude Desktop setup */}
-          <div className="p-6 space-y-3">
-            <p className="text-sm font-medium">Connect to Claude Desktop</p>
-            <p className="text-xs text-muted-foreground">
-              Add the following to your{' '}
-              <code className="font-mono">claude_desktop_config.json</code>
-              {' '}(macOS: <code className="font-mono">~/Library/Application Support/Claude/claude_desktop_config.json</code>):
-            </p>
-            <pre className="rounded-lg bg-secondary/60 px-4 py-3 text-xs font-mono overflow-x-auto text-foreground/90 leading-relaxed">
-{`{
-  "mcpServers": {
-    "world-of-taxonomy": {
-      "command": "/usr/bin/python3",
-      "args": ["-m", "world_of_taxonomy", "mcp"],
-      "env": {
-        "PYTHONPATH": "/path/to/WorldOfTaxonomy",
-        "DATABASE_URL": "postgresql://user:pass@host/db?sslmode=require"
-      }
-    }
-  }
-}`}
-            </pre>
-            <p className="text-xs text-muted-foreground">
-              Replace <code className="font-mono">/path/to/WorldOfTaxonomy</code> with your local clone path
-              and supply your Neon (or other PostgreSQL) <code className="font-mono">DATABASE_URL</code>.
-              Restart Claude Desktop after saving.
-            </p>
-          </div>
-
-          {/* Run directly */}
           <div className="p-6 space-y-2">
-            <p className="text-sm font-medium">Run the server directly</p>
+            <p className="text-sm font-medium">Quick start</p>
             <pre className="rounded-lg bg-secondary/60 px-4 py-3 text-xs font-mono overflow-x-auto text-foreground/90 leading-relaxed">
 {`# From the repo root (requires DATABASE_URL in environment)
 python3 -m world_of_taxonomy mcp`}
             </pre>
           </div>
 
-          {/* Tools list */}
           <div className="p-6 space-y-3">
-            <p className="text-sm font-medium">Available tools ({MCP_TOOLS.length})</p>
+            <p className="text-sm font-medium">Popular tools</p>
             <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
-              {MCP_TOOLS.map(({ name, desc }) => (
+              {MCP_HIGHLIGHTS.map(({ name, desc }) => (
                 <div key={name} className="flex items-start gap-2 py-1 border-b border-border/20 last:border-0">
                   <ChevronRight className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                   <div>
@@ -477,6 +416,15 @@ python3 -m world_of_taxonomy mcp`}
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="p-4">
+            <Link
+              href="/mcp"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium"
+            >
+              View full MCP reference ({MCP_TOOL_COUNT} tools) <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
           </div>
         </div>
       </section>
@@ -623,47 +571,23 @@ async def ingest(conn) -> None:
           </div>
           <div>
             <h2 className="text-xl font-semibold">Pricing</h2>
-            <p className="text-sm text-muted-foreground">Choose the plan that fits your needs</p>
+            <p className="text-sm text-muted-foreground">Free, Pro, and Enterprise plans available</p>
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-3 gap-4">
-          {PRICING_TIERS.map((tier) => (
-            <div
-              key={tier.name}
-              className={`rounded-xl border p-6 space-y-4 ${
-                tier.highlighted
-                  ? 'border-primary bg-primary/5 ring-1 ring-primary/20'
-                  : 'border-border/50 bg-card'
-              }`}
-            >
-              <div>
-                <h3 className="text-lg font-semibold">{tier.name}</h3>
-                <div className="flex items-baseline gap-1 mt-1">
-                  <span className="text-3xl font-bold">{tier.price}</span>
-                  {tier.period && <span className="text-sm text-muted-foreground">{tier.period}</span>}
-                </div>
-              </div>
-              <ul className="space-y-2">
-                {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <ChevronRight className="h-3.5 w-3.5 text-primary shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={tier.ctaHref}
-                className={`block text-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  tier.highlighted
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                }`}
-              >
-                {tier.cta}
-              </Link>
-            </div>
-          ))}
+        <div className="rounded-xl border border-border/50 bg-card p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              The full knowledge graph is available on every plan. Paid tiers add higher limits,
+              bulk export, classification API, and dedicated support.
+            </p>
+          </div>
+          <Link
+            href="/pricing"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+          >
+            View pricing <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 

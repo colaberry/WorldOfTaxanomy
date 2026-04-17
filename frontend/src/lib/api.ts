@@ -6,6 +6,7 @@ import type {
   Equivalence,
   CrosswalkStat,
   CrosswalkGraphResponse,
+  CrosswalkSectionsResponse,
   User,
   ApiKey,
   AuthTokens,
@@ -153,10 +154,22 @@ export async function getStats(): Promise<CrosswalkStat[]> {
 export async function getCrosswalkGraph(
   source: string,
   target: string,
-  limit = 500
+  limit = 500,
+  section?: string,
 ): Promise<CrosswalkGraphResponse> {
+  const params = new URLSearchParams({ limit: String(limit) })
+  if (section) params.set('section', section)
   return fetchJson(
-    `/api/v1/systems/${source}/crosswalk/${target}/graph?limit=${limit}`
+    `/api/v1/systems/${source}/crosswalk/${target}/graph?${params}`
+  )
+}
+
+export async function getCrosswalkSections(
+  source: string,
+  target: string,
+): Promise<CrosswalkSectionsResponse> {
+  return fetchJson(
+    `/api/v1/systems/${source}/crosswalk/${target}/sections`
   )
 }
 

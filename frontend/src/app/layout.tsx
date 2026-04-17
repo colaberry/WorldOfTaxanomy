@@ -93,6 +93,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="WorldOfTaxonomy Blog"
+          href="/feed.xml"
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <Providers>

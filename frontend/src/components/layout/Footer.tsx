@@ -4,14 +4,15 @@ import { Globe, GitFork } from 'lucide-react'
 const EXPLORE_LINKS = [
   { href: '/',           label: 'Home' },
   { href: '/explore',    label: 'Search codes' },
+  { href: '/blog',       label: 'Blog' },
   { href: '/dashboard',  label: 'Browse systems' },
   { href: '/developers', label: 'Developers' },
 ]
 
 const DEVELOPER_LINKS = [
   { href: 'https://github.com/colaberry/WorldOfTaxonomy',        label: 'GitHub repository', external: true },
-  { href: '/developers#api',                                      label: 'REST API reference', external: false },
-  { href: '/developers#mcp',                                      label: 'MCP server setup', external: false },
+  { href: '/api',                                                  label: 'REST API reference', external: false },
+  { href: '/mcp',                                                  label: 'MCP tools', external: false },
   { href: 'https://github.com/colaberry/WorldOfTaxonomy/issues', label: 'Report an issue', external: true },
 ]
 

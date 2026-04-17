@@ -83,6 +83,22 @@ export interface CrosswalkGraphResponse {
   truncated: boolean
 }
 
+export interface CrosswalkSection {
+  source_section: string
+  source_title: string
+  target_section: string
+  target_title: string
+  edge_count: number
+  exact_count: number
+}
+
+export interface CrosswalkSectionsResponse {
+  source_system: string
+  target_system: string
+  sections: CrosswalkSection[]
+  total_edges: number
+}
+
 export interface User {
   id: string
   email: string

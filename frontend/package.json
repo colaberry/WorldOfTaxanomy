@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "wiki:copy": "rm -rf src/content/wiki && mkdir -p src/content && cp -r ../wiki src/content/wiki",
-    "predev": "npm run wiki:copy",
+    "blog:copy": "rm -rf src/content/blog && mkdir -p src/content && cp -r ../blog src/content/blog",
+    "predev": "npm run wiki:copy && npm run blog:copy",
     "dev": "NODE_OPTIONS='--max-old-space-size=4096' next dev",
-    "prebuild": "npm run wiki:copy",
+    "prebuild": "npm run wiki:copy && npm run blog:copy",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

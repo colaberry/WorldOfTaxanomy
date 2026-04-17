@@ -85,6 +85,22 @@ class CrosswalkGraphResponse(BaseModel):
     truncated: bool
 
 
+class CrosswalkSection(BaseModel):
+    source_section: str
+    source_title: str
+    target_section: str
+    target_title: str
+    edge_count: int
+    exact_count: int
+
+
+class CrosswalkSectionsResponse(BaseModel):
+    source_system: str
+    target_system: str
+    sections: List[CrosswalkSection]
+    total_edges: int
+
+
 # ── Auth schemas ─────────────────────────────────────────────
 
 
