@@ -69,7 +69,7 @@ export function HomeContent({ initialSystems, initialStats }: HomeContentProps) 
           {/* Stat pills */}
           <div className="flex flex-wrap gap-3 justify-center">
             {[
-              { icon: Globe,     value: loadingSystems ? '...' : (systems?.length ?? '...').toString(),     label: 'Systems',      href: '/dashboard' },
+              { icon: Globe,     value: loadingSystems ? '...' : (systems?.length ?? '...').toString(),     label: 'Systems',      href: '/explore' },
               { icon: GitBranch, value: loadingSystems ? '...' : totalNodes.toLocaleString(),            label: 'Nodes',        href: '/explore' },
               { icon: Network,   value: loadingStats   ? '...' : totalEdges.toLocaleString(),            label: 'Connections',  href: '/crosswalk-explorer' },
               { icon: Star,      value: githubStars != null ? githubStars.toLocaleString() : '...',      label: 'GitHub Stars', href: 'https://github.com/colaberry/WorldOfTaxonomy/stargazers' },
@@ -97,7 +97,7 @@ export function HomeContent({ initialSystems, initialStats }: HomeContentProps) 
               Search all codes
             </Link>
             <Link
-              href="/dashboard"
+              href="/explore"
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-secondary text-secondary-foreground text-sm font-medium hover:bg-secondary/80 transition-colors"
             >
               Browse systems
@@ -115,7 +115,7 @@ export function HomeContent({ initialSystems, initialStats }: HomeContentProps) 
             <p className="text-sm text-muted-foreground">Countries colored by taxonomy coverage depth</p>
           </div>
           <Link
-            href="/dashboard"
+            href="/explore"
             className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
           >
             View all systems <ArrowRight className="h-3 w-3" />
@@ -241,7 +241,7 @@ export function HomeContent({ initialSystems, initialStats }: HomeContentProps) 
             return (
               <Link
                 key={cat.id}
-                href={`/dashboard?cat=${cat.id}`}
+                href={`/explore?cat=${cat.id}`}
                 className="group flex flex-col gap-2 p-4 rounded-xl border border-border/50 bg-card hover:border-border hover:shadow-sm transition-all"
                 style={{ borderLeftColor: cat.accent, borderLeftWidth: 3 }}
               >

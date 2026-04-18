@@ -31,7 +31,6 @@ export function Header() {
     { href: '/developers', label: 'Builders', active: pathname === '/developers' },
     { href: '/about', label: 'About', active: pathname === '/about' },
     { href: '/pricing', label: 'Pricing', active: pathname === '/pricing' },
-    { href: '/dashboard', label: 'Dashboard', active: pathname === '/dashboard' },
   ]
 
   function handleSignOut() {

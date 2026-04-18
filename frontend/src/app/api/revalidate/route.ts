@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
   if (systemId) {
     // Revalidate specific system page and related pages
     revalidatePath(`/system/${systemId}`, 'page')
-    revalidatePath('/dashboard', 'page')
+    revalidatePath('/explore', 'page')
     revalidatePath('/', 'page')
     return NextResponse.json({ revalidated: true, systemId })
   }

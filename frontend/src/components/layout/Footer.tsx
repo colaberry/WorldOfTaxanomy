@@ -4,9 +4,9 @@ import { Globe, GitFork } from 'lucide-react'
 const EXPLORE_LINKS = [
   { href: '/',           label: 'Home' },
   { href: '/explore',    label: 'Search codes' },
+  { href: '/explore',    label: 'Browse systems' },
   { href: '/blog',       label: 'Blog' },
-  { href: '/dashboard',  label: 'Browse systems' },
-  { href: '/developers', label: 'Developers' },
+  { href: '/developers', label: 'Builders' },
 ]
 
 const DEVELOPER_LINKS = [
@@ -48,7 +48,7 @@ export function Footer() {
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Explore</p>
             <ul className="space-y-2">
               {EXPLORE_LINKS.map(({ href, label }) => (
-                <li key={href}>
+                <li key={label}>
                   <Link
                     href={href}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors"

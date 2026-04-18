@@ -1,32 +1,16 @@
-import type { Metadata } from 'next'
-import { DashboardWrapper } from './DashboardContent'
-import { serverGetSystems, serverGetStats } from '@/lib/server-api'
+import { permanentRedirect } from 'next/navigation'
 
-export const metadata: Metadata = {
-  title: 'Systems Overview - WorldOfTaxonomy',
-  description:
-    'Browse all 1,000+ classification systems across 16 categories. ' +
-    'Industry, health, trade, occupations, regulatory, and more.',
-  openGraph: {
-    title: 'Systems Overview - WorldOfTaxonomy',
-    description: '1,000+ classification systems across 16 categories.',
-    url: 'https://worldoftaxonomy.com/dashboard',
-    type: 'website',
-  },
-}
-
-export default async function DashboardPage() {
-  let systems = null
-  let stats = null
-
-  try {
-    ;[systems, stats] = await Promise.all([
-      serverGetSystems(),
-      serverGetStats(),
-    ])
-  } catch {
-    // Backend unavailable - client component will fetch on its own
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const params = await searchParams
+  const qs = new URLSearchParams()
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') qs.set(key, value)
+    else if (Array.isArray(value)) value.forEach((v) => qs.append(key, v))
   }
-
-  return <DashboardWrapper initialSystems={systems} initialStats={stats} />
+  const query = qs.toString()
+  permanentRedirect(query ? `/explore?${query}` : '/explore')
 }
