@@ -195,8 +195,29 @@ Tools (21): list_systems, get_industry, browse_children, get_ancestors, search_c
 """
 
 
+def _init_sentry() -> None:
+    """Initialize Sentry only when SENTRY_DSN is set. Safe no-op otherwise."""
+    dsn = os.getenv("SENTRY_DSN", "").strip()
+    if not dsn:
+        return
+    try:
+        import sentry_sdk
+
+        sentry_sdk.init(
+            dsn=dsn,
+            environment=os.getenv("SENTRY_ENVIRONMENT", "production"),
+            traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "0.1")),
+            send_default_pii=False,
+        )
+    except Exception:
+        # Never let telemetry wiring break startup.
+        pass
+
+
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
+    _init_sentry()
+
     app = FastAPI(
         title="WorldOfTaxonomy",
         description=(
