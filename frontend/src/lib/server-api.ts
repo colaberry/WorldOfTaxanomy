@@ -78,6 +78,41 @@ export async function serverGetChildren(
   return serverFetch(`/api/v1/systems/${systemId}/nodes/${code}/children`)
 }
 
+// BFS walk of the classification tree, returning all nodes at level <=
+// maxLevel. Uses the /children endpoint per node. The underlying fetches
+// respect the ISR revalidate window, so repeat calls within the cache
+// window are cheap. Used at build time for sitemap generation and for
+// expanding generateStaticParams beyond the sector (level 1) tier.
+export async function serverListNodesUpToLevel(
+  systemId: string,
+  maxLevel: number,
+): Promise<ClassificationNode[]> {
+  if (maxLevel < 1) return []
+  const detail = await serverGetSystem(systemId).catch(() => null)
+  if (!detail) return []
+  const result: ClassificationNode[] = [...detail.roots]
+  let frontier: ClassificationNode[] = detail.roots
+  for (let level = 1; level < maxLevel; level++) {
+    const allChildren = await Promise.all(
+      frontier.map((n) =>
+        serverGetChildren(systemId, n.code).catch(
+          () => [] as ClassificationNode[],
+        ),
+      ),
+    )
+    const next: ClassificationNode[] = []
+    for (const children of allChildren) {
+      for (const c of children) {
+        result.push(c)
+        next.push(c)
+      }
+    }
+    if (next.length === 0) break
+    frontier = next
+  }
+  return result
+}
+
 export async function serverGetAncestors(
   systemId: string,
   code: string,

@@ -1,11 +1,19 @@
 import type { MetadataRoute } from 'next'
 import { getWikiSlugs } from '@/lib/wiki'
 import { getBlogSlugs } from '@/lib/blog'
+import { serverListNodesUpToLevel } from '@/lib/server-api'
 import { MAJOR_SYSTEMS } from './codes/constants'
 import { QUERIES } from './codes/q/queries'
 
 const SITE_URL = 'https://worldoftaxonomy.com'
 const BACKEND_URL = process.env.BACKEND_URL ?? 'http://localhost:8000'
+
+// Depth cap for /codes/[system]/[code] pages emitted into the sitemap.
+// Level 1 = sector (e.g. NAICS 2-digit), 2 = subsector (3-digit),
+// 3 = industry group (4-digit). Anything deeper is still reachable via
+// SSR + ISR and via internal links on the industry group pages, but is
+// not listed in the sitemap to keep it under Google's per-file limits.
+const CODES_SITEMAP_MAX_LEVEL = 3
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const guidePages: MetadataRoute.Sitemap = getWikiSlugs().map((slug) => ({
@@ -54,16 +62,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    const [systemsRes, rootsRes] = await Promise.all([
+    const [systemsRes, deepNodesPerSystem] = await Promise.all([
       fetch(`${BACKEND_URL}/api/v1/systems`, { next: { revalidate: 3600 } }),
       Promise.all(
         MAJOR_SYSTEMS.map(async (id) => {
-          const r = await fetch(`${BACKEND_URL}/api/v1/systems/${id}`, {
-            next: { revalidate: 3600 },
-          })
-          if (!r.ok) return { id, roots: [] as Array<{ code: string }> }
-          const detail: { roots: Array<{ code: string }> } = await r.json()
-          return { id, roots: detail.roots ?? [] }
+          const nodes = await serverListNodesUpToLevel(
+            id,
+            CODES_SITEMAP_MAX_LEVEL,
+          ).catch(() => [])
+          return { id, nodes }
         }),
       ),
     ])
@@ -77,16 +84,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }))
 
-    const codeSectorUrls: MetadataRoute.Sitemap = rootsRes.flatMap(({ id, roots }) =>
-      roots.map((root) => ({
-        url: `${SITE_URL}/codes/${id}/${encodeURIComponent(root.code)}`,
-        lastModified: new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.85,
-      })),
+    // Priority tiers by depth: sectors (level 1) = 0.85, subsectors
+    // (level 2) = 0.75, industry groups (level 3) = 0.65. Shallow pages
+    // aggregate more cross-system content so they are more important for
+    // SEO; deeper pages are long-tail.
+    const codeNodeUrls: MetadataRoute.Sitemap = deepNodesPerSystem.flatMap(
+      ({ id, nodes }) =>
+        nodes.map((node) => ({
+          url: `${SITE_URL}/codes/${id}/${encodeURIComponent(node.code)}`,
+          lastModified: new Date(),
+          changeFrequency: 'monthly' as const,
+          priority: node.level === 1 ? 0.85 : node.level === 2 ? 0.75 : 0.65,
+        })),
     )
 
-    return [...staticPages, ...codesSystemHubs, ...codeSectorUrls, ...queryPages, ...systemUrls]
+    return [
+      ...staticPages,
+      ...codesSystemHubs,
+      ...codeNodeUrls,
+      ...queryPages,
+      ...systemUrls,
+    ]
   } catch {
     return [...staticPages, ...codesSystemHubs, ...queryPages]
   }
