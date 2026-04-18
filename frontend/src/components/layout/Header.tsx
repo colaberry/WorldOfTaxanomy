@@ -24,7 +24,7 @@ export function Header() {
 
   const navItems = [
     { href: '/', label: 'Galaxy', active: pathname === '/' },
-    { href: '/crosswalk-explorer', label: 'Crosswalks', active: pathname === '/crosswalk-explorer' },
+    { href: '/crosswalks', label: 'Crosswalks', active: pathname === '/crosswalks' || pathname.startsWith('/crosswalks/') || pathname === '/crosswalk-explorer' },
     { href: '/explore', label: 'Explore', active: pathname === '/explore' },
     { href: '/classify', label: 'Classify', active: pathname.startsWith('/classify') },
     { href: '/codes', label: 'Codes', active: pathname.startsWith('/codes') },

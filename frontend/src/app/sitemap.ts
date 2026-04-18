@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getWikiSlugs } from '@/lib/wiki'
 import { getBlogSlugs } from '@/lib/blog'
-import { serverListNodesUpToLevel } from '@/lib/server-api'
-import { MAJOR_SYSTEMS } from './codes/constants'
+import { serverGetStats, serverListNodesUpToLevel } from '@/lib/server-api'
+import { MAJOR_SYSTEMS, MAJOR_SYSTEM_SET } from './codes/constants'
 import { QUERIES } from './codes/q/queries'
 
 const SITE_URL = 'https://worldoftaxonomy.com'
@@ -34,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: SITE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
     { url: `${SITE_URL}/classify`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${SITE_URL}/codes`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${SITE_URL}/crosswalks`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.95 },
     { url: `${SITE_URL}/explore`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/guide`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE_URL}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
@@ -62,7 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]
 
   try {
-    const [systemsRes, deepNodesPerSystem] = await Promise.all([
+    const [systemsRes, deepNodesPerSystem, stats] = await Promise.all([
       fetch(`${BACKEND_URL}/api/v1/systems`, { next: { revalidate: 3600 } }),
       Promise.all(
         MAJOR_SYSTEMS.map(async (id) => {
@@ -73,6 +74,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           return { id, nodes }
         }),
       ),
+      serverGetStats().catch(() => []),
     ])
     if (!systemsRes.ok) return [...staticPages, ...codesSystemHubs, ...queryPages]
 
@@ -98,11 +100,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })),
     )
 
+    // Crosswalk pair hubs: one page per major-to-major pair that has
+    // edges. Detail pages (level-1 source code x target system) are
+    // generated below from the already-walked deepNodesPerSystem, so we
+    // do not re-query.
+    const majorPairs = stats.filter(
+      (s) =>
+        MAJOR_SYSTEM_SET.has(s.source_system) &&
+        MAJOR_SYSTEM_SET.has(s.target_system) &&
+        s.edge_count > 0,
+    )
+    const crosswalkPairUrls: MetadataRoute.Sitemap = majorPairs.map((p) => ({
+      url: `${SITE_URL}/crosswalks/${p.source_system}/to/${p.target_system}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.85,
+    }))
+
+    const sectorNodesBySystem = new Map(
+      deepNodesPerSystem.map(({ id, nodes }) => [
+        id,
+        nodes.filter((n) => n.level === 1),
+      ]),
+    )
+    const crosswalkDetailUrls: MetadataRoute.Sitemap = majorPairs.flatMap(
+      (p) => {
+        const sectors = sectorNodesBySystem.get(p.source_system) ?? []
+        return sectors.map((node) => ({
+          url: `${SITE_URL}/crosswalks/${p.source_system}/${encodeURIComponent(node.code)}/${p.target_system}`,
+          lastModified: new Date(),
+          changeFrequency: 'monthly' as const,
+          priority: 0.7,
+        }))
+      },
+    )
+
     return [
       ...staticPages,
       ...codesSystemHubs,
       ...codeNodeUrls,
       ...queryPages,
+      ...crosswalkPairUrls,
+      ...crosswalkDetailUrls,
       ...systemUrls,
     ]
   } catch {

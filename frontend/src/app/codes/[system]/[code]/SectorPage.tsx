@@ -358,18 +358,24 @@ export function SectorPage({
                       </li>
                     ))}
                   </ul>
-                  {group.edges.length > 10 && (
-                    <div className="px-4 py-2 text-xs text-muted-foreground border-t border-border bg-muted/30">
-                      +{group.edges.length - 10} more mappings. View the full crosswalk on the{' '}
-                      <Link
-                        href={`/crosswalk-explorer?source=${system.id}&target=${group.target_system}`}
-                        className="text-primary underline"
-                      >
-                        crosswalk explorer
-                      </Link>
-                      .
-                    </div>
-                  )}
+                  <div className="px-4 py-2 text-xs text-muted-foreground border-t border-border bg-muted/30 flex flex-wrap items-center gap-x-3 gap-y-1">
+                    {group.edges.length > 10 && (
+                      <span>+{group.edges.length - 10} more mappings.</span>
+                    )}
+                    <Link
+                      href={`/crosswalks/${system.id}/${encodeURIComponent(node.code)}/${group.target_system}`}
+                      className="text-primary underline"
+                    >
+                      {system.name} {node.code} to {systemName(allSystems, group.target_system)} crosswalk page
+                    </Link>
+                    <span className="text-muted-foreground/70">|</span>
+                    <Link
+                      href={`/crosswalk-explorer?source=${system.id}&target=${group.target_system}`}
+                      className="text-primary underline"
+                    >
+                      interactive explorer
+                    </Link>
+                  </div>
                 </div>
               )
             })}
