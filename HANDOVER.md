@@ -388,7 +388,7 @@ What's queued: [ROADMAP.md](ROADMAP.md).
 | [docs/handover/backend.md](docs/handover/backend.md) | FastAPI internals, MCP, auth, ingest pipeline, wiki loader |
 | [docs/handover/frontend.md](docs/handover/frontend.md) | Next 16 specifics, App Router, data layer, SSR+React Query, theming, crosswalk bundling |
 | [docs/handover/rebuild-checklist.md](docs/handover/rebuild-checklist.md) | Step-by-step rebuild from zero |
-| [docs/handover/portfolio-auth.md](docs/handover/portfolio-auth.md) | Portfolio-wide central auth (Zitadel Cloud at auth.aiaccelerator.ai) |
+| [docs/handover/portfolio-auth.md](docs/handover/portfolio-auth.md) | Portfolio-wide auth: Zitadel Cloud (authN) at auth.aiaccelerator.ai + Permit.io (authZ) policy engine |
 | [DESIGN.md](DESIGN.md) | Architectural rationale and trade-offs |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | TDD workflow + 7-step new-system checklist |
 | [DATA_SOURCES.md](DATA_SOURCES.md) | Upstream authority, license, URL for every system |

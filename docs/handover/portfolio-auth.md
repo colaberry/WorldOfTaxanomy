@@ -18,7 +18,24 @@ in, sees one account page, has one billing relationship, and uses one
 set of API keys that work across every product with per-product
 entitlements.
 
-## Decision: Zitadel Cloud
+## Two layers: authentication and authorization
+
+Portfolio auth is split into two hosted services with strict separation
+of concerns:
+
+- **Authentication (who are you?)** - Zitadel Cloud. Identity, login,
+  MFA, social, SSO, orgs, roles, PATs.
+- **Authorization (what can you do?)** - Permit.io. Fine-grained policy
+  decisions: ABAC + ReBAC, policy-as-code via GitOps.
+
+Every product verifies the Zitadel-issued JWT on every request, then
+calls `permit.check(user, action, resource)` for any operation whose
+answer depends on more than "is the user authenticated at all."
+Coarse rate-limit tiers (`free` / `pro` / `enterprise`) stay as claims
+on the Zitadel token so the hot path does not round-trip to Permit.io
+per request.
+
+## Decision: Zitadel Cloud (authentication)
 
 The central Identity Provider is **Zitadel Cloud**, hosted at
 `auth.aiaccelerator.ai`. The decision criteria and the alternatives
@@ -37,23 +54,68 @@ self-hosted Zitadel (ops burden), WorkOS (per-SAML-connection pricing,
 weak API-key story), Clerk (SAML is a paid add-on), rolling our own
 (permanent maintenance burden).
 
+## Decision: Permit.io (authorization)
+
+The central policy engine is **Permit.io**, a hosted policy-as-a-service
+that wraps OPA (for ABAC) and OpenFGA (for ReBAC) behind one SDK and
+one management plane. Zitadel answers "who is this?"; Permit.io answers
+"can this subject perform this action on this resource, given this
+context?"
+
+| Requirement | Why Permit.io |
+|-------------|---------------|
+| Outsource security (Ram's preference) | Hosted policy-as-a-service; no ops burden |
+| ABAC and ReBAC both needed | Wraps OPA (ABAC) and OpenFGA (ReBAC) under one API |
+| Multi-language SDKs across product portfolio | First-class Python and TypeScript SDKs; HTTP PDP available for anything else |
+| Pairs cleanly with Zitadel | Sync SDK pulls Zitadel users/orgs/roles into Permit.io as subjects |
+| Policy-as-code for review and rollback | GitOps integration; policies committed to a repo, not clicked into a UI |
+| Generous free tier for pre-revenue stage | 1000 MAU free, reasonable growth pricing |
+
+Rejected alternatives:
+
+- **AuthZed Cloud (SpiceDB)** - excellent at ReBAC, weaker for pure
+  ABAC, steeper learning curve. Less relevant when Permit.io already
+  wraps ReBAC via OpenFGA.
+- **OpenFGA self-hosted** - conflicts with the outsource-security
+  preference; ops burden on a security-critical service.
+- **Cerbos** - policy-as-code done well, but does not handle ReBAC
+  natively; agent-delegation scenarios want ReBAC.
+- **Auth0 FGA** - bundled with Auth0; does not help because we did
+  not pick Auth0.
+- **Build authz in each product** - what we are explicitly avoiding.
+  Four products authoring their own authz is four codebases that drift
+  apart and four audit surfaces.
+
+### Coarse vs fine-grained checks
+
+| Check | Where |
+|-------|-------|
+| Is the JWT valid and unexpired? | Backend, JWKS verification (no network call per request once JWKS is cached) |
+| Is the user authenticated at all? | Backend, from JWT presence |
+| Is the user on the "pro" tier (for rate limits)? | Zitadel claim on token |
+| Can this user read a given system? | Permit.io |
+| Can this user export bulk crosswalk data for system X? | Permit.io |
+| Can this agent classify on behalf of org Y? | Permit.io |
+| Can user A share an API key with user B? | Permit.io |
+
 ## Architecture
 
 ```
-                          ┌─────────────────────────────────┐
-                          │  auth.aiaccelerator.ai          │
-                          │  (Zitadel Cloud)                │
-                          │                                 │
-                          │  - Login, MFA, social, SSO      │
-                          │  - Orgs (= Stripe customers)    │
-                          │  - Users, roles, PATs           │
-                          │  - SAML + SCIM for enterprise   │
-                          └──────────┬──────────────────────┘
-                                     │  OIDC
-                                     │  JWKS, introspection
-        ┌────────────────────────────┼────────────────────────────┐
-        │                            │                            │
-        ▼                            ▼                            ▼
+    ┌─────────────────────────────────┐      ┌─────────────────────────────────┐
+    │  auth.aiaccelerator.ai          │      │  Permit.io (hosted PDP)         │
+    │  (Zitadel Cloud)                │      │                                 │
+    │                                 │      │  - Policy-as-code (GitOps)      │
+    │  - Login, MFA, social, SSO      │      │  - ABAC (OPA) + ReBAC (OpenFGA) │
+    │  - Orgs (= Stripe customers)    │      │  - Subjects synced from Zitadel │
+    │  - Users, roles, PATs           │      │  - Decision logs                │
+    │  - SAML + SCIM for enterprise   │      │                                 │
+    └──────────┬──────────────────────┘      └────────────────┬────────────────┘
+               │                                              │
+               │  1. OIDC, JWKS (authN)                       │  2. permit.check (authZ)
+               │                                              │
+     ┌─────────┴──────────────────────────────────────────────┴──────────┐
+     │                                                                    │
+     ▼                                                                    ▼
 ┌───────────────────┐    ┌───────────────────┐        ┌───────────────────┐
 │ worldoftaxonomy   │    │ worldofontology   │        │ worldofagents     │
 │                   │    │                   │        │                   │
@@ -61,8 +123,10 @@ weak API-key story), Clerk (SAML is a paid add-on), rolling our own
 │ - REST API        │    │ - REST API        │        │ - REST API        │
 │ - MCP server      │    │ - MCP server      │        │ - MCP server      │
 │                   │    │                   │        │                   │
-│ Verifies tokens   │    │ Verifies tokens   │        │ Verifies tokens   │
-│ via JWKS          │    │ via JWKS          │        │ via JWKS          │
+│ 1. Verify JWT     │    │ 1. Verify JWT     │        │ 1. Verify JWT     │
+│    via JWKS       │    │    via JWKS       │        │    via JWKS       │
+│ 2. permit.check() │    │ 2. permit.check() │        │ 2. permit.check() │
+│    per operation  │    │    per operation  │        │    per operation  │
 └─────────┬─────────┘    └─────────┬─────────┘        └─────────┬─────────┘
           │                        │                            │
           │                        ▼                            │
@@ -74,15 +138,21 @@ weak API-key story), Clerk (SAML is a paid add-on), rolling our own
                          └───────────────────┘
 ```
 
-Every product:
+Every product, every protected request:
 
-- Redirects unauthenticated web users to `auth.aiaccelerator.ai/login`.
-- On callback, verifies the Zitadel-issued ID token, then mints (or
-  accepts) its own session.
-- Verifies REST/MCP bearer tokens against Zitadel's JWKS.
-- Accepts Zitadel Personal Access Tokens (long-lived, user-scoped) as
-  "API keys" for paid tiers. Product-specific rate-limit tiers come from
-  a claim on the token, looked up from Stripe entitlements.
+1. Redirects unauthenticated web users to `auth.aiaccelerator.ai/login`.
+2. On callback, verifies the Zitadel-issued ID token via cached JWKS,
+   then mints (or accepts) its own session.
+3. Verifies REST/MCP bearer tokens against Zitadel's JWKS (RS256).
+4. Accepts Zitadel Personal Access Tokens (long-lived, user-scoped) as
+   "API keys" for paid tiers. Tier claim on the token drives rate-limit
+   buckets without a Permit.io round-trip.
+5. For any operation whose answer depends on org membership, resource
+   ownership, enterprise contract terms, or agent delegation, calls
+   `permit.check(user, action, resource, context)` and respects the
+   allow/deny decision.
+6. Products do not author policy locally. Policies live in Permit.io,
+   versioned via the GitOps integration, reviewed like code.
 
 ## What this changes for WorldOfTaxonomy
 
@@ -129,8 +199,42 @@ migration replaces the first three and re-homes the fourth:
    new logins to Zitadel. Once green in staging, flip the flag in prod
    and delete the legacy routes in a follow-up release.
 
-Expect three to five focused days for WoT. Every subsequent World-Of
-product is one day because the pattern is already worn in.
+Authz-specific steps (added once authentication is working end-to-end):
+
+8. **Provision Permit.io project.** Create the project (scope decision
+   below: one project per product vs. one portfolio-wide project).
+   Define resource types (`system`, `node`, `equivalence`, `api_key`,
+   `org`, `user`) and actions (`read`, `list`, `write`, `delete`,
+   `classify`, `export`, `admin`).
+9. **Sync Zitadel to Permit.io.** Use Permit.io's identity sync SDK or
+   a Zitadel Actions webhook to mirror user/org/role creation. Subjects
+   in Permit.io are keyed by Zitadel `sub`; orgs in Permit.io are keyed
+   by Zitadel org ID (same key Stripe uses).
+10. **Add the `permit` dependency** in
+    `world_of_taxonomy/authz/permit.py` (new module). Initialize the
+    Permit client at app startup via the FastAPI lifespan; inject it
+    into request handlers as a dependency alongside `get_current_user`
+    in `world_of_taxonomy/api/deps.py`.
+11. **Replace local authorization checks with `permit.check()`.** WoT's
+    current checks are coarse (authenticated vs. anonymous, tier-based
+    rate limits); the migration is mostly additive. Start with bulk
+    export and admin-only endpoints, then extend to per-resource reads
+    once enterprise cross-org sharing lands.
+12. **Policy bootstrap.** Write the first 5 to 10 policies via Permit.io
+    GitOps: anonymous read on public systems, authenticated read/list,
+    pro-tier bulk export, enterprise cross-org sharing, admin
+    operations, agent delegation on behalf of a user.
+13. **Observability.** Surface Permit.io decision logs as a Prometheus
+    metric family in the existing setup:
+    `wot_authz_decisions_total{decision="allow|deny",resource_type="..."}`.
+    Keep per-request rate-limit counters untouched in
+    `world_of_taxonomy/api/middleware.py`; they remain driven by the
+    Zitadel tier claim, not by Permit.io.
+
+Expect three to five focused days for the authentication layer, plus
+another two to three days for the authorization layer wiring and
+policy bootstrap. Every subsequent World-Of product is one to two days
+because the pattern is already worn in.
 
 ## What this does *not* cover
 
@@ -157,3 +261,13 @@ product is one day because the pattern is already worn in.
 2. **When to migrate.** Before the first paying customer (cheap) or
    after launch (harder, but unblocks launch). The current WoT auth
    works; this is not launch-blocking.
+3. **Permit.io project scope.** One project per product (cleaner
+   blast radius, one tenant per codebase) or one portfolio-wide
+   project (simpler cross-product policies like "enterprise seat on
+   WoT grants read-only on WoO"). Recommendation leans portfolio-wide
+   because the whole point of central authz is cross-product rules;
+   revisit only if the policy surface gets large enough to warrant
+   isolation.
+4. **Authz rollout sequencing.** Ship Zitadel migration first, keep
+   current coarse checks, then layer Permit.io on top once auth is
+   stable. Avoid the temptation to cut over both at once.
