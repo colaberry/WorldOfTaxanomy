@@ -19,6 +19,27 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "geolocation=(), microphone=(), camera=()",
   },
+  // CSP in report-only first. The frontend is Next.js + React + shadcn:
+  // hydration needs inline scripts, Tailwind emits inline style tags,
+  // and we fetch api.github.com for star counts. Violations are POSTed
+  // to /api/v1/csp-report so we can tune before flipping to enforcement.
+  {
+    key: "Content-Security-Policy-Report-Only",
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https:",
+      "font-src 'self' data:",
+      "connect-src 'self' https://api.github.com",
+      "frame-ancestors 'none'",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "upgrade-insecure-requests",
+      "report-uri /api/v1/csp-report",
+    ].join("; "),
+  },
 ];
 
 const nextConfig: NextConfig = {
