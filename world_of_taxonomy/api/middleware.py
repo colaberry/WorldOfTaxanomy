@@ -1,12 +1,47 @@
-"""Rate limiting + security-headers middleware for WorldOfTaxonomy API."""
+"""Rate limiting + security-headers + request-logging middleware for WorldOfTaxonomy API."""
 
 from __future__ import annotations
+
+import json
+import logging
+import os
+import time
 
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+
+_request_logger = logging.getLogger("wot.request")
+_ACCESS_LOG_ENABLED = os.getenv("ACCESS_LOG", "true").lower() not in ("0", "false", "no")
+
+
+async def request_logging_middleware(request: Request, call_next):
+    """Emit one JSON line per HTTP request.
+
+    Includes method, path, status, duration_ms, user tier, and client IP.
+    Disabled by setting ACCESS_LOG=false.
+    """
+    if not _ACCESS_LOG_ENABLED:
+        return await call_next(request)
+
+    started = time.perf_counter()
+    response = await call_next(request)
+    duration_ms = round((time.perf_counter() - started) * 1000, 2)
+
+    user = getattr(request.state, "auth_user", None)
+    record = {
+        "method": request.method,
+        "path": request.url.path,
+        "status": response.status_code,
+        "duration_ms": duration_ms,
+        "ip": get_remote_address(request),
+        "user_id": user.get("id") if user else None,
+        "tier": user.get("tier") if user else "anonymous",
+    }
+    _request_logger.info(json.dumps(record, separators=(",", ":"), default=str))
+    return response
 
 # Security headers applied to every response. Kept conservative so the
 # API and /docs Swagger UI both keep working.

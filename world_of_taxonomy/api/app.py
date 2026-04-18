@@ -23,7 +23,12 @@ from world_of_taxonomy.api.routers import contact as contact_router
 from world_of_taxonomy.api.routers import bulk_export as bulk_export_router
 from world_of_taxonomy.api.routers import wiki as wiki_router
 from world_of_taxonomy.api.routers import health as health_router
-from world_of_taxonomy.api.middleware import limiter, rate_limit_middleware, security_headers_middleware
+from world_of_taxonomy.api.middleware import (
+    limiter,
+    rate_limit_middleware,
+    request_logging_middleware,
+    security_headers_middleware,
+)
 from world_of_taxonomy.db import get_pool
 from world_of_taxonomy.wiki import build_llms_full_txt
 
@@ -255,6 +260,9 @@ def create_app() -> FastAPI:
 
     # Security headers (applied to every response)
     app.middleware("http")(security_headers_middleware)
+
+    # Structured access log (JSON line per request)
+    app.middleware("http")(request_logging_middleware)
 
     # API routers
     app.include_router(explore.router)  # must be before systems (has /systems/stats)
