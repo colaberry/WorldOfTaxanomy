@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+message: "If you use WorldOfTaxonomy in research or production, please cite it using the metadata below."
+title: "WorldOfTaxonomy: a unified knowledge graph of 1000+ global classification systems"
+abstract: >-
+  WorldOfTaxonomy links 1000+ industry, occupation, product, trade,
+  education, health, regulatory, and domain classification systems as
+  equal peers through equivalence mappings. It exposes the graph via
+  three surfaces: a Next.js web application, a FastAPI REST API, and
+  a Model Context Protocol (MCP) server. The dataset includes
+  1,212,173+ classification nodes and 321,937+ crosswalk edges.
+type: dataset
+authors:
+  - family-names: Katamaraja
+    given-names: Ram
+    affiliation: Colaberry AI
+    website: "https://www.linkedin.com/in/ramdhan/"
+repository-code: "https://github.com/ramdhanyk/WorldOfTaxonomy"
+url: "https://worldoftaxonomy.com"
+license: MIT
+keywords:
+  - classification
+  - taxonomy
+  - crosswalk
+  - knowledge-graph
+  - ontology
+  - NAICS
+  - ISIC
+  - NACE
+  - HS
+  - ESCO
+  - ICD
+  - MCP
+  - fastapi
+  - nextjs
