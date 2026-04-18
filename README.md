@@ -13,8 +13,13 @@
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" />
   </a>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue.svg" alt="Python 3.9+" />
+  <img src="https://img.shields.io/badge/next.js-16-black.svg" alt="Next.js 16" />
+  <img src="https://img.shields.io/badge/MCP-compatible-orange.svg" alt="MCP compatible" />
   <img src="https://img.shields.io/badge/systems-1000-purple.svg" alt="1000 systems" />
   <img src="https://img.shields.io/badge/codes-1.2M%2B-green.svg" alt="1.2M codes" />
+  <a href="https://github.com/sponsors/ramdhanyk">
+    <img src="https://img.shields.io/badge/sponsor-%E2%9D%A4-ea4aaa.svg" alt="Sponsor" />
+  </a>
 </p>
 
 ---
