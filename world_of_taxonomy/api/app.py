@@ -32,6 +32,10 @@ from world_of_taxonomy.api.middleware import (
     request_logging_middleware,
     security_headers_middleware,
 )
+from world_of_taxonomy.api.metrics import (
+    metrics_middleware,
+    router as metrics_router,
+)
 from world_of_taxonomy.db import get_pool
 from world_of_taxonomy.wiki import build_llms_full_txt
 
@@ -326,6 +330,9 @@ def create_app() -> FastAPI:
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
     app.middleware("http")(rate_limit_middleware)
 
+    # Prometheus instrumentation (counters + latency histogram).
+    app.middleware("http")(metrics_middleware)
+
     # Security headers (applied to every response)
     app.middleware("http")(security_headers_middleware)
 
@@ -357,6 +364,7 @@ def create_app() -> FastAPI:
     app.include_router(bulk_export_router.router)
     app.include_router(wiki_router.router)
     app.include_router(health_router.router)
+    app.include_router(metrics_router)
 
     # Bot protection routes
     @app.get("/robots.txt", response_class=PlainTextResponse)

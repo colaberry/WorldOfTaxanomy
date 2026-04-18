@@ -29,6 +29,9 @@ anthropic>=0.40.0
 # Phase 7: Observability (optional - only active when SENTRY_DSN is set)
 sentry-sdk[fastapi]>=2.0.0
 
+# Prometheus metrics exposition.
+prometheus-client>=0.20.0
+
 # Phase 8: Schema migrations
 # alembic ships with SQLAlchemy; we only use it for DDL migrations, not as
 # an ORM. Keeps init_db()/schema.sql working for fresh installs; alembic
