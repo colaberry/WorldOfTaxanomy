@@ -6,6 +6,7 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import PlainTextResponse
 
 from slowapi import _rate_limit_exceeded_handler
@@ -288,6 +289,10 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # GZip compression for responses > 500 bytes. Slashes bandwidth
+    # for JSON listings, search results, and crosswalk payloads.
+    app.add_middleware(GZipMiddleware, minimum_size=500)
 
     # Rate limiting
     app.state.limiter = limiter
