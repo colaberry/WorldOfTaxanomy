@@ -48,9 +48,13 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD curl -fsS http://127.0.0.1:8000/api/v1/healthz || exit 1
 
 # Initialize schema, then start the API server.
+# --timeout-graceful-shutdown 30 lets uvicorn drain in-flight requests
+# for up to 30s on SIGTERM before tearing down; Fly's default kill
+# grace is 5m so we finish well inside it.
 # Data ingestion is done separately via:
 #   docker compose exec backend python3 -m world_of_taxonomy ingest <system>
 CMD ["sh", "-c", \
      "python3 -m world_of_taxonomy init && \
       python3 -m uvicorn world_of_taxonomy.api.app:create_app \
-        --factory --host 0.0.0.0 --port 8000"]
+        --factory --host 0.0.0.0 --port 8000 \
+        --timeout-graceful-shutdown 30"]

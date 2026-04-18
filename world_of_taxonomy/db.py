@@ -4,6 +4,7 @@ Uses asyncpg for PostgreSQL with connection pooling.
 """
 
 import asyncio
+import logging
 import os
 from pathlib import Path
 from typing import Optional
@@ -17,8 +18,23 @@ from world_of_taxonomy.exceptions import DatabaseError
 _project_root = Path(__file__).parent.parent
 load_dotenv(_project_root / ".env")
 
+_logger = logging.getLogger(__name__)
+
 # Connection pool singleton
 _pool: Optional[asyncpg.Pool] = None
+
+# Pool configuration. Env-overridable so operators can tune without
+# redeploying code. command_timeout is applied to every query acquired
+# from the pool, which is the main defence against runaway queries.
+_POOL_MIN_SIZE = int(os.getenv("DB_POOL_MIN_SIZE", "2"))
+_POOL_MAX_SIZE = int(os.getenv("DB_POOL_MAX_SIZE", "10"))
+_POOL_COMMAND_TIMEOUT = int(os.getenv("DB_COMMAND_TIMEOUT", "30"))
+
+# Startup retry: Neon serverless compute can take several seconds to
+# wake from sleep, long enough to lose a connection attempt. We retry
+# with exponential backoff before giving up and surfacing the error.
+_CONNECT_RETRIES = int(os.getenv("DB_CONNECT_RETRIES", "5"))
+_CONNECT_BACKOFF_SECONDS = float(os.getenv("DB_CONNECT_BACKOFF_SECONDS", "1.0"))
 
 
 def get_database_url() -> str:
@@ -33,16 +49,44 @@ def get_database_url() -> str:
 
 
 async def get_pool() -> asyncpg.Pool:
-    """Get or create the connection pool."""
+    """Get or create the connection pool, with retry on cold-start."""
     global _pool
-    if _pool is None:
-        _pool = await asyncpg.create_pool(
-            get_database_url(),
-            min_size=2,
-            max_size=10,
-            command_timeout=30,
-        )
-    return _pool
+    if _pool is not None:
+        return _pool
+
+    last_exc: Optional[BaseException] = None
+    for attempt in range(1, _CONNECT_RETRIES + 1):
+        try:
+            _pool = await asyncpg.create_pool(
+                get_database_url(),
+                min_size=_POOL_MIN_SIZE,
+                max_size=_POOL_MAX_SIZE,
+                command_timeout=_POOL_COMMAND_TIMEOUT,
+            )
+            if attempt > 1:
+                _logger.info(
+                    "DB pool connected on attempt %d/%d",
+                    attempt,
+                    _CONNECT_RETRIES,
+                )
+            return _pool
+        except (OSError, asyncpg.PostgresError, asyncio.TimeoutError) as exc:
+            last_exc = exc
+            if attempt >= _CONNECT_RETRIES:
+                break
+            delay = _CONNECT_BACKOFF_SECONDS * (2 ** (attempt - 1))
+            _logger.warning(
+                "DB pool connect attempt %d/%d failed (%s); retrying in %.1fs",
+                attempt,
+                _CONNECT_RETRIES,
+                exc.__class__.__name__,
+                delay,
+            )
+            await asyncio.sleep(delay)
+
+    raise DatabaseError(
+        f"Failed to connect to database after {_CONNECT_RETRIES} attempts"
+    ) from last_exc
 
 
 async def close_pool():

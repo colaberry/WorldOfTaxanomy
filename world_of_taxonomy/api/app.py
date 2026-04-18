@@ -38,10 +38,19 @@ from world_of_taxonomy.wiki import build_llms_full_txt
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Manage the database connection pool lifecycle."""
+    """Manage the database connection pool lifecycle.
+
+    Graceful shutdown: uvicorn intercepts SIGTERM and stops accepting
+    new connections, waits up to --timeout-graceful-shutdown seconds
+    for in-flight requests to finish, then runs this shutdown half
+    (after yield). We close the pool only after uvicorn has drained
+    live requests, so no handler is cut mid-query.
+    """
     app.state.pool = await get_pool()
-    yield
-    await app.state.pool.close()
+    try:
+        yield
+    finally:
+        await app.state.pool.close()
 
 
 ROBOTS_TXT = """\
