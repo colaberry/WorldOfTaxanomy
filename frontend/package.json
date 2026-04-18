@@ -12,7 +12,8 @@
     "prebuild": "npm run wiki:copy && npm run blog:copy && npm run crosswalk:copy && npm run tree:copy",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "types:gen": "cd .. && python3 scripts/export_openapi.py frontend/openapi.json && cd frontend && openapi-typescript openapi.json -o src/lib/api-types.ts && rm openapi.json"
   },
   "dependencies": {
     "@base-ui/react": "^1.3.0",
@@ -45,6 +46,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.2",
+    "openapi-typescript": "^7.0.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
