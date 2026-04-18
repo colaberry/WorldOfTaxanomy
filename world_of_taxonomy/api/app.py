@@ -262,6 +262,22 @@ def create_app() -> FastAPI:
     _validate_env()
     _init_sentry()
 
+    # OpenAPI servers list. Lets /docs, /redoc, Scalar, and generated
+    # SDKs target the production API by default instead of the relative
+    # path of the page that loaded the spec. Override with
+    # OPENAPI_SERVERS (comma-separated absolute URLs) when hosting a
+    # preview or internal deployment.
+    openapi_servers_env = os.getenv("OPENAPI_SERVERS", "").strip()
+    if openapi_servers_env:
+        openapi_servers = [
+            {"url": u.strip()} for u in openapi_servers_env.split(",") if u.strip()
+        ]
+    else:
+        openapi_servers = [
+            {"url": "https://wot.aixcelerator.app", "description": "Production"},
+            {"url": "http://localhost:8000", "description": "Local development"},
+        ]
+
     app = FastAPI(
         title="WorldOfTaxonomy",
         description=(
@@ -271,6 +287,7 @@ def create_app() -> FastAPI:
         version="0.1.0",
         docs_url="/docs",
         redoc_url="/redoc",
+        servers=openapi_servers,
         lifespan=lifespan,
     )
 
