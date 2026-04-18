@@ -18,6 +18,37 @@ _request_logger = logging.getLogger("wot.request")
 _ACCESS_LOG_ENABLED = os.getenv("ACCESS_LOG", "true").lower() not in ("0", "false", "no")
 
 
+# Hard cap on request body size. 2 MiB is far above the largest
+# expected classify payload (a few KB of text) and still rejects
+# obvious abuse cheaply. Overridable via MAX_REQUEST_BYTES.
+_MAX_REQUEST_BYTES = int(os.getenv("MAX_REQUEST_BYTES", str(2 * 1024 * 1024)))
+
+
+async def body_size_limit_middleware(request: Request, call_next):
+    """Reject requests whose Content-Length exceeds MAX_REQUEST_BYTES.
+
+    Only inspects the declared header; streaming abuse beyond that is
+    handled by the upstream ingress (nginx / Vercel / Fly proxy).
+    """
+    raw = request.headers.get("content-length")
+    if raw is not None:
+        try:
+            declared = int(raw)
+        except ValueError:
+            return JSONResponse({"detail": "Invalid Content-Length"}, status_code=400)
+        if declared > _MAX_REQUEST_BYTES:
+            return JSONResponse(
+                {
+                    "detail": (
+                        f"Request body too large "
+                        f"({declared:,} > {_MAX_REQUEST_BYTES:,} bytes)."
+                    )
+                },
+                status_code=413,
+            )
+    return await call_next(request)
+
+
 async def request_id_middleware(request: Request, call_next):
     """Accept an incoming X-Request-ID or mint a new uuid4 for every request.
 

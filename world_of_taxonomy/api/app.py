@@ -25,6 +25,7 @@ from world_of_taxonomy.api.routers import bulk_export as bulk_export_router
 from world_of_taxonomy.api.routers import wiki as wiki_router
 from world_of_taxonomy.api.routers import health as health_router
 from world_of_taxonomy.api.middleware import (
+    body_size_limit_middleware,
     limiter,
     rate_limit_middleware,
     request_id_middleware,
@@ -308,6 +309,10 @@ def create_app() -> FastAPI:
     # Request ID correlation (added last so it runs first on the way in,
     # making the id available to all downstream middleware + handlers).
     app.middleware("http")(request_id_middleware)
+
+    # Body size cap (added after request_id so 413 responses still get
+    # a correlation id; runs before the handler reads the body).
+    app.middleware("http")(body_size_limit_middleware)
 
     # API routers
     app.include_router(explore.router)  # must be before systems (has /systems/stats)
