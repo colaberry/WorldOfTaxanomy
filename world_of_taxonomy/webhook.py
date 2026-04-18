@@ -2,18 +2,103 @@
 
 Posts JSON payloads to the LEAD_WEBHOOK_URL environment variable.
 If the variable is not set, events are logged and silently skipped.
+
+SSRF hardening: the webhook URL is validated once, at import time,
+against an allowlist of schemes + hosts. An attacker who gained a way
+to mutate LEAD_WEBHOOK_URL at runtime could otherwise point it at
+internal services like http://169.254.169.254 (cloud metadata) or
+http://localhost:5432. We refuse those targets up front.
 """
 
 from __future__ import annotations
 
+import ipaddress
 import logging
 import os
+import socket
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
+# Allowlisted schemes. No http:// in production; HTTPS only.
+_ALLOWED_SCHEMES = {"https"}
+# Optional allowlist of fully-qualified hostnames. When set, the webhook
+# host must match one of these. Comma-separated in the env.
+_HOST_ALLOWLIST = {
+    h.strip().lower()
+    for h in os.getenv("WEBHOOK_HOST_ALLOWLIST", "").split(",")
+    if h.strip()
+}
+# Escape hatch for dev + tests: set WEBHOOK_ALLOW_HTTP=true to accept
+# http:// URLs. Production deployments must leave this unset.
+if os.getenv("WEBHOOK_ALLOW_HTTP", "").lower() in ("1", "true", "yes"):
+    _ALLOWED_SCHEMES = {"http", "https"}
+
+
+def _is_internal_ip(host: str) -> bool:
+    """True for loopback, link-local, private, or metadata-service IPs.
+
+    Resolves the hostname to its A/AAAA records and classifies every
+    result; any internal-looking answer fails the check. This closes
+    the DNS-rebind + explicit-IP variants at once.
+    """
+    try:
+        infos = socket.getaddrinfo(host, None)
+    except OSError:
+        # If DNS fails we let the HTTP stack surface the error; do not
+        # block on a transient lookup miss.
+        return False
+    for info in infos:
+        addr = info[4][0]
+        try:
+            ip = ipaddress.ip_address(addr)
+        except ValueError:
+            continue
+        if (
+            ip.is_loopback
+            or ip.is_link_local
+            or ip.is_private
+            or ip.is_multicast
+            or ip.is_reserved
+            or ip.is_unspecified
+        ):
+            return True
+        # AWS / GCP / Azure instance metadata service
+        if str(ip) in {"169.254.169.254", "fd00:ec2::254"}:
+            return True
+    return False
+
+
+def _validate_webhook_url(url: str) -> Optional[str]:
+    """Return None if the URL is safe to post to, else a reason string."""
+    if not url:
+        return "empty URL"
+    try:
+        parsed = urlparse(url)
+    except ValueError:
+        return "unparseable URL"
+    if parsed.scheme.lower() not in _ALLOWED_SCHEMES:
+        return f"scheme {parsed.scheme!r} not allowed"
+    host = (parsed.hostname or "").lower()
+    if not host:
+        return "missing host"
+    if _HOST_ALLOWLIST and host not in _HOST_ALLOWLIST:
+        return f"host {host!r} not in WEBHOOK_HOST_ALLOWLIST"
+    if _is_internal_ip(host):
+        return f"host {host!r} resolves to an internal address"
+    return None
+
+
 LEAD_WEBHOOK_URL = os.environ.get("LEAD_WEBHOOK_URL", "")
+_WEBHOOK_REJECTION_REASON = _validate_webhook_url(LEAD_WEBHOOK_URL) if LEAD_WEBHOOK_URL else None
+if _WEBHOOK_REJECTION_REASON:
+    logger.warning(
+        "LEAD_WEBHOOK_URL rejected at import: %s. Webhook delivery disabled.",
+        _WEBHOOK_REJECTION_REASON,
+    )
+    LEAD_WEBHOOK_URL = ""
 
 
 async def send_webhook(event: str, data: dict[str, Any]) -> bool:
