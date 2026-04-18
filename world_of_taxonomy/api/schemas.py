@@ -1,7 +1,7 @@
 """Pydantic response models for the REST API."""
 
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 
 
 class SystemResponse(BaseModel):
@@ -105,14 +105,16 @@ class CrosswalkSectionsResponse(BaseModel):
 
 
 class RegisterRequest(BaseModel):
-    email: str
-    password: str
-    display_name: Optional[str] = None
+    # Length caps defend against oversized-input DoS and malformed
+    # inputs that would otherwise travel all the way to the DB.
+    email: str = Field(..., min_length=3, max_length=254)
+    password: str = Field(..., min_length=8, max_length=128)
+    display_name: Optional[str] = Field(None, max_length=100)
 
 
 class LoginRequest(BaseModel):
-    email: str
-    password: str
+    email: str = Field(..., min_length=3, max_length=254)
+    password: str = Field(..., min_length=1, max_length=128)
 
 
 class UserResponse(BaseModel):
@@ -129,7 +131,7 @@ class TokenResponse(BaseModel):
 
 
 class CreateApiKeyRequest(BaseModel):
-    name: str = "Default"
+    name: str = Field("Default", min_length=1, max_length=100)
 
 
 class ApiKeyResponse(BaseModel):
