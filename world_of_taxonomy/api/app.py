@@ -201,6 +201,40 @@ Tools (21): list_systems, get_industry, browse_children, get_ancestors, search_c
 """
 
 
+class EnvConfigError(RuntimeError):
+    """Raised when required environment variables are missing or invalid."""
+
+
+def _validate_env() -> None:
+    """Fail fast on boot for missing or malformed env vars.
+
+    Checked at app creation so container crashes immediately with a
+    clear message instead of failing at the first DB query or auth
+    request. Skipped when DISABLE_AUTH is truthy for local dev.
+    """
+    errors: list[str] = []
+
+    if not os.getenv("DATABASE_URL", "").strip():
+        errors.append("DATABASE_URL is required")
+
+    disable_auth = os.getenv("DISABLE_AUTH", "").lower() in ("1", "true", "yes")
+    if not disable_auth:
+        secret = os.getenv("JWT_SECRET", "")
+        if not secret:
+            errors.append("JWT_SECRET is required when DISABLE_AUTH is not set")
+        elif len(secret) < 32:
+            errors.append(
+                "JWT_SECRET must be at least 32 characters "
+                f"(got {len(secret)}); generate one with "
+                "python3 -c 'import secrets; print(secrets.token_hex(32))'"
+            )
+
+    if errors:
+        raise EnvConfigError(
+            "Invalid environment configuration:\n  - " + "\n  - ".join(errors)
+        )
+
+
 def _init_sentry() -> None:
     """Initialize Sentry only when SENTRY_DSN is set. Safe no-op otherwise."""
     dsn = os.getenv("SENTRY_DSN", "").strip()
@@ -222,6 +256,7 @@ def _init_sentry() -> None:
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
+    _validate_env()
     _init_sentry()
 
     app = FastAPI(
