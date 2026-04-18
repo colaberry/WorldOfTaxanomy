@@ -22,6 +22,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  // Drop the default "X-Powered-By: Next.js" response header. Reduces
+  // version fingerprinting and keeps generic scanners quiet.
+  poweredByHeader: false,
   async rewrites() {
     return [
       {
