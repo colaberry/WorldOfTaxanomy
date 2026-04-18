@@ -1,0 +1,23 @@
+# https://editorconfig.org
+# Keeps whitespace and line endings consistent across editors
+# (VS Code, JetBrains, Vim, Sublime, etc.) without needing plugins
+# in each tool.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{ts,tsx,js,jsx,json,jsonc,yml,yaml,css,scss,html}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[Makefile]
+indent_style = tab
