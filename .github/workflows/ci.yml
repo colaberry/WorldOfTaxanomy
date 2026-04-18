@@ -41,6 +41,16 @@ jobs:
           fi
           echo "No em-dashes found."
 
+      - name: Check llms-full.txt is up to date
+        run: |
+          python scripts/build_llms_txt.py
+          if ! git diff --exit-code frontend/public/llms-full.txt; then
+            echo "ERROR: frontend/public/llms-full.txt is stale."
+            echo "Run 'python scripts/build_llms_txt.py' locally and commit the result."
+            exit 1
+          fi
+          echo "llms-full.txt is up to date."
+
   # ── Frontend TypeScript build ─────────────────────────────────────────────
   frontend:
     name: Frontend build
