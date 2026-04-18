@@ -9,6 +9,38 @@ Versioning follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Infrastructure and Operations
+
+**Observability and reliability:**
+- `GET /api/v1/healthz` probing the asyncpg pool for uptime monitors.
+- `GET /api/v1/version` returning app version, git SHA, and build time so operators can verify deployments.
+- Docker `HEALTHCHECK` probing `/api/v1/healthz` for container-level liveness.
+- Structured JSON access log (one line per HTTP request, includes method, path, status, duration, tier, IP).
+- `X-Request-ID` correlation middleware: accepts incoming or mints uuid4, stored on request.state, echoed on response, attached to Sentry scope.
+- Optional Sentry telemetry for backend (`sentry-sdk[fastapi]`) and frontend (`@sentry/nextjs`), activated via DSN env vars.
+- `X-RateLimit-*` headers on API responses so clients can self-throttle.
+
+**Security hardening:**
+- Baseline security headers middleware (HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy, X-Content-Type-Options).
+- Request body size limit middleware rejecting Content-Length > 2 MiB with HTTP 413.
+- Startup-time validation for required env vars (`DATABASE_URL`, `JWT_SECRET`).
+- CORS allow-list now env-driven via `ALLOWED_ORIGINS`.
+- `SECURITY.md` with private vulnerability reporting policy, response SLAs, and safe-harbor terms.
+
+**Performance:**
+- GZip response compression for payloads >= 500 bytes.
+
+**Developer experience:**
+- Auto-generated typed frontend API surface from FastAPI's OpenAPI spec (`frontend/src/lib/api-types.ts`).
+- Pre-commit hook mirroring the CI em-dash check.
+- Dependabot for pip, npm, and github-actions with weekly PR grouping.
+- Monthly ingest-refresh cron for NAICS, ISIC, NACE, and crosswalks.
+- CI check that fails the build when `frontend/public/llms-full.txt` is stale.
+- `.github/CODEOWNERS` to auto-request reviews.
+- GitHub issue templates: `feature_request.md` and `config.yml` complementing the existing bug, data issue, and new-system templates.
+- `.github/FUNDING.yml` to surface a GitHub Sponsors button.
+- `HANDOVER.md` plus `docs/handover/` drill-downs for rebuild teams.
+
 ### Added
 
 **World Map visualization (home page):**
