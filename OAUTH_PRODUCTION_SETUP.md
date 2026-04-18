@@ -1,5 +1,14 @@
 # OAuth Production Setup Guide
 
+> **Portfolio note.** The long-term plan is to move auth to a central
+> Identity Provider at `auth.aiaccelerator.ai` (Zitadel Cloud). See
+> [docs/handover/portfolio-auth.md](docs/handover/portfolio-auth.md).
+> This guide describes the per-product OAuth setup that is valid
+> until that migration happens. If you are reading this before the
+> first WorldOfTaxonomy paid customer, consider whether to skip
+> ahead to the portfolio plan instead of wiring up the per-product
+> OAuth apps described here.
+
 Follow these steps after deploying WorldOfTaxonomy to production.
 Complete them in order - the database migration must run before any
 OAuth sign-ins will work.
