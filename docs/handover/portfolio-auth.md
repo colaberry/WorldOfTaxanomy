@@ -251,23 +251,27 @@ because the pattern is already worn in.
   product still writes its own access log. A unified log view can
   come later if needed.
 
+## Decisions locked in (2026-04-18)
+
+- **Domain standardization.** Portfolio standardizes on
+  `aiaccelerator.ai`. WoT's API moves from `wot.aixcelerator.app` to
+  `wot.aiaccelerator.ai`. Auth lives at `auth.aiaccelerator.ai`. The
+  migration is a CORS + OAuth-callback + docs-URL update, not a rebuild.
+- **Permit.io project scope.** One portfolio-wide Permit.io project.
+  Motivation: cross-product policies (e.g., "enterprise seat on WoT
+  grants read-only on WoO") are the whole point of a central authz
+  layer. Revisit only if the policy surface grows large enough to
+  warrant per-product isolation.
+- **Authz rollout sequencing.** Ship Zitadel migration first, keep
+  current coarse checks, then layer Permit.io on top once auth is
+  stable in prod. No simultaneous cutover.
+
 ## Open questions Ram still has to decide
 
-1. **Domain migration.** `wot.aixcelerator.app` is the current API host.
-   If the portfolio standardizes on `aiaccelerator.ai`, WoT's API should
-   probably move to `api.worldoftaxonomy.com` or `wot.aiaccelerator.ai`
-   for consistency. That is a CORS + OAuth-callback + docs update, not
-   a rebuild.
-2. **When to migrate.** Before the first paying customer (cheap) or
-   after launch (harder, but unblocks launch). The current WoT auth
-   works; this is not launch-blocking.
-3. **Permit.io project scope.** One project per product (cleaner
-   blast radius, one tenant per codebase) or one portfolio-wide
-   project (simpler cross-product policies like "enterprise seat on
-   WoT grants read-only on WoO"). Recommendation leans portfolio-wide
-   because the whole point of central authz is cross-product rules;
-   revisit only if the policy surface gets large enough to warrant
-   isolation.
-4. **Authz rollout sequencing.** Ship Zitadel migration first, keep
-   current coarse checks, then layer Permit.io on top once auth is
-   stable. Avoid the temptation to cut over both at once.
+1. **When to migrate to Zitadel.** Before the first paying customer
+   (cheap) or after launch (unblocks launch, harder to retrofit). The
+   current WoT auth works; this is not launch-blocking.
+2. **Skip the per-product OAuth setup?** The existing
+   `OAUTH_PRODUCTION_SETUP.md` wires GitHub / Google / LinkedIn OAuth
+   apps directly into WoT. If Zitadel comes soon, that whole setup is
+   throwaway. Tied to question 1.
