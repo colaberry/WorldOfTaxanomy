@@ -126,6 +126,7 @@ async def _teardown(pool):
         await conn.execute("DELETE FROM usage_log WHERE TRUE")
         await conn.execute("DELETE FROM api_key WHERE TRUE")
         await conn.execute("DELETE FROM app_user WHERE TRUE")
+        await conn.execute("DELETE FROM classify_lead WHERE TRUE")
         # Core tables
         await conn.execute("DELETE FROM equivalence")
         await conn.execute("DELETE FROM classification_node")

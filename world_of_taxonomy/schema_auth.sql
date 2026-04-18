@@ -57,3 +57,19 @@ CREATE TABLE IF NOT EXISTS daily_usage (
     count       INTEGER NOT NULL DEFAULT 0,
     PRIMARY KEY (user_id, usage_date)
 );
+
+-- Lead capture for the free /classify web tool.
+-- Anonymous users give an email in exchange for a classify query.
+-- Used for lead nurture marketing, NOT for authentication.
+-- Migrates to Zitadel accounts once the central IdP is provisioned.
+CREATE TABLE IF NOT EXISTS classify_lead (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email        TEXT NOT NULL,
+    query_text   TEXT NOT NULL,
+    ip_address   TEXT,
+    user_agent   TEXT,
+    referrer     TEXT,
+    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_classify_lead_email ON classify_lead(email);
+CREATE INDEX IF NOT EXISTS idx_classify_lead_created ON classify_lead(created_at);

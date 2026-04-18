@@ -282,6 +282,40 @@ export async function revokeApiKey(
   }
 }
 
+// ── Classify (demo, email-gated) ──
+
+export interface ClassifyDemoMatch {
+  code: string
+  title: string
+  score: number
+  level: number
+}
+
+export interface ClassifyDemoSystemMatch {
+  system_id: string
+  system_name: string
+  results: ClassifyDemoMatch[]
+}
+
+export interface ClassifyDemoResponse {
+  query: string
+  matches: ClassifyDemoSystemMatch[]
+  disclaimer: string
+  report_issue_url: string
+  demo: boolean
+  upgrade_cta: string
+}
+
+export async function classifyDemo(
+  email: string,
+  text: string
+): Promise<ClassifyDemoResponse> {
+  return fetchJson('/api/v1/classify/demo', {
+    method: 'POST',
+    body: JSON.stringify({ email, text }),
+  })
+}
+
 // ── GitHub public repo stats ──
 
 export async function getGithubStars(): Promise<number> {
