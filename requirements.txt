@@ -28,3 +28,12 @@ anthropic>=0.40.0
 
 # Phase 7: Observability (optional - only active when SENTRY_DSN is set)
 sentry-sdk[fastapi]>=2.0.0
+
+# Phase 8: Schema migrations
+# alembic ships with SQLAlchemy; we only use it for DDL migrations, not as
+# an ORM. Keeps init_db()/schema.sql working for fresh installs; alembic
+# is the path for incremental DDL from now on.
+alembic>=1.13.0
+SQLAlchemy>=2.0.0
+psycopg[binary]>=3.1.0
+
