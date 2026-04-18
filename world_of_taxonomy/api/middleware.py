@@ -205,6 +205,18 @@ async def _increment_daily_usage(request: Request, user: dict | None) -> None:
         pass  # If table doesn't exist yet, skip silently
 
 
+def _apply_rate_limit_headers(response, tier: str) -> None:
+    """Attach X-RateLimit-* headers so clients can self-throttle."""
+    per_minute = TIER_RATE_LIMITS.get(tier, TIER_RATE_LIMITS["anonymous"])
+    reset_in = 60 - (int(time.time()) % 60)
+    response.headers["X-RateLimit-Limit"] = str(per_minute)
+    response.headers["X-RateLimit-Tier"] = tier
+    response.headers["X-RateLimit-Reset"] = str(reset_in)
+    daily_cap = TIER_DAILY_LIMITS.get(tier)
+    if daily_cap is not None:
+        response.headers["X-RateLimit-Daily-Limit"] = str(daily_cap)
+
+
 async def rate_limit_middleware(request: Request, call_next):
     """Middleware that applies tiered rate limiting to /api/v1/ routes."""
     path = request.url.path
@@ -227,10 +239,12 @@ async def rate_limit_middleware(request: Request, call_next):
 
     # Store user info for downstream use
     request.state.auth_user = user
+    tier = user.get("tier", "free") if user else "anonymous"
 
     # Check daily limit
     daily_exceeded = await _check_daily_limit(request, user)
     if daily_exceeded is not None:
+        _apply_rate_limit_headers(daily_exceeded, tier)
         return daily_exceeded
 
     response = await call_next(request)
@@ -239,4 +253,5 @@ async def rate_limit_middleware(request: Request, call_next):
     if response.status_code < 400:
         await _increment_daily_usage(request, user)
 
+    _apply_rate_limit_headers(response, tier)
     return response
