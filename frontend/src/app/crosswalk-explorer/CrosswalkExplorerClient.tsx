@@ -1,13 +1,21 @@
 'use client'
 
-import { useState, useMemo, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { getCrosswalkGraph, getCrosswalkSections } from '@/lib/api'
-import {
-  CrosswalkGraph,
-  type CrosswalkGraphHandle,
-  type SelectedSystemNode,
+import type { CrosswalkSectionsResponse, CrosswalkGraphResponse } from '@/lib/types'
+
+async function fetchLocalGraph(
+  source: string, target: string, limit = 1000, section?: string,
+): Promise<CrosswalkGraphResponse> {
+  const params = new URLSearchParams({ limit: String(limit) })
+  if (section) params.set('section', section)
+  const res = await fetch(`/api/crosswalk/${source}/${target}/graph?${params}`)
+  return res.json()
+}
+import type {
+  CrosswalkGraphHandle,
+  SelectedSystemNode,
 } from '@/components/visualizations/CrosswalkGraph'
 import { getCategoryForSystem } from '@/lib/categories'
 import type { ClassificationSystem, CrosswalkStat } from '@/lib/types'
@@ -23,9 +31,10 @@ const SECTION_THRESHOLD = 50 // Show sections view when total edges exceed this
 interface Props {
   systems: ClassificationSystem[]
   stats: CrosswalkStat[]
+  allSections: Record<string, CrosswalkSectionsResponse>
 }
 
-export default function CrosswalkExplorerClient({ systems, stats }: Props) {
+export default function CrosswalkExplorerClient({ systems, stats, allSections }: Props) {
   const router = useRouter()
   const graphRef = useRef<CrosswalkGraphHandle>(null)
   const [mode, setMode] = useState<Mode>('system')
@@ -36,17 +45,19 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedNode, setSelectedNode] = useState<SelectedSystemNode | null>(null)
 
-  // Systems that have crosswalks
+  // Lazy-load Cytoscape.js (~300KB) - shell paints immediately, graph loads after
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [GraphComp, setGraphComp] = useState<any>(null)
+  useEffect(() => {
+    import('@/components/visualizations/CrosswalkGraph').then(mod => {
+      setGraphComp(() => mod.CrosswalkGraph)
+    })
+  }, [])
+
+  // Systems pre-filtered server-side, just sort for dropdowns
   const crosswalkedSystems = useMemo(() => {
-    const ids = new Set<string>()
-    for (const st of stats) {
-      ids.add(st.source_system)
-      ids.add(st.target_system)
-    }
-    return systems
-      .filter((s) => ids.has(s.id))
-      .sort((a, b) => a.name.localeCompare(b.name))
-  }, [systems, stats])
+    return [...systems].sort((a, b) => a.name.localeCompare(b.name))
+  }, [systems])
 
   // Search results filtered from crosswalked systems
   const searchResults = useMemo(() => {
@@ -68,15 +79,20 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
     return crosswalkedSystems.filter((s) => targets.has(s.id))
   }, [sourceSystem, stats, crosswalkedSystems])
 
-  // Sections query
-  const {
-    data: sectionsData,
-    isLoading: sectionsLoading,
-  } = useQuery({
-    queryKey: ['crosswalk-sections', loadPair?.source, loadPair?.target],
-    queryFn: () => getCrosswalkSections(loadPair!.source, loadPair!.target),
-    enabled: !!loadPair,
-  })
+  // Sections: instant lookup from props (no network request)
+  const sectionsData = loadPair
+    ? (allSections[`${loadPair.source}___${loadPair.target}`]
+      ?? allSections[`${loadPair.target}___${loadPair.source}`]
+      ?? null)
+    : null
+  const sectionsLoading = false
+
+  // Pre-warm graph route handler while user reads sections table
+  useEffect(() => {
+    if (loadPair) {
+      fetch(`/api/crosswalk/${loadPair.source}/${loadPair.target}/graph?limit=1`).catch(() => {})
+    }
+  }, [loadPair])
 
   // Code-level graph query (with optional section filter)
   const {
@@ -85,13 +101,13 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
     error: graphError,
   } = useQuery({
     queryKey: ['crosswalk-graph', loadPair?.source, loadPair?.target, activeSection],
-    queryFn: () => getCrosswalkGraph(
+    queryFn: () => fetchLocalGraph(
       loadPair!.source,
       loadPair!.target,
       1000,
       activeSection ?? undefined,
     ),
-    enabled: !!loadPair && mode === 'code',
+    enabled: !!loadPair && (!!activeSection || mode === 'code'),
   })
 
   function handleEdgeClick(source: string, target: string) {
@@ -112,13 +128,8 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
   }
 
   function handleSectionClick(sectionCode: string) {
-    setActiveSection(sectionCode)
-    setMode('code')
-  }
-
-  function handleBackToSections() {
-    setMode('sections')
-    setActiveSection(null)
+    // Accordion toggle: click same section to collapse, different to expand
+    setActiveSection((prev) => (prev === sectionCode ? null : sectionCode))
   }
 
   function handleBackToSystem() {
@@ -167,9 +178,9 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
           <div className="flex items-center gap-3 flex-wrap">
             {mode !== 'system' && (
               <button
-                onClick={mode === 'code' && activeSection ? handleBackToSections : handleBackToSystem}
+                onClick={handleBackToSystem}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                title={mode === 'code' && activeSection ? 'Back to sections' : 'Back to system graph'}
+                title="Back to system graph"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span className="hidden sm:inline">Back</span>
@@ -282,9 +293,15 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
                   {stats.reduce((sum, s) => sum + s.edge_count, 0).toLocaleString()} edges
                 </>
               )}
-              {mode === 'sections' && sectionsData && (
+              {mode === 'sections' && sectionsData && !activeSection && (
                 <>
                   {sectionsData.sections.length} sections - {sectionsData.total_edges.toLocaleString()} total edges
+                </>
+              )}
+              {mode === 'sections' && activeSection && graphData && (
+                <>
+                  {graphData.nodes.length} nodes, {graphData.edges.length} edges
+                  {graphData.truncated && ` (${graphData.total_edges} total)`}
                 </>
               )}
               {mode === 'code' && graphData && (
@@ -354,8 +371,8 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
       {/* Main content area */}
       <div className="flex-1 relative bg-background">
         {/* SYSTEM MODE: Ring visualization */}
-        {mode === 'system' && (
-          <CrosswalkGraph
+        {mode === 'system' && GraphComp ? (
+          <GraphComp
             ref={graphRef}
             mode="system"
             systems={systems}
@@ -363,7 +380,12 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
             onEdgeClick={handleEdgeClick}
             onNodeSelect={handleNodeSelect}
           />
-        )}
+        ) : mode === 'system' ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-sm text-muted-foreground">Loading visualization...</span>
+          </div>
+        ) : null}
 
         {/* SECTIONS MODE: Table of section groupings */}
         {mode === 'sections' && sectionsLoading && (
@@ -412,37 +434,70 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
                 <tbody className="divide-y divide-border/30">
                   {sectionsData.sections.map((sec) => {
                     const exactPct = sec.edge_count > 0 ? Math.round((sec.exact_count / sec.edge_count) * 100) : 0
+                    const isExpanded = activeSection === sec.source_section
                     return (
-                      <tr
-                        key={`${sec.source_section}-${sec.target_section}`}
-                        onClick={() => handleSectionClick(sec.source_section)}
-                        className="hover:bg-secondary/50 cursor-pointer transition-colors group"
-                      >
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs text-primary/80">{sec.source_section}</span>
-                            <span className="text-foreground group-hover:text-primary transition-colors">{sec.source_title}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono text-xs text-primary/80">{sec.target_section}</span>
-                            <span className="text-muted-foreground">{sec.target_title}</span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <span className="font-mono text-sm">{sec.edge_count.toLocaleString()}</span>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            exactPct === 100 ? 'bg-emerald-500/10 text-emerald-400' :
-                            exactPct >= 50 ? 'bg-amber-500/10 text-amber-400' :
-                            'bg-blue-500/10 text-blue-400'
-                          }`}>
-                            {exactPct}% exact
-                          </span>
-                        </td>
-                      </tr>
+                      <React.Fragment key={`${sec.source_section}-${sec.target_section}`}>
+                        <tr
+                          onClick={() => handleSectionClick(sec.source_section)}
+                          className={`cursor-pointer transition-colors group ${
+                            isExpanded ? 'bg-secondary/70' : 'hover:bg-secondary/50'
+                          }`}
+                        >
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <ChevronRight className={`h-3.5 w-3.5 text-muted-foreground transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                              <span className="font-mono text-xs text-primary/80">{sec.source_section}</span>
+                              <span className="text-foreground group-hover:text-primary transition-colors">{sec.source_title}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs text-primary/80">{sec.target_section}</span>
+                              <span className="text-muted-foreground">{sec.target_title}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <span className="font-mono text-sm">{sec.edge_count.toLocaleString()}</span>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              exactPct === 100 ? 'bg-emerald-500/10 text-emerald-400' :
+                              exactPct >= 50 ? 'bg-amber-500/10 text-amber-400' :
+                              'bg-blue-500/10 text-blue-400'
+                            }`}>
+                              {exactPct}% exact
+                            </span>
+                          </td>
+                        </tr>
+                        {isExpanded && (
+                          <tr>
+                            <td colSpan={4} className="p-0">
+                              <div className="border-t border-border/30" style={{ height: 500 }}>
+                                {graphLoading || !GraphComp ? (
+                                  <div className="flex items-center justify-center h-full">
+                                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                                    <span className="ml-2 text-sm text-muted-foreground">Loading graph...</span>
+                                  </div>
+                                ) : graphError ? (
+                                  <div className="flex items-center justify-center h-full">
+                                    <p className="text-sm text-destructive">Failed to load graph.</p>
+                                  </div>
+                                ) : graphData && graphData.edges.length > 0 ? (
+                                  <GraphComp
+                                    mode="code"
+                                    data={graphData}
+                                    onNodeClick={handleNodeClick}
+                                  />
+                                ) : (
+                                  <div className="flex items-center justify-center h-full">
+                                    <p className="text-sm text-muted-foreground">No crosswalk edges in this section.</p>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
                     )
                   })}
                 </tbody>
@@ -451,8 +506,8 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
           </div>
         )}
 
-        {/* CODE MODE: Graph visualization */}
-        {mode === 'code' && graphLoading && (
+        {/* CODE MODE: Full graph for small crosswalks (< SECTION_THRESHOLD edges) */}
+        {mode === 'code' && (graphLoading || !GraphComp) && (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
             <span className="ml-2 text-sm text-muted-foreground">Loading crosswalk graph...</span>
@@ -467,8 +522,8 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
           </div>
         )}
 
-        {mode === 'code' && graphData && graphData.edges.length > 0 && (
-          <CrosswalkGraph
+        {mode === 'code' && graphData && graphData.edges.length > 0 && GraphComp && (
+          <GraphComp
             mode="code"
             data={graphData}
             onNodeClick={handleNodeClick}
@@ -479,16 +534,8 @@ export default function CrosswalkExplorerClient({ systems, stats }: Props) {
           <div className="flex flex-col items-center justify-center h-full gap-3">
             <GitCompareArrows className="h-10 w-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">
-              No crosswalk edges in this section.
+              No crosswalk edges found.
             </p>
-            {activeSection && (
-              <button
-                onClick={handleBackToSections}
-                className="text-sm text-primary hover:underline"
-              >
-                Back to all sections
-              </button>
-            )}
           </div>
         )}
 

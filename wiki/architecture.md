@@ -1,8 +1,10 @@
 ## System Architecture and Data Flows
 
-This guide provides visual documentation of the WorldOfTaxonomy system architecture, data ingestion pipeline, API request handling, MCP session lifecycle, and the four-channel wiki distribution system.
+> **TL;DR:** Three consumer interfaces (web app, REST API, MCP server) backed by PostgreSQL and a wiki knowledge layer. Data flows from 1,000 official sources through an ingestion pipeline into three core tables. Wiki content serves four channels from one source of truth.
 
-## System Architecture Overview
+---
+
+## System architecture overview
 
 The platform serves three consumer interfaces - a web application, a REST API, and an MCP server - all backed by a shared PostgreSQL database and wiki knowledge layer.
 
@@ -43,7 +45,7 @@ graph TB
   DEV --> API
 ```
 
-## Four-Channel Wiki Data Flow
+## Four-channel wiki data flow
 
 The wiki system follows the "write once, serve four ways" pattern. A single set of curated markdown files feeds all distribution channels.
 
@@ -60,16 +62,14 @@ graph LR
   CH4 --> DEVS["Developer Apps"]
 ```
 
-### Channel Details
-
-| Channel | Format | Cache/Refresh | Audience |
-|---------|--------|---------------|----------|
+| Channel | Format | Refresh | Audience |
+|---------|--------|---------|----------|
 | Web pages at /guide/ | Server-rendered HTML with SEO metadata | Static generation at build time | Human readers, search engines |
 | MCP instructions | Plain text injected at session start | Loaded on MCP initialize | AI agents (Claude, GPT, Gemini) |
 | llms-full.txt | Concatenated plain text | Regenerated on build | AI crawlers (Perplexity, Google AI) |
 | Wiki API | JSON with raw markdown | On-demand from disk | Developer applications, RAG pipelines |
 
-## Classification Data Ingestion Pipeline
+## Classification data ingestion pipeline
 
 Raw data from official sources flows through the ingestion pipeline into three database tables.
 
@@ -106,14 +106,14 @@ graph TD
   NODE --- EQUIV
 ```
 
-### Ingestion Steps
+### Ingestion steps
 
 1. **Parse**: Read the source file (CSV, Excel, HTML, or hardcoded data). Validate code format, hierarchy, and completeness.
 2. **Upsert nodes**: Insert or update rows in `classification_node` with code, title, description, level, parent_code, is_leaf, and seq_order.
 3. **Build crosswalks**: Create bidirectional edges in the `equivalence` table with match_type (exact, partial, broader, narrower, related).
 4. **Set provenance**: Update `classification_system` with data_provenance tier, source_url, source_date, license, and source_file_hash.
 
-## API Request Flow
+## API request flow
 
 Every API request passes through rate limiting and authentication before reaching the query layer.
 
@@ -138,16 +138,16 @@ sequenceDiagram
   R-->>C: JSON response
 ```
 
-### Rate Limit Tiers
+### Rate limit tiers
 
-| Tier | Requests/Minute | Daily Limit |
-|------|-----------------|-------------|
-| Anonymous | 30 | Unlimited |
-| Free | 1,000 | Unlimited |
-| Pro | 5,000 | 100,000 |
-| Enterprise | 50,000 | Unlimited |
+| Tier | Requests/Minute | Daily Limit | Best For |
+|------|-----------------|-------------|----------|
+| Anonymous | 30 | Unlimited | Quick exploration |
+| Free | 1,000 | Unlimited | Development |
+| Pro | 5,000 | 100,000 | Production apps |
+| Enterprise | 50,000 | Unlimited | High-volume |
 
-## MCP Session Lifecycle
+## MCP session lifecycle
 
 When an AI agent connects to the MCP server, it receives structural knowledge about the entire knowledge graph before making any tool calls.
 
@@ -173,36 +173,70 @@ sequenceDiagram
   MCP-->>AI: Resource content
 ```
 
-### MCP Capabilities
+### MCP capabilities
 
 The server advertises 23 tools and wiki resources:
 
 - **Tools**: list_classification_systems, search_classifications, get_industry, browse_children, get_equivalences, translate_code, classify_business, get_audit_report, and 15 more
 - **Resources**: taxonomy://systems, taxonomy://stats, taxonomy://wiki/{slug} for each guide page
 
-## Database Schema
+## Database schema
 
 The three core tables and their relationships:
 
-| Table | Purpose | Key Columns |
-|-------|---------|-------------|
-| `classification_system` | System metadata | id, name, region, data_provenance, source_url, source_file_hash |
-| `classification_node` | Individual codes | system_id, code, title, level, parent_code, is_leaf |
-| `equivalence` | Cross-system mappings | source_system, source_code, target_system, target_code, match_type |
+```mermaid
+erDiagram
+  classification_system {
+    string id PK
+    string name
+    string region
+    string data_provenance
+    string source_url
+    string source_file_hash
+  }
+  classification_node {
+    string system_id FK
+    string code
+    string title
+    int level
+    string parent_code
+    boolean is_leaf
+  }
+  equivalence {
+    string source_system FK
+    string source_code
+    string target_system FK
+    string target_code
+    string match_type
+  }
+  classification_system ||--o{ classification_node : "has"
+  classification_system ||--o{ equivalence : "source"
+  classification_system ||--o{ equivalence : "target"
+```
 
-Relationships:
-- `classification_node.system_id` references `classification_system.id`
-- `equivalence.source_system` and `equivalence.target_system` reference `classification_system.id`
 - Parent-child hierarchy within a system is modeled by `classification_node.parent_code`
+- Crosswalk edges are bidirectional: if A maps to B, B maps to A
 
-## Technology Stack
+## Technology stack
 
-| Layer | Technology |
-|-------|-----------|
-| Database | PostgreSQL (with pgbouncer) |
-| Backend | Python 3.9+, FastAPI, asyncpg |
-| Frontend | Next.js 15, TypeScript, Tailwind CSS v4, shadcn/ui |
-| Visualization | D3.js (Galaxy View force simulation) |
-| Auth | bcrypt + JWT + API keys |
-| Rate Limiting | slowapi |
-| MCP | Custom JSON-RPC over stdio |
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Database | PostgreSQL (with pgbouncer) | 1.2M+ nodes, 321K+ edges |
+| Backend | Python 3.9+, FastAPI, asyncpg | REST API + MCP server |
+| Frontend | Next.js 15, TypeScript, Tailwind CSS v4, shadcn/ui | Web application |
+| Visualization | D3.js (Galaxy View), Cytoscape.js (Crosswalk Explorer) | Interactive graphs |
+| Auth | bcrypt + JWT + API keys (`wot_` prefix) | Tiered access |
+| Rate Limiting | slowapi | Per-tier enforcement |
+| MCP | Custom JSON-RPC over stdio | AI agent integration |
+| Content | Markdown + remark + remarkGfm | Wiki and blog rendering |
+
+## Self-hosting
+
+Two commands to run everything locally:
+
+```bash
+git clone https://github.com/colaberry/WorldOfTaxonomy.git
+cd WorldOfTaxonomy && docker compose up
+```
+
+Web app at `localhost:3000`. API at `localhost:8000`. MCP server via `python -m world_of_taxonomy mcp`.

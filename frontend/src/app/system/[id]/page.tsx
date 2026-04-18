@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { serverGetSystem, serverGetStats, serverGetSystems } from '@/lib/server-api'
+import { getStaticTree } from '@/lib/tree-data'
 import { SystemDetail } from './SystemDetail'
 
 interface Props {
@@ -45,12 +46,15 @@ export default async function SystemPage({ params }: Props) {
     // Server fetch failed - client component will fetch from browser
   }
 
+  const treeNodes = getStaticTree(id)
+
   return (
     <SystemDetail
       id={id}
       initialSystem={system}
       initialStats={stats}
       initialSystems={systems}
+      initialTreeNodes={treeNodes}
     />
   )
 }

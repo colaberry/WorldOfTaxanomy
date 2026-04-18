@@ -7,12 +7,38 @@
  */
 import fs from 'fs'
 import path from 'path'
-import type { ClassificationSystem, CrosswalkStat } from './types'
+import type {
+  ClassificationSystem, CrosswalkStat,
+  CrosswalkSectionsResponse, CrosswalkGraphResponse,
+} from './types'
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'content', 'crosswalk')
 
+interface PairNodeWithRoot {
+  id: string
+  system: string
+  code: string
+  title: string
+  root: string
+}
+
+interface PairData {
+  source_system: string
+  target_system: string
+  sections: CrosswalkSectionsResponse
+  graph: {
+    source_system: string
+    target_system: string
+    nodes: PairNodeWithRoot[]
+    edges: { source: string; target: string; match_type: string }[]
+    total_edges: number
+    truncated: boolean
+  }
+}
+
 let _systemsCache: ClassificationSystem[] | null = null
 let _statsCache: CrosswalkStat[] | null = null
+let _allSectionsCache: Record<string, CrosswalkSectionsResponse> | null = null
 
 export function getStaticSystems(): ClassificationSystem[] {
   if (_systemsCache) return _systemsCache
@@ -28,4 +54,87 @@ export function getStaticStats(): CrosswalkStat[] {
   const raw = fs.readFileSync(filePath, 'utf-8')
   _statsCache = JSON.parse(raw)
   return _statsCache!
+}
+
+export function getStaticAllSections(): Record<string, CrosswalkSectionsResponse> {
+  if (_allSectionsCache) return _allSectionsCache
+  const filePath = path.join(DATA_DIR, 'all-sections.json')
+  const raw = fs.readFileSync(filePath, 'utf-8')
+  _allSectionsCache = JSON.parse(raw)
+  return _allSectionsCache!
+}
+
+// ── Per-pair data (sections + graph) ──────────────────────────────
+
+const _pairCache = new Map<string, PairData | null>()
+
+function getPairData(source: string, target: string): PairData | null {
+  // Try both directions (files use sorted system IDs)
+  const key1 = `pair__${source}___${target}`
+  const key2 = `pair__${target}___${source}`
+
+  for (const key of [key1, key2]) {
+    if (_pairCache.has(key)) return _pairCache.get(key)!
+    const filePath = path.join(DATA_DIR, `${key}.json`)
+    if (fs.existsSync(filePath)) {
+      const data: PairData = JSON.parse(fs.readFileSync(filePath, 'utf-8'))
+      _pairCache.set(key, data)
+      return data
+    }
+  }
+  _pairCache.set(key1, null)
+  return null
+}
+
+export function getStaticSections(
+  source: string,
+  target: string,
+): CrosswalkSectionsResponse | null {
+  const data = getPairData(source, target)
+  return data?.sections ?? null
+}
+
+export function getStaticGraph(
+  source: string,
+  target: string,
+  limit = 1000,
+  section?: string,
+): CrosswalkGraphResponse | null {
+  const data = getPairData(source, target)
+  if (!data) return null
+
+  let { nodes, edges } = data.graph
+
+  // Section filter: include nodes whose root matches, plus their connected edges
+  if (section) {
+    const sectionNodeIds = new Set(
+      nodes.filter(n => n.root === section).map(n => n.id),
+    )
+    edges = edges.filter(
+      e => sectionNodeIds.has(e.source) || sectionNodeIds.has(e.target),
+    )
+    // Include nodes from both sides of matching edges
+    const allNodeIds = new Set<string>()
+    for (const e of edges) {
+      allNodeIds.add(e.source)
+      allNodeIds.add(e.target)
+    }
+    nodes = nodes.filter(n => allNodeIds.has(n.id))
+  }
+
+  const totalEdges = edges.length
+  const truncated = totalEdges > limit
+  if (truncated) edges = edges.slice(0, limit)
+
+  // Strip the root field (not in the client type)
+  const clientNodes = nodes.map(({ root: _, ...rest }) => rest)
+
+  return {
+    source_system: data.graph.source_system,
+    target_system: data.graph.target_system,
+    nodes: clientNodes,
+    edges,
+    total_edges: totalEdges,
+    truncated,
+  }
 }

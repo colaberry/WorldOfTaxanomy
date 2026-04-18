@@ -1,8 +1,10 @@
 ## Occupation Classification Systems Compared
 
-WorldOfTaxonomy includes the major occupation and skills classification systems used for labor market analysis, job matching, education-to-career pathways, and workforce planning. This guide compares SOC, ISCO, ESCO, O*NET, and national systems.
+> **TL;DR:** SOC for US labor data, ISCO for global comparison, ESCO for European skills matching, O*NET for detailed occupation attributes. Connected by 10,000+ crosswalk edges with education-to-career pathways through CIP.
 
-## System Overview
+---
+
+## System overview
 
 | System | Codes | Region | Purpose | Authority |
 |--------|-------|--------|---------|-----------|
@@ -17,7 +19,40 @@ WorldOfTaxonomy includes the major occupation and skills classification systems 
 | KldB 2010 | 54 | Germany | German occupation classification | Federal Employment Agency |
 | ROME v4 | 93 | France | French job/occupation repertoire | Pole emploi |
 
-## SOC vs ISCO: The Two Major Frameworks
+## How occupation systems connect
+
+```mermaid
+graph TB
+  subgraph Education["Education"]
+    CIP["CIP 2020\n2,848 programs"]
+    ISCEDF["ISCED-F 2013\n122 fields"]
+  end
+  subgraph US_Occ["United States"]
+    SOC["SOC 2018\n1,447 occupations"]
+    ONET["O*NET-SOC\n867 occupations\n+ skills, abilities, interests"]
+  end
+  subgraph Global_Occ["Global"]
+    ISCO["ISCO-08\n619 occupations"]
+  end
+  subgraph EU_Occ["Europe"]
+    ESCO_O["ESCO Occupations\n3,045"]
+    ESCO_S["ESCO Skills\n14,247"]
+  end
+  subgraph Industry["Industry"]
+    NAICS["NAICS 2022"]
+    ISIC["ISIC Rev 4"]
+  end
+  CIP -->|5,903 edges| SOC
+  CIP -->|1,615 edges| ISCEDF
+  SOC <-->|992 edges| ISCO
+  SOC <-->|1,734 edges| ONET
+  ISCO <-->|6,048 edges| ESCO_O
+  ESCO_O --- ESCO_S
+  ISCO -->|44 edges| ISIC
+  SOC -.-> NAICS
+```
+
+## SOC vs ISCO: The two major frameworks
 
 ### SOC 2018 (Standard Occupational Classification)
 
@@ -33,16 +68,16 @@ WorldOfTaxonomy includes the major occupation and skills classification systems 
 - **Used for**: International labor statistics, ILO reporting, basis for national systems
 - **Key difference**: Broader categories than SOC; designed for international comparison
 
-### Crosswalk Between SOC and ISCO
+### Crosswalk between SOC and ISCO
 
-SOC 2018 and ISCO-08 are connected by 992 crosswalk edges. The mapping is many-to-many because SOC is more granular than ISCO.
+SOC 2018 and ISCO-08 are connected by **992 crosswalk edges**. The mapping is many-to-many because SOC is more granular than ISCO.
 
 ```bash
-# Translate SOC to ISCO
+# Translate a SOC code to ISCO
 curl https://worldoftaxonomy.com/api/v1/systems/soc_2018/nodes/29-1211/equivalences
 ```
 
-## ESCO - European Skills and Occupations
+## ESCO - European skills and occupations
 
 ESCO is the EU's multilingual classification connecting occupations to skills:
 
@@ -51,7 +86,16 @@ ESCO is the EU's multilingual classification connecting occupations to skills:
 - **Key advantage**: Skills-based matching across EU labor markets
 - **Use cases**: Job portals, skills gap analysis, career guidance, Europass
 
-## O*NET - Occupation Information Network
+```mermaid
+graph LR
+  ESCO_O["ESCO Occupations\n3,045"] <-->|6,048 edges| ISCO["ISCO-08\n619"]
+  ESCO_O --- ESCO_S["ESCO Skills\n14,247"]
+  ESCO_S -.->|linked to| ESCO_O
+```
+
+> ESCO is the only system in the graph that connects occupations directly to skills. This makes it essential for AI-powered job matching and workforce analytics.
+
+## O*NET - Occupation information network
 
 O*NET extends SOC with rich attribute data:
 
@@ -60,35 +104,43 @@ O*NET extends SOC with rich attribute data:
 - **Key advantage**: Most detailed occupation attribute data available
 - **Use cases**: Career exploration, job analysis, workforce development
 
-## Education-to-Occupation Pathways
+| O*NET Component | Items | What It Measures |
+|-----------------|-------|-----------------|
+| Knowledge Areas | 14 | Subject domains required |
+| Abilities | 17 | Cognitive, physical, sensory capabilities |
+| Work Activities | 16 | General types of job behaviors |
+| Work Context | 15 | Physical and social work environment |
+| Interests (RIASEC) | 13 | Holland occupational interest types |
+| Work Values | 14 | What workers find important |
+| Work Styles | 17 | Personal characteristics for performance |
+
+## Education-to-occupation pathways
 
 The crosswalk topology connects education to occupations:
 
-```
-CIP 2020 (instructional programs)
-  |-- 5,903 edges --> SOC 2018 (US occupations)
-  |-- 1,615 edges --> ISCED-F 2013 (fields of education)
-  |
-ISCED 2011 (education levels)
-  |-- 25 edges --> ISCO-08 (global occupations)
+```mermaid
+graph LR
+  CIP["CIP 2020\n2,848 instructional\nprograms"] -->|5,903 edges| SOC["SOC 2018\n1,447 US\noccupations"]
+  CIP -->|1,615 edges| ISCEDF["ISCED-F 2013\n122 fields\nof education"]
+  ISCED["ISCED 2011\n20 education\nlevels"] -->|25 edges| ISCO["ISCO-08\n619 global\noccupations"]
 ```
 
-This lets you answer questions like "What occupations do CIP 51.0912 (Physician Assistant) graduates work in?"
+This lets you answer questions like "What occupations do graduates of CIP 51.0912 (Physician Assistant) work in?"
 
 ```bash
 curl https://worldoftaxonomy.com/api/v1/systems/cip_2020/nodes/51.0912/equivalences
 ```
 
-## Occupation-to-Industry Mapping
+## Occupation-to-industry mapping
 
-Occupations connect to industries:
+Occupations connect to industries through two paths:
 
-```
-SOC 2018 --> NAICS 2022 (55 edges)
-ISCO-08 --> ISIC Rev 4 (44 edges)
-```
+| Link | Edges | Use Case |
+|------|-------|----------|
+| SOC 2018 to NAICS 2022 | 55 | US workforce-to-industry analysis |
+| ISCO-08 to ISIC Rev 4 | 44 | Global occupation-industry mapping |
 
-## Which System to Use
+## Which system to use
 
 | Purpose | Recommended System | Why |
 |---------|-------------------|-----|
@@ -101,7 +153,18 @@ ISCO-08 --> ISIC Rev 4 (44 edges)
 | Skills gap analysis | ESCO Skills | 14K skills taxonomy |
 | Education-to-career mapping | CIP 2020 + SOC | 5,903 crosswalk edges |
 
-## MCP Tools for Occupation Data
+## Use cases
+
+| Who | What | Systems |
+|-----|------|---------|
+| HR analytics teams | Map job postings to standard codes | SOC 2018, ISCO-08 |
+| Career counselors | Match education to occupations | CIP 2020, SOC 2018, O*NET |
+| EU job portals | Skills-based matching across borders | ESCO Occupations + Skills |
+| Immigration lawyers | Classify occupations for visa applications | SOC 2018 (H-1B) |
+| Workforce planners | Identify skills gaps by region | ESCO Skills, O*NET |
+| AI recruitment agents | Automate classification via MCP | All of the above |
+
+## MCP tools for occupation data
 
 | Tool | Purpose |
 |------|---------|

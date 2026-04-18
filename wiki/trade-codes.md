@@ -1,8 +1,10 @@
 ## Trade and Product Classification Guide
 
-WorldOfTaxonomy includes the major product and trade classification systems used for customs, procurement, and statistical reporting. This guide explains how HS, CPC, UNSPSC, SITC, and BEC relate, and which system to use for different purposes.
+> **TL;DR:** HS for customs, CPC to bridge trade and industry, UNSPSC for procurement (77K codes). This guide shows how the trade classification systems relate, which one to use, and how to navigate between them with 11,686+ crosswalk edges.
 
-## System Comparison
+---
+
+## System comparison
 
 | System | Codes | Purpose | Maintained By |
 |--------|-------|---------|---------------|
@@ -14,44 +16,49 @@ WorldOfTaxonomy includes the major product and trade classification systems used
 | HTS (US) | 120 | US-specific tariff schedule | US International Trade Commission |
 | CN 2024 | 118 | EU Combined Nomenclature | European Commission |
 
-## How These Systems Relate
+## How these systems relate
 
-### The HS Family Tree
+### The HS family tree
 
-The Harmonized System (HS) is the foundation. Other systems build on it:
+The Harmonized System (HS) is the foundation of international trade classification. Other systems build on it.
 
-```
-HS 2022 (WCO)
-  |
-  +--> HTS (US) - adds US-specific subheadings
-  +--> CN 2024 (EU) - adds EU-specific subheadings
-  +--> ASEAN Tariff (AHTN) - regional extension
-  +--> MERCOSUR Tariff (NCM) - regional extension
-  +--> AfCFTA Tariff - African regional extension
-```
-
-### The Statistical Bridge
-
-CPC v2.1 bridges product classification and industry classification:
-
-```
-HS 2022 <-- 11,686 edges --> CPC v2.1 <-- 5,430 edges --> ISIC Rev 4
+```mermaid
+graph TD
+  HS["HS 2022 (WCO)\n6,960 codes\nGlobal foundation"] --> HTS["HTS (US)\nUS-specific subheadings"]
+  HS --> CN["CN 2024 (EU)\nEU-specific subheadings"]
+  HS --> AHTN["ASEAN Tariff (AHTN)\nSoutheast Asia"]
+  HS --> NCM["MERCOSUR Tariff (NCM)\nSouth America"]
+  HS --> AFCFTA["AfCFTA Tariff\nAfrica"]
+  HS --> GCC["GCC Common Tariff\nGulf States"]
 ```
 
-This means you can trace: a trade code (HS) to what product category it belongs to (CPC) to which industry produces it (ISIC/NAICS).
+Every country that trades internationally uses HS at the 6-digit level. National extensions add more digits for country-specific detail.
 
-### Aggregation for Statistics
+### The statistical bridge
 
-SITC and BEC aggregate trade data at higher levels:
+CPC v2.1 bridges product classification and industry classification. This is where trade meets production.
 
+```mermaid
+graph LR
+  HS["HS 2022\n6,960 trade codes"] <-->|11,686 edges| CPC["CPC v2.1\n4,596 product codes"]
+  CPC <-->|5,430 edges| ISIC["ISIC Rev 4\n766 industry codes"]
+  CPC -.-> UNSPSC["UNSPSC v24\n77,337 procurement codes"]
 ```
-HS 2022 (6,960 detailed codes)
-  |
-  +--> SITC Rev 4 (77 codes) - for trade flow analysis
-  +--> BEC Rev 5 (29 codes) - for economic category analysis
+
+This means you can trace: a **trade code** (HS) to its **product category** (CPC) to the **industry that produces it** (ISIC/NAICS).
+
+### Aggregation for statistics
+
+SITC and BEC aggregate trade data at higher levels for economic analysis:
+
+```mermaid
+graph TD
+  HS["HS 2022\n6,960 detailed codes"] --> SITC["SITC Rev 4\n77 codes\nTrade flow analysis"]
+  HS --> BEC["BEC Rev 5\n29 codes\nEconomic category analysis"]
+  BEC --> SNA["Maps to SNA\ncategories"]
 ```
 
-## Which System to Use
+## Which system to use
 
 | Purpose | Recommended System | Why |
 |---------|-------------------|-----|
@@ -63,46 +70,44 @@ HS 2022 (6,960 detailed codes)
 | Economic modeling | BEC Rev 5 | Maps to SNA categories |
 | Product-to-industry mapping | CPC v2.1 | Bridges HS to ISIC |
 
-## HS Code Structure
+## HS code structure
 
 HS codes use a hierarchical 6-digit structure:
 
-```
-01        Chapter (2 digits) - Live animals
-0101      Heading (4 digits) - Horses, asses, mules
-010121    Subheading (6 digits) - Pure-bred horses
-```
+| Level | Digits | Example | Description |
+|-------|--------|---------|-------------|
+| Chapter | 2 | 01 | Live animals |
+| Heading | 4 | 0101 | Horses, asses, mules |
+| Subheading | 6 | 010121 | Pure-bred horses |
 
-National extensions add further digits:
-- HTS (US): up to 10 digits
-- CN (EU): 8 digits
+National extensions add further digits. HTS (US) goes up to 10 digits. CN (EU) uses 8 digits.
 
-## CPC Code Structure
+## CPC code structure
 
 CPC v2.1 uses a 5-level hierarchy:
 
-```
-0     Section - Agriculture, forestry and fishery products
-01    Division - Products of agriculture, horticulture
-011   Group - Cereals
-0111  Class - Wheat
-01110 Subclass - Wheat, unmilled
-```
+| Level | Example | Description |
+|-------|---------|-------------|
+| Section | 0 | Agriculture, forestry and fishery products |
+| Division | 01 | Products of agriculture, horticulture |
+| Group | 011 | Cereals |
+| Class | 0111 | Wheat |
+| Subclass | 01110 | Wheat, unmilled |
 
-## UNSPSC Structure
+## UNSPSC structure
 
 UNSPSC uses an 8-digit hierarchy across 4 levels:
 
-```
-10        Segment - Live Plant and Animal Material
-1010      Family - Live animals
-101015    Class - Dogs
-10101501  Commodity - Guard dogs
-```
+| Level | Example | Description |
+|-------|---------|-------------|
+| Segment | 10 | Live Plant and Animal Material |
+| Family | 1010 | Live animals |
+| Class | 101015 | Dogs |
+| Commodity | 10101501 | Guard dogs |
 
-With 77,337 codes, UNSPSC is the most detailed product classification available.
+With 77,337 codes, UNSPSC is the most detailed product classification available. It is widely used in procurement platforms and spend analytics.
 
-## Crosswalk Navigation
+## Crosswalk navigation
 
 ### Translate an HS code to an industry
 
@@ -110,18 +115,39 @@ With 77,337 codes, UNSPSC is the most detailed product classification available.
 # Get CPC equivalences for an HS code
 curl https://worldoftaxonomy.com/api/v1/systems/hs_2022/nodes/0101/equivalences
 
-# Then translate CPC to ISIC
-curl https://worldoftaxonomy.com/api/v1/systems/cpc_v21/nodes/0111/equivalences
+# Translate HS code to all connected systems
+curl https://worldoftaxonomy.com/api/v1/systems/hs_2022/nodes/0101/translations
 ```
 
 ### Find trade codes for an industry
 
 ```bash
-# Start with NAICS, translate to ISIC, then to CPC, then to HS
+# Start from a NAICS code, get all translations including HS/CPC
 curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/1111/translations
+
+# Or use the search to find trade codes by product name
+curl "https://worldoftaxonomy.com/api/v1/search?q=wheat&grouped=true"
 ```
 
-## MCP Tools for Trade Classification
+### Find gaps
+
+```bash
+# HS codes with no CPC equivalent
+curl "https://worldoftaxonomy.com/api/v1/diff?a=hs_2022&b=cpc_v21"
+```
+
+## Use cases
+
+| Who | What | Systems |
+|-----|------|---------|
+| Customs brokers | Classify goods for import/export | HS 2022, HTS, CN 2024 |
+| Procurement teams | Categorize spend across suppliers | UNSPSC v24 |
+| Trade economists | Analyze bilateral trade flows | SITC Rev 4, BEC Rev 5 |
+| Supply chain analysts | Map products to producing industries | CPC v2.1, ISIC Rev 4 |
+| Compliance officers | Verify tariff classification | HS 2022 + national variants |
+| AI trade agents | Automate classification via MCP | All of the above |
+
+## MCP tools for trade classification
 
 | Tool | Purpose |
 |------|---------|

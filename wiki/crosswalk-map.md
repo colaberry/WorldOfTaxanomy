@@ -1,152 +1,14 @@
 ## Crosswalk Map - How Classification Systems Connect
 
-WorldOfTaxonomy contains 321,937+ crosswalk edges linking classification systems. These edges let you translate a code in one system to equivalent codes in another. This guide explains the crosswalk topology, match types, and how to navigate translation paths.
+> **TL;DR:** 321,937+ crosswalk edges link 1,000 classification systems through hub-and-spoke topology. ISIC is the industry hub, CPC bridges trade to industry, SOC/ISCO connect occupations. This guide maps the full topology and shows how to navigate translation paths.
 
-## What Is a Crosswalk?
+---
 
-A crosswalk (or concordance) is a mapping between codes in two different classification systems. For example, NAICS 6211 ("Offices of Physicians") maps to ISIC 8620 ("Medical and dental practice activities"). Crosswalks can be:
+## What is a crosswalk?
 
-- **Exact**: one-to-one mapping with the same scope
-- **Partial**: the source code's scope partially overlaps with the target
-- **Broader**: the target code has a wider scope than the source
-- **Narrower**: the target code has a narrower scope than the source
+A crosswalk (or concordance) is a mapping between codes in two different classification systems. For example, NAICS 6211 ("Offices of Physicians") maps to ISIC 8620 ("Medical and dental practice activities").
 
-## Core Crosswalk Topology
-
-The knowledge graph has several major crosswalk clusters:
-
-### Industry Classification Hub
-
-ISIC Rev 4 serves as the central hub for industry classification:
-
-```
-NAICS 2022 <--> ISIC Rev 4 <--> NACE Rev 2 (and all EU national variants)
-                    |
-                    +--> NIC 2008 (India)
-                    +--> ANZSIC 2006 (Australia/NZ)
-                    +--> GB/T 4754-2017 (China)
-                    +--> 80+ national ISIC adaptations
-```
-
-Key edge counts:
-- ISIC Rev 4 / NAICS 2022: ~3,418 bidirectional edges
-- NACE Rev 2 national variants: 1:1 mappings (identical structure)
-
-### Product and Trade Hub
-
-CPC v2.1 bridges product classification and trade codes:
-
-```
-HS 2022 <--> CPC v2.1 <--> ISIC Rev 4
-  |            |
-  +--> HTS     +--> UNSPSC v24
-  +--> CN 2024
-  +--> SITC Rev 4
-```
-
-Key edge counts:
-- HS 2022 / CPC v2.1: 11,686 edges
-- CPC v2.1 / ISIC Rev 4: 5,430 edges
-
-### Occupation and Education Hub
-
-SOC 2018 and ISCO-08 are the twin hubs for occupation data:
-
-```
-CIP 2020 --> SOC 2018 <--> ISCO-08 <--> ISIC Rev 4
-  |            |              |
-  +--> ISCED-F +--> NAICS     +--> ESCO Occupations
-                              |
-                              +--> O*NET-SOC
-```
-
-Key edge counts:
-- CIP 2020 / SOC 2018: 5,903 edges
-- SOC 2018 / ISCO-08: 992 edges
-- ESCO Occupations / ISCO-08: 6,048 edges
-- O*NET-SOC / SOC 2018: 1,734 edges
-- CIP 2020 / ISCED-F 2013: 1,615 edges
-- ISCED 2011 / ISCO-08: 25 edges
-- ISCO-08 / ISIC Rev 4: 44 edges
-
-### Geographic Hub
-
-```
-ISO 3166-1 <--> ISO 3166-2 (subdivisions)
-     |
-     +--> UN M.49 (regions)
-     +--> Nation-Sector synergy crosswalk (98 edges)
-```
-
-### Domain Crosswalks
-
-Each domain taxonomy links back to its parent NAICS sector:
-
-```
-NAICS 484 (Truck Transportation) --> domain_truck_freight, domain_truck_vehicle, ...
-NAICS 11  (Agriculture)          --> domain_ag_crop, domain_ag_livestock, ...
-NAICS 21  (Mining)               --> domain_mining_mineral, domain_mining_method, ...
-NAICS 22  (Utilities)            --> domain_util_energy, domain_util_grid, ...
-NAICS 23  (Construction)         --> domain_const_trade, domain_const_building, ...
-```
-
-### Regulatory Crosswalks
-
-```
-CFR Title 49 <--> NAICS 2022 (437 edges)
-FMCSA <--> domain_truck (regulatory compliance)
-```
-
-## Translation Paths
-
-Not all systems have direct crosswalks. You can translate between systems by following a path through intermediate hubs.
-
-### Example: Translate a German WZ code to a US SOC occupation
-
-1. WZ 2008 --> NACE Rev 2 (1:1 national variant)
-2. NACE Rev 2 --> ISIC Rev 4 (1:1 structure)
-3. ISIC Rev 4 --> ISCO-08 (44 edges)
-4. ISCO-08 --> SOC 2018 (992 edges)
-
-### Example: Find which HS trade codes relate to a NAICS industry
-
-1. NAICS 2022 --> ISIC Rev 4 (~3,418 edges)
-2. ISIC Rev 4 --> CPC v2.1 (5,430 edges)
-3. CPC v2.1 --> HS 2022 (11,686 edges)
-
-## API for Crosswalk Navigation
-
-### Direct Equivalences
-
-```bash
-# Get all systems that NAICS 6211 maps to
-curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/6211/equivalences
-
-# Translate to all connected systems at once
-curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/6211/translations
-```
-
-### Crosswalk Statistics
-
-```bash
-# Overall crosswalk stats
-curl https://worldoftaxonomy.com/api/v1/equivalences/stats
-
-# Stats for a specific system
-curl "https://worldoftaxonomy.com/api/v1/equivalences/stats?system_id=naics_2022"
-```
-
-### Compare Systems
-
-```bash
-# Side-by-side top-level comparison
-curl "https://worldoftaxonomy.com/api/v1/compare?a=naics_2022&b=isic_rev4"
-
-# Codes in system A with no mapping to B
-curl "https://worldoftaxonomy.com/api/v1/diff?a=naics_2022&b=isic_rev4"
-```
-
-## Match Type Reference
+Crosswalks have a match type that tells you how precise the mapping is:
 
 | Type | Meaning | Example |
 |------|---------|---------|
@@ -156,7 +18,192 @@ curl "https://worldoftaxonomy.com/api/v1/diff?a=naics_2022&b=isic_rev4"
 | `narrower` | Target has narrower scope | A section-level ISIC to a detailed NAICS |
 | `related` | Conceptually related but structurally different | Domain taxonomy to parent NAICS sector |
 
-## MCP Tools for Crosswalks
+## Core crosswalk topology
+
+The knowledge graph has five major hubs. Each hub connects clusters of related systems.
+
+```mermaid
+graph TB
+  subgraph Industry["Industry Hub"]
+    ISIC["ISIC Rev 4\n766 codes"]
+    NAICS["NAICS 2022\n2,125 codes"]
+    NACE["NACE Rev 2\n996 codes"]
+    NIC["NIC 2008\n2,070 codes"]
+    ANZSIC["ANZSIC 2006\n825 codes"]
+    SIC["SIC 1987\n1,176 codes"]
+    GBT["GB/T 4754\n118 codes"]
+    NAT80["80+ National\nISIC variants"]
+  end
+  subgraph Trade["Trade Hub"]
+    CPC["CPC v2.1\n4,596 codes"]
+    HS["HS 2022\n6,960 codes"]
+    UNSPSC["UNSPSC v24\n77,337 codes"]
+    HTS["HTS / CN / SITC"]
+  end
+  subgraph Occupation["Occupation Hub"]
+    SOC["SOC 2018\n1,447 codes"]
+    ISCO["ISCO-08\n619 codes"]
+    ESCO["ESCO\n3,045 + 14,247"]
+    ONET["O*NET-SOC\n867 codes"]
+    CIP["CIP 2020\n2,848 codes"]
+  end
+  NAICS <-->|3,418 edges| ISIC
+  ISIC <-->|1:1| NACE
+  ISIC -.->|derived| NIC
+  ISIC -.->|derived| ANZSIC
+  ISIC -.->|derived| GBT
+  ISIC -.->|derived| NAT80
+  NAICS <-.->|legacy| SIC
+  ISIC <-->|5,430 edges| CPC
+  CPC <-->|11,686 edges| HS
+  CPC -.-> UNSPSC
+  HS -.-> HTS
+  SOC <-->|992 edges| ISCO
+  ISCO <-->|6,048 edges| ESCO
+  SOC <-->|1,734 edges| ONET
+  CIP -->|5,903 edges| SOC
+  ISCO <-->|44 edges| ISIC
+```
+
+## Industry classification hub
+
+ISIC Rev 4 is the central node for industry classification. Every major national system connects through it.
+
+```mermaid
+graph LR
+  NAICS["NAICS 2022"] <-->|3,418| ISIC["ISIC Rev 4"]
+  ISIC <-->|1:1| NACE["NACE Rev 2"]
+  NACE -->|1:1| WZ["WZ 2008\nGermany"]
+  NACE -->|1:1| NAF["NAF Rev 2\nFrance"]
+  NACE -->|1:1| ATECO["ATECO 2007\nItaly"]
+  NACE -->|1:1| MORE["30+ more\nEU variants"]
+  ISIC -->|derived| NIC["NIC 2008\nIndia"]
+  ISIC -->|derived| ANZSIC["ANZSIC 2006\nAU/NZ"]
+  ISIC -->|derived| GBT["GB/T 4754\nChina"]
+  ISIC -->|adapted| NAT80["80+ national\nadaptations"]
+```
+
+NACE national variants (WZ, NAF, ATECO, PKD, SBI, SNI, etc.) share the identical 996-code structure. Each has a 1:1 mapping to NACE Rev 2 and transitively to ISIC Rev 4.
+
+## Product and trade hub
+
+CPC v2.1 is the bridge between trade codes and industry codes.
+
+```mermaid
+graph LR
+  HS["HS 2022\n6,960 codes"] <-->|11,686 edges| CPC["CPC v2.1\n4,596 codes"]
+  CPC <-->|5,430 edges| ISIC["ISIC Rev 4"]
+  HS -->|extended| HTS["HTS (US)"]
+  HS -->|extended| CN["CN 2024 (EU)"]
+  HS -->|extended| AHTN["ASEAN Tariff"]
+  HS -->|extended| NCM["MERCOSUR Tariff"]
+  HS -.->|aggregated| SITC["SITC Rev 4\n77 codes"]
+  HS -.->|aggregated| BEC["BEC Rev 5\n29 codes"]
+  CPC -.-> UNSPSC["UNSPSC v24\n77,337 codes"]
+```
+
+This means you can trace a trade code (HS) to its product category (CPC) to the industry that produces it (ISIC/NAICS).
+
+## Occupation and education hub
+
+SOC 2018 and ISCO-08 are the twin hubs for occupation data.
+
+```mermaid
+graph LR
+  CIP["CIP 2020\n2,848 programs"] -->|5,903 edges| SOC["SOC 2018\n1,447 occupations"]
+  CIP -->|1,615 edges| ISCEDF["ISCED-F 2013\n122 fields"]
+  SOC <-->|992 edges| ISCO["ISCO-08\n619 occupations"]
+  ISCO <-->|6,048 edges| ESCO["ESCO Occupations\n3,045"]
+  SOC <-->|1,734 edges| ONET["O*NET-SOC\n867"]
+  ISCO -->|44 edges| ISIC["ISIC Rev 4"]
+  SOC -.-> NAICS["NAICS 2022"]
+```
+
+CIP 2020 (educational programs) connects to SOC (occupations) with 5,903 edges - the education-to-career pipeline.
+
+## Geographic and domain hubs
+
+```mermaid
+graph TB
+  subgraph Geo["Geographic"]
+    ISO1["ISO 3166-1\n271 countries"]
+    ISO2["ISO 3166-2\n5,246 subdivisions"]
+    UNM["UN M.49\n272 regions"]
+  end
+  subgraph Domain["Domain Crosswalks"]
+    N484["NAICS 484\nTruck Transportation"]
+    N11["NAICS 11\nAgriculture"]
+    N21["NAICS 21\nMining"]
+    N22["NAICS 22\nUtilities"]
+    N23["NAICS 23\nConstruction"]
+  end
+  ISO1 <--> ISO2
+  ISO1 <--> UNM
+  N484 -->|~200 edges| TRUCK["Truck domain\n7 vocabularies"]
+  N11 -->|~48 edges| AG["Agriculture domain\n11 vocabularies"]
+  N21 -->|~31 edges| MINE["Mining domain\n6 vocabularies"]
+  N22 -->|~20 edges| UTIL["Utility domain\n6 vocabularies"]
+  N23 -->|~27 edges| CONST["Construction domain\n6 vocabularies"]
+```
+
+Each domain taxonomy links back to its parent NAICS sector, creating drill-down paths from broad industry codes to specialized vocabularies.
+
+## Translation paths
+
+Not all systems have direct crosswalks. You translate between systems by following a path through intermediate hubs.
+
+### Example: German industry code to US occupation
+
+```mermaid
+graph LR
+  WZ["WZ 2008\nGerman industry"] -->|1:1| NACE["NACE Rev 2"]
+  NACE -->|1:1| ISIC["ISIC Rev 4"]
+  ISIC -->|44 edges| ISCO["ISCO-08"]
+  ISCO -->|992 edges| SOC["SOC 2018\nUS occupation"]
+```
+
+### Example: HS trade code to NAICS industry
+
+```mermaid
+graph LR
+  HS["HS 2022\ntrade code"] -->|11,686| CPC["CPC v2.1"]
+  CPC -->|5,430| ISIC["ISIC Rev 4"]
+  ISIC -->|3,418| NAICS["NAICS 2022"]
+```
+
+## API for crosswalk navigation
+
+### Direct equivalences
+
+```bash
+# Get all systems that NAICS 6211 maps to
+curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/6211/equivalences
+
+# Translate to all connected systems at once
+curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/6211/translations
+```
+
+### Crosswalk statistics
+
+```bash
+# Overall crosswalk stats
+curl https://worldoftaxonomy.com/api/v1/equivalences/stats
+
+# Stats for a specific system
+curl "https://worldoftaxonomy.com/api/v1/equivalences/stats?system_id=naics_2022"
+```
+
+### Compare systems
+
+```bash
+# Side-by-side top-level comparison
+curl "https://worldoftaxonomy.com/api/v1/compare?a=naics_2022&b=isic_rev4"
+
+# Codes in system A with no mapping to B
+curl "https://worldoftaxonomy.com/api/v1/diff?a=naics_2022&b=isic_rev4"
+```
+
+## MCP tools for crosswalks
 
 | Tool | Purpose |
 |------|---------|

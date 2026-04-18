@@ -8,7 +8,9 @@ import { getSystemColor } from '@/lib/colors'
 import { getToken } from '@/lib/auth'
 import { CrosswalkNetwork } from '@/components/visualizations/CrosswalkNetwork'
 import { NodeTree } from '@/components/NodeTree'
+import { RadialDendrogram } from '@/components/visualizations/RadialDendrogram'
 import type { SystemDetail as SystemDetailType, CrosswalkStat, ClassificationSystem } from '@/lib/types'
+import type { TreeNodeData } from '@/lib/tree-data'
 
 const GITHUB_REPO = 'https://github.com/colaberry/WorldOfTaxonomy'
 
@@ -17,9 +19,10 @@ interface SystemDetailProps {
   initialSystem?: SystemDetailType | null
   initialStats?: CrosswalkStat[] | null
   initialSystems?: ClassificationSystem[] | null
+  initialTreeNodes?: TreeNodeData[] | null
 }
 
-export function SystemDetail({ id, initialSystem, initialStats, initialSystems }: SystemDetailProps) {
+export function SystemDetail({ id, initialSystem, initialStats, initialSystems, initialTreeNodes }: SystemDetailProps) {
   const { data: system, isLoading } = useQuery({
     queryKey: ['system', id],
     queryFn: () => getSystem(id),
@@ -192,6 +195,17 @@ export function SystemDetail({ id, initialSystem, initialStats, initialSystems }
           <p className="text-sm text-muted-foreground">No root nodes found.</p>
         )}
       </div>
+
+      {initialTreeNodes && initialTreeNodes.length > 0 && (
+        <div>
+          <h2 className="text-lg font-semibold mb-3">Structure Overview</h2>
+          <RadialDendrogram
+            systemId={id}
+            initialNodes={initialTreeNodes}
+            systemColor={system.tint_color ?? undefined}
+          />
+        </div>
+      )}
 
       {connections.length > 0 && (
         <div>

@@ -1,10 +1,24 @@
 ## Industry Classification Guide - Which System to Use
 
-Choosing the right industry classification system depends on your geographic scope, regulatory requirements, and level of detail needed. This guide provides a decision tree to help you select the appropriate system.
+> **TL;DR:** Your country and purpose determine which industry classification system to use. NAICS for North America, NACE for the EU, ISIC for global. This guide provides a decision tree, country reference, and side-by-side comparisons.
 
-## Decision Tree
+---
 
-### Step 1: What Is Your Geographic Scope?
+## Decision tree
+
+```mermaid
+graph TD
+  START["What do you need to classify?"] --> GEO{"Geographic scope?"}
+  GEO -->|Single country| NATIONAL["Use national system\nsee table below"]
+  GEO -->|Multi-country / Global| ISIC["ISIC Rev 4\n766 codes, UN standard"]
+  GEO -->|North America| NAICS["NAICS 2022\n2,125 codes"]
+  GEO -->|European Union| NACE["NACE Rev 2\n996 codes"]
+  NAICS --> DETAIL{"Need SEC filing?"}
+  DETAIL -->|Yes| SIC["SIC 1987\nstill required by SEC"]
+  DETAIL -->|No| NAICS_DONE["Use NAICS 2022"]
+```
+
+### Step 1: What is your geographic scope?
 
 **Single country** - Use the national system for that country (see table below).
 
@@ -14,7 +28,7 @@ Choosing the right industry classification system depends on your geographic sco
 
 **European Union** - Use NACE Rev 2 (or your country's national variant).
 
-### Step 2: What Level of Detail Do You Need?
+### Step 2: What level of detail do you need?
 
 | Granularity | Typical Use | Recommended System |
 |-------------|-------------|-------------------|
@@ -23,12 +37,12 @@ Choosing the right industry classification system depends on your geographic sco
 | Groups (~300 categories) | Detailed market analysis | ISIC 3-digit or NAICS 4-digit |
 | Classes (~500+ categories) | Regulatory filings, detailed reporting | ISIC 4-digit or NAICS 5-6 digit |
 
-### Step 3: Is This for Regulatory Compliance?
+### Step 3: Is this for regulatory compliance?
 
 If you are filing with a government agency, use the system they require:
 
-| Agency/Purpose | Required System |
-|----------------|----------------|
+| Agency / Purpose | Required System |
+|------------------|----------------|
 | US Census Bureau / BLS | NAICS 2022 |
 | US SEC filings | SIC 1987 |
 | Eurostat / EU statistical reporting | NACE Rev 2 |
@@ -37,9 +51,9 @@ If you are filing with a government agency, use the system they require:
 | Indian Ministry of Statistics | NIC 2008 |
 | World Bank projects | ISIC Rev 4 |
 
-## Country-to-System Quick Reference
+## Country-to-system quick reference
 
-### Major Economies
+### Major economies
 
 | Country | Primary System | Codes | Notes |
 |---------|---------------|-------|-------|
@@ -60,9 +74,24 @@ All countries use CIIU Rev 4 (the Spanish translation of ISIC Rev 4) with 766 co
 
 ### European Union (27 members + EEA)
 
-All EU member states use NACE Rev 2 with national naming: ATECO (Italy), NAF (France), WZ (Germany), CNAE (Spain), PKD (Poland), SBI (Netherlands), SNI (Sweden), and others.
+All EU member states use NACE Rev 2 with national naming: ATECO (Italy), NAF (France), WZ (Germany), CNAE (Spain), PKD (Poland), SBI (Netherlands), SNI (Sweden), and others. The structure is identical - 996 codes with 1:1 mapping.
 
-## Comparing the Major Systems
+## Comparing the major systems
+
+```mermaid
+graph LR
+  subgraph North_America["North America"]
+    NAICS["NAICS 2022\n2,125 codes\n6 levels"]
+  end
+  subgraph EU["European Union"]
+    NACE["NACE Rev 2\n996 codes\n4 levels"]
+  end
+  subgraph Global["Global"]
+    ISIC["ISIC Rev 4\n766 codes\n4 levels"]
+  end
+  NAICS <-->|3,418 edges| ISIC
+  ISIC <-->|1:1 structure| NACE
+```
 
 ### NAICS 2022 vs ISIC Rev 4
 
@@ -94,25 +123,31 @@ All EU member states use NACE Rev 2 with national naming: ATECO (Italy), NAF (Fr
 | Region | North America | USA/UK |
 | Best for | Current analysis | SEC filings, historical data |
 
-## How to Translate Between Systems
-
-Use the WorldOfTaxonomy API to translate codes:
+## How to translate between systems
 
 ```bash
-# Translate NAICS 6211 to ISIC
+# Translate NAICS 6211 to all equivalent systems
+curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/6211/translations
+
+# Direct equivalences with match types
 curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/6211/equivalences
 
-# Translate to ALL connected systems
-curl https://worldoftaxonomy.com/api/v1/systems/naics_2022/nodes/6211/translations
+# Find NAICS codes with no NACE equivalent
+curl "https://worldoftaxonomy.com/api/v1/diff?a=naics_2022&b=nace_rev2"
 ```
 
-For systems without direct crosswalks, follow the translation path through hub systems (see the Crosswalk Map guide).
+For systems without direct crosswalks, follow the translation path through hub systems (see the [Crosswalk Map](crosswalk-map) guide).
 
-## Domain-Specific Extensions
+## Domain-specific extensions
 
-When a standard industry code is too broad for your use case, WorldOfTaxonomy provides domain-specific vocabularies. For example:
+When a standard industry code is too broad for your use case, WorldOfTaxonomy provides domain-specific vocabularies:
 
-- NAICS 484 "Truck Transportation" links to: truck freight types (44 codes), vehicle classes (23), cargo classification (46), carrier operations (27)
-- NAICS 11 "Agriculture" links to: crop types (46), livestock categories (27), farming methods (28), commodity grades (30)
+| NAICS Sector | Domain Vocabularies | Example Codes |
+|-------------|---------------------|---------------|
+| 484 Truck Transportation | Freight types, vehicle classes, cargo, carrier operations | 44 + 23 + 46 + 27 |
+| 11 Agriculture | Crop types, livestock, farming methods, commodity grades | 46 + 27 + 28 + 30 |
+| 21 Mining | Mineral types, extraction methods, reserve classification | 25 + 20 + 12 |
+| 22 Utilities | Energy sources, grid regions, tariff structures | 17 + 15 + 26 |
+| 23 Construction | Trade types, building types, project delivery | 20 + 17 + 22 |
 
-These domain taxonomies are crosswalked back to their parent NAICS/ISIC sector codes.
+These domain taxonomies are crosswalked back to their parent NAICS/ISIC sector codes, so you can drill down from a broad industry classification to specialized detail.

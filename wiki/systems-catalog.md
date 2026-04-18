@@ -1,8 +1,23 @@
 ## Systems Catalog - All 1,000+ Classification Systems
 
+> **TL;DR:** Complete catalog of 1,000+ classification systems organized by category. Industry (150+), Life Sciences (100+), Product/Trade (20+), Occupation (15+), Regulatory (100+), and 300+ domain vocabularies - all connected by 321K+ crosswalk edges.
+
+---
+
+```mermaid
+graph LR
+  subgraph Top5["Largest Systems by Node Count"]
+    NCI["NCI Thesaurus\n211,072"]
+    NDC["NDC\n112,077"]
+    LOINC["LOINC\n102,751"]
+    ICD10CM["ICD-10-CM\n97,606"]
+    ICD10PCS["ICD-10-PCS\n79,987"]
+  end
+```
+
 WorldOfTaxonomy connects over 1,000 classification systems as equal peers in a unified knowledge graph. Systems span industry classification, product and trade codes, occupation standards, health and clinical coding, education frameworks, financial and environmental standards, regulatory compliance, and hundreds of domain-specific vocabularies.
 
-## Industry Classification Standards
+## Industry classification standards
 
 These are the foundational systems for classifying economic activity by industry sector.
 
