@@ -1,0 +1,69 @@
+name: Scheduled ingest refresh
+
+# Reruns the anchor ingesters (NAICS, ISIC, NACE) on the first of every
+# month so the production database picks up upstream corrections.
+# Non-anchor systems reference these three, so keeping them current
+# keeps every downstream crosswalk coherent.
+#
+# Each ingester is idempotent: it upserts by (system_id, code), so
+# reruns are safe. Crosswalks are rebuilt after anchors are in place.
+
+on:
+  schedule:
+    # 03:17 UTC on the 1st of every month. Odd minute avoids the
+    # top-of-the-hour cron stampede that hits shared runners.
+    - cron: "17 3 1 * *"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Single ingester target (leave blank to run anchors + crosswalks)"
+        required: false
+        default: ""
+
+jobs:
+  ingest:
+    name: Refresh classification data
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run targeted ingester
+        if: ${{ github.event.inputs.target != '' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: python -m world_of_taxonomy ingest "${{ github.event.inputs.target }}"
+
+      - name: Refresh anchor systems + crosswalk
+        if: ${{ github.event.inputs.target == '' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -m world_of_taxonomy ingest naics
+          python -m world_of_taxonomy ingest isic
+          python -m world_of_taxonomy ingest nace
+          python -m world_of_taxonomy ingest isic_naics_crosswalk
+
+      - name: Bust Next.js ISR cache
+        env:
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+        run: |
+          if [ -z "$REVALIDATE_SECRET" ] || [ -z "$FRONTEND_URL" ]; then
+            echo "REVALIDATE_SECRET or FRONTEND_URL not configured; skipping cache bust."
+            exit 0
+          fi
+          curl -sS -X POST "$FRONTEND_URL/api/revalidate" \
+            -H "Content-Type: application/json" \
+            -H "x-revalidate-secret: $REVALIDATE_SECRET" \
+            -d '{"scope":"all"}' || echo "Revalidate call failed (non-fatal)"
