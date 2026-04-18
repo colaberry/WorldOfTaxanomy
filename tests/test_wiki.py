@@ -178,7 +178,14 @@ class TestWikiDiagrams:
             if in_block and line.strip():
                 first_lines.append(line.strip())
                 in_block = False
-        valid_starts = {"graph", "sequenceDiagram", "flowchart", "classDiagram", "stateDiagram"}
+        valid_starts = {
+            "graph",
+            "sequenceDiagram",
+            "flowchart",
+            "classDiagram",
+            "stateDiagram",
+            "erDiagram",
+        }
         for fl in first_lines:
             keyword = fl.split()[0] if fl.split() else ""
             assert keyword in valid_starts, (
