@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from world_of_taxonomy.api.deps import get_conn, get_current_user
+from world_of_taxonomy.api.text_guard import TextGuardError, guard
 from world_of_taxonomy.classify import classify_text
 
 router = APIRouter(prefix="/api/v1", tags=["classify"])
@@ -70,9 +71,14 @@ async def classify_business(
             ),
         )
 
+    try:
+        clean_text, _ = guard(body.text, max_length=500)
+    except TextGuardError as exc:
+        raise HTTPException(status_code=400, detail=exc.public_message) from exc
+
     result = await classify_text(
         conn,
-        text=body.text,
+        text=clean_text,
         system_ids=body.systems,
         limit=body.limit,
     )
